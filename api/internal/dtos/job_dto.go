@@ -21,7 +21,8 @@ type JobResponse struct {
 	FinishedAt  *time.Time       `json:"finished_at"`
 }
 
-// NewJobResponse maps a job; the raw error is included only when allowed.
+// NewJobResponse maps a job; the raw error and result.detail (raw error text)
+// are included only when showError is true.
 func NewJobResponse(j models.Job, showError bool) JobResponse {
 	resp := JobResponse{
 		ID: j.ID.String(), Kind: j.Kind, Status: j.Status, Attempts: j.Attempts, MaxAttempts: j.MaxAttempts,
@@ -29,8 +30,27 @@ func NewJobResponse(j models.Job, showError bool) JobResponse {
 	}
 	if showError {
 		resp.Error = j.LastError
+	} else {
+		resp.Result = stripResultDetail(j.Result)
 	}
 	return resp
+}
+
+// stripResultDetail drops the top-level "detail" key: raw error text is for admins only, like LastError.
+func stripResultDetail(raw json.RawMessage) json.RawMessage {
+	var obj map[string]json.RawMessage
+	if err := json.Unmarshal(raw, &obj); err != nil {
+		return raw
+	}
+	if _, ok := obj["detail"]; !ok {
+		return raw
+	}
+	delete(obj, "detail")
+	out, err := json.Marshal(obj)
+	if err != nil {
+		return raw
+	}
+	return out
 }
 
 // JobEnvelope wraps JobResponse.
