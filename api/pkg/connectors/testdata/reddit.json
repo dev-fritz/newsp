@@ -1,0 +1,86 @@
+{
+  "kind": "Listing",
+  "data": {
+    "after": null,
+    "children": [
+      {
+        "kind": "t3",
+        "data": {
+          "id": "1abc23",
+          "title": "I built a niche invoicing SaaS and reached $3k MRR",
+          "selftext": "Here is **what worked**: cold outreach and a small landing page.",
+          "url": "https://www.reddit.com/r/SaaS/comments/1abc23/i_built_a_niche_invoicing_saas/",
+          "permalink": "/r/SaaS/comments/1abc23/i_built_a_niche_invoicing_saas/",
+          "author": "indie_builder",
+          "created_utc": 1793010000.0,
+          "score": 321,
+          "num_comments": 58,
+          "over_18": false,
+          "stickied": false,
+          "is_self": true
+        }
+      },
+      {
+        "kind": "t3",
+        "data": {
+          "id": "1def45",
+          "title": "Pricing teardown of 50 B2B tools",
+          "selftext": "",
+          "url": "https://example.com/pricing-teardown",
+          "permalink": "/r/SaaS/comments/1def45/pricing_teardown_of_50_b2b_tools/",
+          "author": "pricing_nerd",
+          "created_utc": 1793010600.5,
+          "score": 120,
+          "num_comments": 14,
+          "over_18": false,
+          "stickied": false,
+          "is_self": false
+        }
+      },
+      {
+        "kind": "t3",
+        "data": {
+          "id": "1ghi67",
+          "title": "Weekly self-promotion thread",
+          "selftext": "Post your projects here.",
+          "url": "https://www.reddit.com/r/SaaS/comments/1ghi67/weekly/",
+          "permalink": "/r/SaaS/comments/1ghi67/weekly/",
+          "author": "AutoModerator",
+          "created_utc": 1793000000,
+          "score": 10,
+          "num_comments": 300,
+          "over_18": false,
+          "stickied": true,
+          "is_self": true
+        }
+      },
+      {
+        "kind": "t3",
+        "data": {
+          "id": "1jkl89",
+          "title": "Adult content example",
+          "selftext": "",
+          "url": "https://example.com/nsfw",
+          "permalink": "/r/SaaS/comments/1jkl89/adult/",
+          "author": "someone",
+          "created_utc": 1793011000,
+          "score": 99,
+          "num_comments": 1,
+          "over_18": true,
+          "stickied": false,
+          "is_self": false
+        }
+      },
+      {
+        "kind": "t1",
+        "data": {
+          "id": "c1",
+          "title": "",
+          "author": "commenter",
+          "created_utc": 1793012000,
+          "score": 1
+        }
+      }
+    ]
+  }
+}
