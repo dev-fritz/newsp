@@ -1,0 +1,3 @@
+DROP TABLE IF EXISTS idea_evidence;
+DROP TABLE IF EXISTS idea_versions;
+DROP TABLE IF EXISTS ideas;
