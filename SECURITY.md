@@ -45,6 +45,8 @@ service from an admin pointing a source at a slow site, and findings in third-pa
 
 ## Hardening checklist for operators
 
+- Create the first admin right after starting the stack: until then, anyone who reaches the
+  web port can complete the setup.
 - Serve the web app over HTTPS and keep the API and database off the public internet. Only the
   web port (3000 in the default compose file) needs to be reachable.
 - Use unique random values for `JWT_SECRET`, `SESSION_SECRET` and `ENCRYPTION_KEY`.

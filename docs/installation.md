@@ -31,6 +31,11 @@ Open <http://localhost:3000>. The first visit shows the setup screen:
 3. **Add sources** (Hacker News, an RSS feed, ...). Each source is collected on its own interval.
 4. Open **Profile**, set your interests, and ask for a report.
 
+!!! warning "Create the admin before exposing the port"
+    Until the first admin exists, whoever opens the app can create it. On a server, finish the
+    setup right after `docker compose up` (for example through an SSH tunnel to port 3000), or
+    keep the web port closed to the internet until you have done it.
+
 !!! warning "Back up `.env`"
     `ENCRYPTION_KEY` encrypts the provider API keys stored in the database. If you lose it, the
     stored keys cannot be decrypted and you must enter them again.
