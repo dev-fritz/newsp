@@ -7,6 +7,32 @@ import { commitSession, destroySession, type SessionData } from "@/lib/.server/s
 import type { Route } from "./+types/api";
 
 const MAX_BODY_BYTES = 2 * 1024 * 1024;
+const API_PREFIX = "/api/v1/";
+
+// These endpoints answer with access and refresh tokens. The server-side
+// actions call them directly; through the proxy they would hand the tokens to
+// browser JavaScript.
+const TOKEN_ENDPOINTS = new Set([
+  "auth/login",
+  "auth/refresh",
+  "auth/signup",
+  "invites/accept",
+  "me/password",
+  "setup",
+]);
+
+/**
+ * Resolves the API URL for a proxied path, or null when it would leave
+ * /api/v1 (the URL parser turns "\\" into "/" and resolves dot segments) or
+ * reach an endpoint that returns tokens.
+ */
+function apiTarget(apiUrl: string, path: string, search: string): URL | null {
+  const url = new URL(`${API_PREFIX}${path}${search}`, apiUrl);
+  if (!url.pathname.startsWith(API_PREFIX)) return null;
+  const endpoint = url.pathname.slice(API_PREFIX.length).replace(/\/+$/, "");
+  if (TOKEN_ENDPOINTS.has(endpoint)) return null;
+  return url;
+}
 
 function jsonError(
   status: number,
@@ -23,9 +49,8 @@ function jsonError(
  * Tokens never reach client JavaScript.
  */
 async function proxy(request: Request, path: string | undefined): Promise<Response> {
-  if (!path || path.split("/").some((seg) => seg === ".." || seg === ".")) {
-    return jsonError(404, "NOT_FOUND", "not found");
-  }
+  const target = path ? apiTarget(serverEnv().API_URL, path, new URL(request.url).search) : null;
+  if (!target) return jsonError(404, "NOT_FOUND", "not found");
   if (!isTrustedMutation(request)) {
     return jsonError(403, "FORBIDDEN_ORIGIN", "cross-origin request refused");
   }
@@ -42,9 +67,6 @@ async function proxy(request: Request, path: string | undefined): Promise<Respon
     if (body.byteLength > MAX_BODY_BYTES)
       return jsonError(413, "PAYLOAD_TOO_LARGE", "request body too large");
   }
-  const search = new URL(request.url).search;
-  const target = `${serverEnv().API_URL}/api/v1/${path}${search}`;
-
   const send = (session: SessionData) => {
     const headers: Record<string, string> = {
       Accept: "application/json",

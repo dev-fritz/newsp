@@ -30,7 +30,11 @@ app.use(
   express.static(path.join(BUILD_DIR, "client", "assets"), { immutable: true, maxAge: "1y" }),
 );
 app.use(express.static(path.join(BUILD_DIR, "client"), { maxAge: "1h" }));
-app.use(morgan("tiny"));
+// One-time links carry their token in the path; keep it out of the logs.
+morgan.token("safe-url", (req) =>
+  req.originalUrl.replace(/^\/(invite|reset-password|verify-email)\/[^/?]+/, "/$1/:token"),
+);
+app.use(morgan(":method :safe-url :status :res[content-length] - :response-time ms"));
 
 app.use((req, _res, next) => {
   const peer = req.socket.remoteAddress?.replace(/^::ffff:/, "");
