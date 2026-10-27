@@ -1,0 +1,84 @@
+{
+  "kicker": "Your account",
+  "title": "Profile and preferences",
+  "description": "These choices decide what goes into your reports and which ideas are generated for you. Sources and collection belong to the instance and apply to everyone.",
+  "interests": {
+    "title": "Interests",
+    "hint": "They rank what is relevant to you. Write the way you would say it: “developer tools”, “fintech in Brazil”.",
+    "label": "Add interest",
+    "placeholder": "Type and press Enter",
+    "remove": "Remove {{topic}}",
+    "limit": "Up to 20 interests, 60 characters each.",
+    "notRanked": "No embedding model is configured on this instance, so reports rank items by recency and engagement. Interests will count once an admin configures one."
+  },
+  "report": {
+    "title": "Daily report",
+    "hint": "Covers the last 24 h and is ready at the chosen time.",
+    "enabled": "Generate a report every day",
+    "time": "Time",
+    "timezone": "Time zone",
+    "browserZone": "{{zone}} (this browser)",
+    "outputLang": "Language of generated content",
+    "outputLangHint": "Sources can be in any language; reports and ideas come out in this one.",
+    "next": "Next report: {{when}}",
+    "pt-BR": "Português",
+    "en": "English"
+  },
+  "ideas": {
+    "title": "Ideas",
+    "hint": "Generated after the daily report. Repeated ideas become new versions, so the number may vary.",
+    "perDay": "Ideas per day",
+    "decrease": "Decrease",
+    "increase": "Increase",
+    "range": "From 0 (off) to 10."
+  },
+  "models": {
+    "title": "Models",
+    "hint": "Pick among the models enabled by the admin. A local model has no per-use cost; a larger model usually writes better ideas.",
+    "report": "Reports",
+    "idea": "Ideas",
+    "default": "Instance default",
+    "local": "local"
+  },
+  "sources": {
+    "title": "Sources",
+    "hint": "Which instance sources go into your analyses.",
+    "empty": "The instance has no sources yet. Ask an admin to add some."
+  },
+  "appearance": {
+    "title": "Appearance",
+    "hint": "Applies only to you, on this and your other devices.",
+    "theme": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System",
+    "uiLocale": "Interface language",
+    "pt-BR": "Português (Brasil)",
+    "en": "English"
+  },
+  "security": {
+    "title": "Security",
+    "hint": "Changing the password ends the sessions on your other devices.",
+    "current": "Current password",
+    "new": "New password",
+    "newHint": "At least 12 characters.",
+    "confirm": "Confirm new password",
+    "submit": "Change password",
+    "submitting": "Changing…",
+    "done": "Password changed.",
+    "signOut": "Sign out",
+    "WRONG_CURRENT_PASSWORD": "The current password is wrong."
+  },
+  "bar": {
+    "label": "Unsaved changes",
+    "unsaved_one": "You have {{count}} unsaved change.",
+    "unsaved_other": "You have {{count}} unsaved changes.",
+    "discard": "Discard",
+    "save": "Save changes",
+    "saving": "Saving…"
+  },
+  "toast": {
+    "saved": "Preferences saved.",
+    "failed": "Could not save your preferences."
+  }
+}

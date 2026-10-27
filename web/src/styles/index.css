@@ -1,0 +1,204 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource-variable/geist";
+@import "@fontsource-variable/geist-mono";
+@import "@fontsource-variable/newsreader";
+@import "@fontsource-variable/newsreader/wght-italic.css";
+
+/* Dark mode is driven by data-theme on <html> so the SSR can set it without a flash. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/*
+ * "Newsprint & Signal" design tokens.
+ * shadcn/ui names first; newsp-specific tokens below them.
+ */
+:root {
+  --radius: 0.625rem;
+
+  --background: #f5f6f7;
+  --foreground: #0f1216;
+  --card: #ffffff;
+  --card-foreground: #0f1216;
+  --popover: #ffffff;
+  --popover-foreground: #0f1216;
+  --primary: #0f1216;
+  --primary-foreground: #ffffff;
+  --secondary: #eef0f2;
+  --secondary-foreground: #0f1216;
+  --muted: #eef0f2;
+  --muted-foreground: #545d69;
+  --accent: #eef0f2;
+  --accent-foreground: #0f1216;
+  --destructive: #b42318;
+  --border: #e2e5e9;
+  --input: #c9ced5;
+  --ring: #2d4be0;
+  --chart-1: #2d4be0;
+  --chart-2: #c2410c;
+  --chart-3: #17703f;
+  --chart-4: #8a5300;
+  --chart-5: #545d69;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #0f1216;
+  --sidebar-primary: #0f1216;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #eef0f2;
+  --sidebar-accent-foreground: #0f1216;
+  --sidebar-border: #e2e5e9;
+  --sidebar-ring: #2d4be0;
+
+  --subtle-foreground: #66707c;
+  --border-strong: #c9ced5;
+  --signal: #2d4be0;
+  --signal-soft: #e9edfd;
+  --signal-ink: #1f36b0;
+  --marker: #ffe98a;
+  --marker-ink: #3b2f00;
+  --positive: #17703f;
+  --positive-soft: #e2f3e8;
+  --negative: #b42318;
+  --negative-soft: #fdecea;
+  --warning: #8a5300;
+  --warning-soft: #fff1d6;
+}
+
+[data-theme="dark"] {
+  --background: #0c0e11;
+  --foreground: #eceef1;
+  --card: #14171b;
+  --card-foreground: #eceef1;
+  --popover: #14171b;
+  --popover-foreground: #eceef1;
+  --primary: #eceef1;
+  --primary-foreground: #0c0e11;
+  --secondary: #1b1f25;
+  --secondary-foreground: #eceef1;
+  --muted: #1b1f25;
+  --muted-foreground: #a3abb5;
+  --accent: #1b1f25;
+  --accent-foreground: #eceef1;
+  --destructive: #ff8f84;
+  --border: #252a31;
+  --input: #353c46;
+  --ring: #91a3ff;
+  --chart-1: #91a3ff;
+  --chart-2: #f3b960;
+  --chart-3: #63d39b;
+  --chart-4: #ff8f84;
+  --chart-5: #a3abb5;
+  --sidebar: #14171b;
+  --sidebar-foreground: #eceef1;
+  --sidebar-primary: #eceef1;
+  --sidebar-primary-foreground: #0c0e11;
+  --sidebar-accent: #1b1f25;
+  --sidebar-accent-foreground: #eceef1;
+  --sidebar-border: #252a31;
+  --sidebar-ring: #91a3ff;
+
+  --subtle-foreground: #8d96a1;
+  --border-strong: #353c46;
+  --signal: #91a3ff;
+  --signal-soft: #1b2246;
+  --signal-ink: #b9c4ff;
+  --marker: #3a3112;
+  --marker-ink: #fbe7a1;
+  --positive: #63d39b;
+  --positive-soft: #10281c;
+  --negative: #ff8f84;
+  --negative-soft: #33150f;
+  --warning: #f3b960;
+  --warning-soft: #2e2209;
+}
+
+@theme inline {
+  --font-sans: "Geist Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "Geist Mono Variable", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --font-serif: "Newsreader Variable", Georgia, "Times New Roman", serif;
+  --font-heading: var(--font-serif);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --color-subtle-foreground: var(--subtle-foreground);
+  --color-border-strong: var(--border-strong);
+  --color-signal: var(--signal);
+  --color-signal-soft: var(--signal-soft);
+  --color-signal-ink: var(--signal-ink);
+  --color-marker: var(--marker);
+  --color-marker-ink: var(--marker-ink);
+  --color-positive: var(--positive);
+  --color-positive-soft: var(--positive-soft);
+  --color-negative: var(--negative);
+  --color-negative-soft: var(--negative-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    @apply font-sans antialiased;
+    color-scheme: light;
+  }
+  html[data-theme="dark"] {
+    color-scheme: dark;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+@layer components {
+  /* Small-caps mono label used above sections ("kicker" in the design). */
+  .kicker {
+    @apply font-mono text-[11px] font-medium tracking-[0.08em] text-muted-foreground uppercase;
+  }
+  /* Hand-drawn highlighter used for "new" information in reports and ideas. */
+  .mark {
+    background: linear-gradient(transparent 55%, var(--marker) 55%);
+  }
+}

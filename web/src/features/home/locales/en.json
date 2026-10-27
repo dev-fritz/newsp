@@ -1,0 +1,42 @@
+{
+  "greeting": {
+    "neutral": "Hello, {{name}}.",
+    "morning": "Good morning, {{name}}.",
+    "afternoon": "Good afternoon, {{name}}.",
+    "evening": "Good evening, {{name}}."
+  },
+  "subtitle": "What changed in the market since you last looked.",
+  "actions": {
+    "generateReport": "Generate report now",
+    "generateIdeas": "Generate ideas"
+  },
+  "report": {
+    "badge": "Daily report",
+    "readFull": "Read the full report",
+    "empty": {
+      "title": "No report yet",
+      "body": "The daily report sums up what matters across your sources and comes out at the time set in your profile. To see one now, generate an on-demand report.",
+      "action": "Generate now"
+    }
+  },
+  "ideas": {
+    "title": "Recent ideas",
+    "seeAll": "See all",
+    "empty": {
+      "title": "No ideas yet",
+      "body": "Project ideas come from what was collected and never repeat: a similar idea becomes a new version of the existing one.",
+      "action": "Generate ideas"
+    }
+  },
+  "trending": {
+    "title": "Trending now",
+    "seeAll": "See in feed",
+    "untitled": "Untitled",
+    "empty": {
+      "title": "Nothing collected in the last 24 hours",
+      "adminBody": "Add or enable sources to start collecting news and discussions.",
+      "adminAction": "Set up sources",
+      "memberBody": "Collection has not run yet. Once the sources are collected, trending items show up here."
+    }
+  }
+}

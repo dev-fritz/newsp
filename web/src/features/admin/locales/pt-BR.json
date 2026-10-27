@@ -1,0 +1,535 @@
+{
+  "kicker": "Administração · vale para toda a instância",
+  "link": {
+    "label": "Link",
+    "hint": "Expira em {{expires}} e só funciona uma vez. Este link não será exibido de novo.",
+    "once": "Este link não será exibido de novo.",
+    "copyFailed": "Não foi possível copiar. Selecione o link e copie manualmente."
+  },
+  "sources": {
+    "title": "Fontes",
+    "new": "Nova fonte",
+    "empty": {
+      "title": "Nenhuma fonte ainda",
+      "body": "As fontes alimentam os relatórios e as ideias. Adicione Hacker News, TabNews, Lobsters, dev.to, um subreddit, um canal do YouTube, Mastodon, Bluesky, GitHub, Product Hunt ou qualquer feed RSS."
+    },
+    "stats": {
+      "active": "Ativas",
+      "failing": "Com erro",
+      "items": "Itens em 24 h",
+      "next": "Próxima coleta"
+    },
+    "table": {
+      "source": "Fonte",
+      "interval": "Intervalo",
+      "status": "Status",
+      "lastRun": "Última coleta",
+      "items": "Itens 24 h",
+      "actions": "Ações"
+    },
+    "status": {
+      "ok": "OK",
+      "error": "Erro",
+      "paused": "Pausada",
+      "waiting": "Ainda não coletada"
+    },
+    "detail": {
+      "hackernews": "{{list}} · até {{limit}}",
+      "tabnews": "{{strategy}} · até {{limit}}",
+      "reddit": "r/{{subreddit}} · {{sort}} · até {{limit}}",
+      "youtube": "canal {{channel}} · até {{limit}}",
+      "lobsters": "{{list}} · até {{limit}}",
+      "lobstersTag": "tag {{tag}} · até {{limit}}",
+      "devto": "{{tag}} · {{top}} · até {{limit}}",
+      "anyTag": "todas as tags",
+      "mastodon": "{{target}} em {{instance}} · até {{limit}}",
+      "bluesky": "{{mode}} · {{target}} · até {{limit}}",
+      "github": "{{query}} · ≥ {{stars}} estrelas · últimos {{days}} dias · até {{limit}}",
+      "producthunt": "{{order}} · últimos {{days}} dias · até {{limit}}"
+    },
+    "actions": {
+      "collect": "Coletar {{name}} agora",
+      "collectTitle": "Coletar agora",
+      "edit": "Editar {{name}}",
+      "delete": "Excluir {{name}}",
+      "enabled": "{{name}} está ativa"
+    },
+    "collect": {
+      "started": "Coletando {{name}}…",
+      "done": "{{name}} coletada.",
+      "failed": "A coleta de {{name}} falhou. Veja o status da fonte."
+    },
+    "delete": {
+      "title": "Excluir {{name}}?",
+      "body": "A fonte e os itens que ela coletou são removidos. Não dá para desfazer.",
+      "confirm": "Excluir fonte",
+      "hasCitedItems": "Não dá para excluir {{name}}: relatórios ou ideias citam itens dela. Desative a fonte em vez disso."
+    },
+    "toast": {
+      "created": "{{name}} adicionada.",
+      "updated": "{{name}} atualizada.",
+      "deleted": "{{name}} excluída."
+    },
+    "sheet": {
+      "newTitle": "Nova fonte",
+      "newDescription": "Escolha de onde vêm as notícias. A primeira coleta roda logo depois de salvar.",
+      "editTitle": "Editar fonte"
+    },
+    "kinds": {
+      "hackernews": "Hacker News",
+      "tabnews": "TabNews",
+      "reddit": "Reddit",
+      "youtube": "YouTube",
+      "rss": "RSS / Atom",
+      "lobsters": "Lobsters",
+      "devto": "dev.to",
+      "mastodon": "Mastodon",
+      "bluesky": "Bluesky",
+      "github": "GitHub (repositórios novos)",
+      "producthunt": "Product Hunt"
+    },
+    "form": {
+      "kind": "Tipo",
+      "name": "Nome",
+      "hnList": "Lista",
+      "tnStrategy": "Estratégia",
+      "subreddit": "Subreddit",
+      "subredditHint": "O prefixo r/ é opcional. Usa o JSON público do Reddit.",
+      "redditSort": "Ordenação",
+      "redditTime": "Período",
+      "channelId": "ID do canal",
+      "channelIdHint": "Lemos o RSS público do canal; não precisa de chave.",
+      "url": "URL do feed",
+      "urlHint": "RSS ou Atom. Validamos o feed ao salvar.",
+      "limit": "Itens por coleta",
+      "limitHint": "De 1 a {{max}}.",
+      "rangeHint": "De 1 a {{max}}.",
+      "lobstersList": "Lista",
+      "lobstersTag": "Tag",
+      "lobstersTagHint": "Opcional. Quando preenchida, a lista acima é ignorada e leem-se as histórias da tag.",
+      "devtoTag": "Tag",
+      "devtoTagHint": "Opcional. Deixe vazio para artigos de qualquer tag.",
+      "devtoTop": "Ranking",
+      "mastodonInstance": "Instância",
+      "mastodonInstanceHint": "O host do servidor, sem https://.",
+      "mastodonMode": "Acompanhar",
+      "mastodonHashtag": "Hashtag",
+      "mastodonHashtagHint": "Sem o #.",
+      "mastodonAccount": "Conta",
+      "mastodonAccountHint": "usuario, ou usuario@outro.host quando a conta está em outro servidor.",
+      "bskyMode": "Origem",
+      "bskyActor": "Handle ou DID",
+      "bskyActorHint": "As publicações desta conta, por exemplo bsky.app. Não precisa de login.",
+      "bskyFeed": "Feed",
+      "bskyFeedHint": "Uma URI at:// ou um link https://bsky.app/profile/…/feed/…. Não precisa de login.",
+      "bskyQuery": "Busca",
+      "bskyQueryHint": "O Bluesky só permite buscar com login.",
+      "bskySort": "Ordenação",
+      "bskyIdentifier": "Login",
+      "bskyIdentifierHint": "O handle ou e-mail que entra com a senha de app abaixo.",
+      "ghQuery": "Busca",
+      "ghQueryHint": "Opcional. Palavras a procurar nos repositórios.",
+      "ghLanguage": "Linguagem",
+      "ghTopic": "Tópico",
+      "ghMinStars": "Mínimo de estrelas",
+      "ghCreatedWithin": "Criados nos últimos (dias)",
+      "phOrder": "Ordem",
+      "phTopic": "Tópico",
+      "phTopicHint": "Opcional. O slug do tópico, como em producthunt.com/topics/<slug>.",
+      "phPostedWithin": "Publicados nos últimos (dias)",
+      "interval": "Coletar a cada",
+      "intervalCustom": "Personalizado…",
+      "intervalMinutes": "Intervalo em minutos",
+      "minutes": "minutos",
+      "intervalHint": "Entre {{min}} e {{max}} minutos.",
+      "save": "Salvar alterações",
+      "add": "Adicionar fonte"
+    },
+    "secret": {
+      "label": {
+        "bluesky": "Senha de app",
+        "github": "Token de acesso pessoal",
+        "producthunt": "Token de desenvolvedor"
+      },
+      "hint": {
+        "bluesky": "Crie uma senha de app no Bluesky em Configurações → Privacidade e segurança.",
+        "github": "Um token de acesso pessoal aumenta o limite de requisições do GitHub.",
+        "producthunt": "Crie um token de desenvolvedor em producthunt.com/v2/oauth/applications."
+      },
+      "requiredHint": "{{what}} Guardado criptografado. Não será exibido de novo.",
+      "optionalHint": "Opcional. {{what}} Guardado criptografado. Não será exibido de novo.",
+      "placeholder": "Cole aqui",
+      "savedPlaceholder": "Credencial salva",
+      "savedHint": "Há uma credencial configurada. Deixe vazio para mantê-la, ou cole uma nova para substituí-la.",
+      "remove": "Remover credencial salva"
+    },
+    "options": {
+      "hnList": {
+        "top": "Mais votadas",
+        "best": "Melhores",
+        "new": "Novas"
+      },
+      "tnStrategy": {
+        "relevant": "Relevantes",
+        "new": "Novas",
+        "old": "Antigas"
+      },
+      "redditSort": {
+        "top": "Top",
+        "hot": "Em alta",
+        "new": "Novas"
+      },
+      "redditTime": {
+        "hour": "Última hora",
+        "day": "Hoje",
+        "week": "Esta semana"
+      },
+      "lobstersList": {
+        "hottest": "Em alta",
+        "newest": "Mais recentes"
+      },
+      "devtoTop": {
+        "0": "Mais recentes",
+        "1": "Top do dia",
+        "7": "Top da semana",
+        "30": "Top do mês"
+      },
+      "mastodonMode": {
+        "hashtag": "Uma hashtag",
+        "account": "Uma conta"
+      },
+      "bskyMode": {
+        "author": "Uma conta",
+        "feed": "Um feed",
+        "search": "Uma busca"
+      },
+      "bskySort": {
+        "top": "Top",
+        "latest": "Mais recentes"
+      },
+      "phOrder": {
+        "ranking": "Ranking",
+        "votes": "Mais votados",
+        "newest": "Mais recentes"
+      }
+    }
+  },
+  "ai": {
+    "title": "Provedores de IA",
+    "description": "Modelos locais (Ollama, llama.cpp, LM Studio) usam o tipo compatível com OpenAI. As chaves ficam criptografadas e nunca são exibidas de novo.",
+    "empty": {
+      "title": "Nenhum provedor de IA ainda",
+      "body": "Relatórios e ideias são escritos por um modelo. Conecte um servidor local ou um provedor na nuvem para começar."
+    },
+    "kinds": {
+      "openai_compatible": {
+        "title": "Local / compatível com OpenAI",
+        "hint": "Ollama, llama.cpp, LM Studio",
+        "label": "Compatível com OpenAI (local)"
+      },
+      "openai": {
+        "title": "OpenAI",
+        "hint": "Chave de API",
+        "label": "OpenAI"
+      },
+      "anthropic": {
+        "title": "Anthropic",
+        "hint": "Chave de API",
+        "label": "Anthropic"
+      },
+      "gemini": {
+        "title": "Google Gemini",
+        "hint": "Chave de API",
+        "label": "Google Gemini"
+      }
+    },
+    "form": {
+      "kind": "Provedor",
+      "recommended": "Recomendado",
+      "name": "Nome",
+      "baseUrl": "URL base",
+      "baseUrlDefault": "Padrão do provedor",
+      "baseUrlRequired": "Onde o servidor responde, por exemplo http://ollama:11434/v1.",
+      "baseUrlOptional": "Opcional. Deixe vazio para usar o endereço do provedor.",
+      "apiKey": "Chave de API",
+      "apiKeyOptional": "Chave de API (opcional)",
+      "apiKeyPlaceholder": "Cole a chave aqui",
+      "apiKeyHint": "Guardada criptografada. Não será exibida de novo.",
+      "connecting": "Conectando…",
+      "connect": "Conectar e testar",
+      "newKey": "Nova chave de API",
+      "newKeyHint": "Chave atual: {{hint}}. Deixe vazio para mantê-la."
+    },
+    "toast": {
+      "created": "{{name}} adicionado.",
+      "updated": "{{name}} atualizado.",
+      "keyUpdated": "Chave de {{name}} atualizada.",
+      "deleted": "{{name}} excluído.",
+      "modelDeleted": "{{name}} excluído."
+    },
+    "found": {
+      "added": "{{name}} adicionado.",
+      "filter": "Filtrar modelos",
+      "registered": "Adicionado · {{capability}}",
+      "addAs": "Adicionar {{name}} como {{capability}}",
+      "noMatch": "Nenhum modelo corresponde ao filtro.",
+      "hint": "Adicione os modelos que quer usar: modelos de chat escrevem relatórios e ideias; modelos de embedding ranqueiam e comparam."
+    },
+    "capability": {
+      "chat": "Chat",
+      "embedding": "Embedding"
+    },
+    "test": {
+      "title": "Conexão com {{name}}",
+      "body": "Listamos os modelos que o provedor oferece. Adicione os que quer usar.",
+      "running": "Testando a conexão…",
+      "ok_zero": "Conexão funcionando · nenhum modelo encontrado",
+      "ok_one": "Conexão funcionando · {{count}} modelo encontrado",
+      "ok_other": "Conexão funcionando · {{count}} modelos encontrados",
+      "failed": "A conexão falhou",
+      "idle": "Ainda não testado",
+      "again": "Testar de novo",
+      "run": "Testar conexão",
+      "noDetail": "O provedor não deu mais detalhes.",
+      "noModels": "O provedor respondeu, mas não lista modelos. Baixe ou carregue um e teste de novo."
+    },
+    "add": {
+      "title": "Adicionar provedor",
+      "body": "Testamos a conexão logo depois de salvar.",
+      "connectedTitle": "Provedor adicionado",
+      "connectedBody": "Confira a conexão e adicione os modelos que quer usar.",
+      "done": "Concluir",
+      "card": "Adicionar provedor",
+      "cardHint": "OpenAI, Anthropic, Gemini ou compatível",
+      "button": "Adicionar provedor"
+    },
+    "edit": {
+      "title": "Editar {{name}}",
+      "body": "Mude o nome ou o endereço. Uma chave nova substitui a antiga.",
+      "keyTitle": "Atualizar chave de {{name}}",
+      "keyBody": "A nova chave substitui a atual e nunca é exibida de novo."
+    },
+    "status": {
+      "connected": "Conectado",
+      "error": "Erro",
+      "disabled": "Desativado",
+      "untested": "Não testado"
+    },
+    "card": {
+      "models_zero": "Nenhum modelo",
+      "models_one": "{{count}} modelo",
+      "models_other": "{{count}} modelos",
+      "key": "chave {{hint}}",
+      "noKey": "sem chave",
+      "checked": "verificado {{when}}",
+      "test": "Testar conexão",
+      "updateKey": "Atualizar chave",
+      "edit": "Editar",
+      "more": "Mais ações de {{name}}",
+      "disable": "Desativar",
+      "enable": "Ativar",
+      "delete": "Excluir"
+    },
+    "delete": {
+      "title": "Excluir {{name}}?",
+      "body": "O provedor e os modelos dele são removidos. Configurações que os usam são limpas.",
+      "confirm": "Excluir provedor"
+    },
+    "models": {
+      "title": "Modelos habilitados",
+      "hint": "Só os habilitados aparecem para os usuários.",
+      "empty": "Nenhum modelo ainda. Teste a conexão de um provedor e adicione os modelos que quer usar.",
+      "model": "Modelo",
+      "provider": "Provedor",
+      "use": "Uso",
+      "tokens": "Tokens · 7 dias",
+      "actions": "Habilitado",
+      "defaultEmbedding": "embedding da instância",
+      "defaultReports": "padrão · relatórios",
+      "defaultIdeas": "padrão · ideias",
+      "enabled": "{{name}} está habilitado",
+      "delete": "Excluir {{name}}",
+      "deleteTitle": "Excluir {{name}}?",
+      "deleteBody": "O modelo é removido da instância. Configurações que o usam são limpas.",
+      "deleteConfirm": "Excluir modelo"
+    },
+    "settings": {
+      "title": "Configurações da instância",
+      "pick": "Escolha um modelo",
+      "noEmbedding": "Ainda não há modelo de embedding. Adicione um pelo teste de conexão de um provedor.",
+      "saved": "Configurações salvas.",
+      "save": "Salvar configurações",
+      "embeddings": {
+        "title": "Embeddings",
+        "body": "Usados para ranquear notícias e evitar ideias repetidas.",
+        "label": "Modelo de embedding",
+        "warning": "Trocar o modelo de embedding reindexa tudo: itens, ideias e interesses dos usuários. Relatórios e ideias ficam em espera até terminar."
+      },
+      "defaults": {
+        "title": "Padrões para novos usuários",
+        "body": "Cada usuário pode trocar no próprio perfil.",
+        "reports": "Relatórios",
+        "ideas": "Ideias"
+      },
+      "similarity": {
+        "title": "Ideias sem repetição",
+        "body": "Acima deste limiar de semelhança, o modelo decide se a candidata é a mesma ideia e, se for, mescla numa nova versão.",
+        "label": "Limiar de semelhança",
+        "low": "Mais mesclagens",
+        "high": "Mais ideias novas"
+      },
+      "retention": {
+        "title": "Retenção",
+        "body": "Itens citados em relatórios ou ideias nunca são apagados.",
+        "label": "Manter itens coletados por (dias)",
+        "hint": "Entre {{min}} e {{max}} dias."
+      },
+      "reindex": {
+        "running": "Reindexação em andamento. Relatórios e ideias ficam em espera até terminar.",
+        "done": "Reindexação concluída.",
+        "failed": "A reindexação falhou. Tente trocar o modelo de embedding de novo."
+      },
+      "accounts": {
+        "title": "Contas",
+        "body": "Quem pode criar conta e quando contas paradas são pausadas.",
+        "signup": "Cadastro público",
+        "signupBody": "Qualquer pessoa pode criar uma conta de membro. O e-mail precisa ser confirmado antes de gerar relatórios e ideias.",
+        "noMail": "Configure o SMTP antes (SMTP_HOST e MAIL_FROM) para ligar o cadastro.",
+        "inactivity": "Pausar contas sem acesso após (dias)",
+        "inactivityHint": "0 desliga. Contas paradas não recebem relatório nem ideias até voltarem."
+      }
+    }
+  },
+  "users": {
+    "title": "Usuários",
+    "description": "Convide pessoas por link ou e-mail; o cadastro público é ligado em Configurações. Os links expiram e funcionam uma única vez.",
+    "you": "você",
+    "neverSeen": "nunca",
+    "status": {
+      "active": "Ativo",
+      "disabled": "Desativado"
+    },
+    "table": {
+      "person": "Pessoa",
+      "role": "Papel",
+      "status": "Status",
+      "lastSeen": "Último acesso",
+      "actions": "Ações"
+    },
+    "actions": {
+      "resetLink": "Link de nova senha",
+      "reactivate": "Reativar",
+      "disable": "Desativar",
+      "more": "Mais ações de {{name}}",
+      "makeMember": "Tornar membro",
+      "makeAdmin": "Tornar admin"
+    },
+    "toast": {
+      "disabled": "{{name}} desativado.",
+      "reactivated": "{{name}} reativado.",
+      "madeAdmin": "{{name}} agora é admin.",
+      "madeMember": "{{name}} agora é membro.",
+      "revoked": "Convite revogado."
+    },
+    "reset": {
+      "title": "Link de nova senha de {{name}}",
+      "body": "Envie para a pessoa por onde preferir. Ele substitui links de redefinição anteriores."
+    },
+    "confirm": {
+      "disable": {
+        "title": "Desativar {{name}}?",
+        "body": "A pessoa é desconectada e não consegue entrar até você reativar a conta.",
+        "confirm": "Desativar"
+      },
+      "makeAdmin": {
+        "title": "Tornar {{name}} admin?",
+        "body": "Admins gerenciam fontes, provedores de IA e usuários de toda a instância.",
+        "confirm": "Tornar admin"
+      },
+      "makeMember": {
+        "title": "Tornar {{name}} membro?",
+        "body": "A pessoa perde o acesso às telas de administração.",
+        "confirm": "Tornar membro"
+      }
+    },
+    "invite": {
+      "button": "Convidar pessoa",
+      "title": "Convidar uma pessoa",
+      "body": "Escolha o papel. O link é criado no próximo passo.",
+      "readyTitle": "Link de convite pronto",
+      "readyBody": "Envie para a pessoa por onde preferir. Ela escolhe nome e senha ao abrir.",
+      "done": "Concluir",
+      "role": "Papel",
+      "roleHint": {
+        "member": "Lê relatórios e gera ideias.",
+        "admin": "Também gerencia fontes, provedores de IA e usuários."
+      },
+      "create": "Criar link",
+      "email": "E-mail (opcional)",
+      "emailHint": "Enviamos o convite por e-mail e a conta precisa usar este e-mail.",
+      "emailed": "Convite enviado para {{email}}. Você ainda pode copiar o link abaixo."
+    },
+    "invites": {
+      "title": "Convites pendentes",
+      "empty": "Nenhum convite pendente.",
+      "admin": "Convite de admin",
+      "member": "Convite de membro",
+      "meta": "Criado {{created}} · expira {{expires}} · ainda não usado",
+      "revoke": "Revogar",
+      "revokeTitle": "Revogar este convite?",
+      "revokeBody": "O link para de funcionar na hora."
+    },
+    "emailUnverified": "E-mail não verificado"
+  },
+  "setup": {
+    "stepOf": "Etapa {{current}} de {{total}}",
+    "ai": {
+      "title": "Conecte um modelo de IA",
+      "body": "É ele que escreve os relatórios e as ideias. Dá para começar com um modelo local e adicionar outros provedores depois, em Administração.",
+      "composeTitle": "Rodando com Docker Compose?",
+      "composeBody": "O Ollama do compose responde em {{url}}. Baixe os modelos com make models.",
+      "chatModel": "Modelo para textos",
+      "embeddingModel": "Modelo de embedding",
+      "noChat": "Adicione um modelo de chat acima para escolhê-lo aqui.",
+      "noEmbedding": "Adicione um modelo de embedding acima para escolhê-lo aqui.",
+      "embeddingWarning": "Sem um modelo de embedding, o ranqueamento das notícias e a deduplicação de ideias ficam desligados. Dá para adicionar um depois.",
+      "addAnother": "Adicionar outro provedor",
+      "later": "Configurar depois"
+    },
+    "sources": {
+      "title": "Escolha as primeiras fontes",
+      "body": "As fontes são de onde vêm as notícias. Comece com algumas e adicione outras depois, em Administração.",
+      "suggested": "Sugeridas",
+      "presets": {
+        "hackernews-top": "Mais votadas · a cada 15 min",
+        "tabnews-relevant": "Publicações relevantes · a cada 30 min",
+        "bbc-technology": "Feed BBC Technology · a cada hora"
+      },
+      "added": "Adicionada",
+      "add": "Adicionar",
+      "addNamed": "Adicionar {{name}}",
+      "custom": "Adicionar outra fonte",
+      "count_zero": "Nenhuma fonte ainda. Dá para concluir e adicionar depois.",
+      "count_one": "{{count}} fonte configurada.",
+      "count_other": "{{count}} fontes configuradas.",
+      "finish": "Concluir"
+    }
+  },
+  "errors": {
+    "FORBIDDEN": "Você não tem permissão para isso.",
+    "SOURCE_NOT_FOUND": "Esta fonte não existe mais.",
+    "SOURCE_HAS_CITED_ITEMS": "Esta fonte tem itens citados por relatórios ou ideias. Desative-a em vez de excluir.",
+    "PROVIDER_NOT_FOUND": "Este provedor não existe mais.",
+    "PROVIDER_NAME_TAKEN": "Já existe um provedor com este nome.",
+    "MODEL_NOT_FOUND": "Este modelo não existe mais.",
+    "MODEL_EXISTS": "Este modelo já foi adicionado ao provedor.",
+    "EMBEDDINGS_UNSUPPORTED": "Este provedor não oferece modelos de embedding.",
+    "AI_MODEL_UNAVAILABLE": "O modelo está indisponível. Confira o provedor e tente de novo.",
+    "USER_NOT_FOUND": "Este usuário não existe mais.",
+    "INVITE_NOT_FOUND": "Este convite não existe mais.",
+    "CANNOT_CHANGE_OWN_ACCESS": "Você não pode alterar o próprio papel ou status.",
+    "LAST_ADMIN": "É preciso manter ao menos um admin ativo.",
+    "EMAIL_TAKEN": "Já existe uma conta com este e-mail.",
+    "MAILER_NOT_CONFIGURED": "O envio de e-mail não está configurado. Defina SMTP_HOST e MAIL_FROM no servidor."
+  }
+}

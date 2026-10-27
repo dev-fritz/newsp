@@ -1,0 +1,133 @@
+{
+  "title": "Reports",
+  "list": {
+    "label": "Report list",
+    "generate": "Generate now",
+    "filterLabel": "Type",
+    "filters": { "all": "All", "scheduled": "Daily", "manual": "On demand" },
+    "groups": { "thisWeek": "This week", "lastWeek": "Last week" },
+    "empty": {
+      "title": "No reports yet",
+      "body": "The daily report comes out at the time set in your profile. To see one now, generate an on-demand report."
+    },
+    "emptyFiltered": {
+      "title": "No reports in this filter",
+      "body": "Change the filter to see the other reports."
+    }
+  },
+  "kind": { "scheduled": "Daily", "manual": "On demand" },
+  "status": { "failed": "Failed" },
+  "window": {
+    "h6": "last 6 h",
+    "h24": "last 24 h",
+    "h168": "last 7 days",
+    "h720": "last 30 days",
+    "custom": "last {{hours}} h"
+  },
+  "progress": {
+    "title": "Generating · {{window}}",
+    "titleWithFocus": "Generating · {{window}}, focus “{{focus}}”",
+    "pending": "Queued, starting shortly…",
+    "running": "Reading the collected items and writing the report…"
+  },
+  "generate": {
+    "title": "Generate a report now",
+    "description": "Pick the time window of collected items and, if you like, a focus.",
+    "windowLabel": "Window",
+    "windows": {
+      "6": "Last 6 h",
+      "24": "Last 24 h",
+      "168": "Last 7 days",
+      "720": "Last 30 days"
+    },
+    "focusLabel": "Focus (optional)",
+    "focusHint": "A subject for the report to prioritize. Up to 200 characters.",
+    "focusPlaceholder": "E.g. fintech in Brazil",
+    "submit": "Generate report",
+    "submitting": "Sending…",
+    "success": "Report queued. It shows up in the list as soon as it is ready.",
+    "retry": "Generate again"
+  },
+  "reader": {
+    "back": "Reports",
+    "toolbar": "Report actions",
+    "copyMarkdown": "Copy Markdown",
+    "copied": "Markdown copied",
+    "copyFailed": "Could not copy. Select the text manually.",
+    "generateIdeas": "Generate ideas from this report",
+    "model": "AI model",
+    "itemsAnalyzed_one": "{{count}} item analyzed",
+    "itemsAnalyzed_other": "{{count}} items analyzed",
+    "cited_one": "{{count}} cited",
+    "cited_other": "{{count}} cited",
+    "reading": "{{count}} min read",
+    "emptyContent": "This report has no content.",
+    "generating": {
+      "title": "This report is still being generated",
+      "body": "The page updates by itself when it is ready."
+    },
+    "failed": {
+      "title": "This report could not be generated"
+    },
+    "notFound": {
+      "title": "Report not found",
+      "body": "It may have been removed, or the address is wrong.",
+      "back": "See all reports"
+    },
+    "noneYet": {
+      "title": "No report to read yet",
+      "body": "Generate a report now or wait for the next daily one."
+    }
+  },
+  "delete": {
+    "button": "Delete",
+    "menu": "Delete…",
+    "actions": "Report actions",
+    "inProgress": "This report is still being generated and can't be deleted yet.",
+    "title": "Delete this report?",
+    "description": "The report and its citations will be deleted permanently. This cannot be undone. The collected items stay in the feed.",
+    "confirm": "Delete report",
+    "success": "Report deleted",
+    "errors": {
+      "REPORT_IN_PROGRESS": "This report is still being generated. Wait for it to finish before deleting it.",
+      "generic": "Could not delete the report. Try again."
+    }
+  },
+  "citation": {
+    "open": "Source {{ref}}",
+    "openOriginal": "Open original ↗",
+    "close": "Close",
+    "by": "by {{author}}",
+    "excerpt": "“{{text}}”"
+  },
+  "sources": {
+    "title": "Cited sources",
+    "count_one": "{{count}} source",
+    "count_other": "{{count}} sources"
+  },
+  "engagement": {
+    "score": {
+      "hackernews": "{{value}} pts",
+      "tabnews": "{{value}} tabcoins",
+      "reddit": "{{value}} pts",
+      "youtube": "{{value}} pts",
+      "lobsters": "{{value}} pts",
+      "devto": "{{value}} reactions",
+      "mastodon": "{{value}} favorites",
+      "bluesky": "{{value}} likes",
+      "github": "{{value}} stars",
+      "producthunt": "{{value}} votes",
+      "default": "{{value}} pts"
+    },
+    "comments": "{{value}} comments"
+  },
+  "errors": {
+    "NO_ITEMS": "There were no new items in the chosen window (items cited by earlier reports are not repeated)",
+    "REPORT_MODEL_NOT_SET": "No AI model configured for reports — ask an admin",
+    "AI_REFUSED": "The AI model refused to write this report. Try another focus or window.",
+    "AI_INVALID_OUTPUT": "The model answered in an invalid format. Try generating again.",
+    "AI_FAILURE": "The AI provider failed while writing the report. Try again shortly.",
+    "REPORT_IN_PROGRESS": "A report is already being generated. Wait for it to finish.",
+    "generic": "Could not generate the report. Try again."
+  }
+}
