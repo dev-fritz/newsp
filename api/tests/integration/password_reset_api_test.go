@@ -1,6 +1,7 @@
 package integration
 
 import (
+	"context"
 	"net/http"
 	"testing"
 
@@ -90,4 +91,39 @@ func TestPasswordResetIsRateLimitedPerEmail(t *testing.T) {
 
 	runJobs(t, s)
 	assert.Len(t, box.Messages(), 1, "repeated requests collapse into one job")
+}
+
+func TestSelfServiceResetKeepsAdminLinkValid(t *testing.T) {
+	t.Parallel()
+	s, box := newMailServer(t)
+	admin, _ := setupAdmin(t, s)
+	inviteMember(t, s, admin)
+	var memberID string
+	require.NoError(t, s.Container.DB.QueryRowContext(context.Background(),
+		`SELECT id::text FROM users WHERE email = 'ana@example.com'`).Scan(&memberID))
+
+	res := s.Do(http.MethodPost, "/api/v1/admin/users/"+memberID+"/password-reset", admin, nil)
+	require.Equal(t, http.StatusCreated, res.Status, res.Body)
+	adminLink := tokenFromURL(t, res.Data()["url"].(string))
+
+	// First self-service request, then a second one that must replace it.
+	res = s.Do(http.MethodPost, resetRequestPath, "", map[string]string{"email": "ana@example.com"})
+	require.Equal(t, http.StatusAccepted, res.Status, res.Body)
+	runJobs(t, s)
+	firstSelf := box.LastToken("ana@example.com")
+	require.NotEmpty(t, firstSelf)
+
+	res = s.Do(http.MethodPost, resetRequestPath, "", map[string]string{"email": "ana@example.com"})
+	require.Equal(t, http.StatusAccepted, res.Status, res.Body)
+	runJobs(t, s)
+	secondSelf := box.LastToken("ana@example.com")
+	require.NotEmpty(t, secondSelf)
+	require.NotEqual(t, firstSelf, secondSelf)
+
+	inspect := func(token string) int {
+		return s.Do(http.MethodPost, "/api/v1/password-resets/inspect", "", map[string]string{"token": token}).Status
+	}
+	assert.Equal(t, http.StatusNoContent, inspect(adminLink), "an admin link survives self-service requests")
+	assert.Equal(t, http.StatusNoContent, inspect(secondSelf), "the newest self-service link works")
+	assert.Equal(t, http.StatusNotFound, inspect(firstSelf), "an older self-service link is replaced")
 }

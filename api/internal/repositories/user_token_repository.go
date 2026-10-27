@@ -90,6 +90,17 @@ func (r *UserTokenRepository) RevokePendingResets(ctx context.Context, userID uu
 	return nil
 }
 
+// RevokePendingSelfResets revokes the unused password resets a user requested
+// for themselves, leaving the ones an admin created.
+func (r *UserTokenRepository) RevokePendingSelfResets(ctx context.Context, userID uuid.UUID, now time.Time) error {
+	const q = `UPDATE user_tokens SET revoked_at = $2
+		WHERE user_id = $1 AND kind = 'password_reset' AND created_by IS NULL AND used_at IS NULL AND revoked_at IS NULL`
+	if _, err := database.Conn(ctx, r.db).ExecContext(ctx, q, userID, now); err != nil {
+		return fmt.Errorf("revoke pending self resets: %w", err)
+	}
+	return nil
+}
+
 // ListPendingInvites returns a page of invites that can still be accepted.
 func (r *UserTokenRepository) ListPendingInvites(ctx context.Context, now time.Time, limit, offset int) ([]models.UserToken, int, error) {
 	conn := database.Conn(ctx, r.db)

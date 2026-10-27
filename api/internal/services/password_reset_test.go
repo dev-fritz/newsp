@@ -29,6 +29,7 @@ func TestRequestPasswordResetQueuesWithoutLookingUpTheUser(t *testing.T) {
 	t.Parallel()
 	svc, d := newAuthService(t)
 	d.reset.EXPECT().Allow("reset:ana@example.com").Return(true, time.Duration(0))
+	d.emails.EXPECT().Ready().Return(true)
 	// No EXPECT on d.users: any lookup fails the test.
 	d.queue.EXPECT().Enqueue(gomock.Any(), services.JobPasswordReset, gomock.Any(), gomock.Any()).
 		DoAndReturn(func(_ context.Context, _ string, payload any, opts workers.EnqueueOptions) (uuid.UUID, error) {
@@ -40,6 +41,16 @@ func TestRequestPasswordResetQueuesWithoutLookingUpTheUser(t *testing.T) {
 		})
 
 	require.NoError(t, svc.RequestPasswordReset(context.Background(), " Ana@Example.com "))
+}
+
+func TestRequestPasswordResetDoesNothingWithoutMailer(t *testing.T) {
+	t.Parallel()
+	svc, d := newAuthService(t)
+	d.reset.EXPECT().Allow("reset:ana@example.com").Return(true, time.Duration(0))
+	d.emails.EXPECT().Ready().Return(false)
+	// No EXPECT on d.queue: any Enqueue fails the test.
+
+	require.NoError(t, svc.RequestPasswordReset(context.Background(), "ana@example.com"))
 }
 
 func TestRequestPasswordResetIsRateLimited(t *testing.T) {
@@ -80,7 +91,7 @@ func TestSendPasswordResetCreatesTokenAndQueuesEmail(t *testing.T) {
 
 	var token models.UserToken
 	gomock.InOrder(
-		d.tokens.EXPECT().RevokePendingResets(gomock.Any(), user.ID, fixedNow).Return(nil),
+		d.tokens.EXPECT().RevokePendingSelfResets(gomock.Any(), user.ID, fixedNow).Return(nil),
 		d.tokens.EXPECT().Create(gomock.Any(), gomock.Any()).DoAndReturn(func(_ context.Context, t models.UserToken) error {
 			token = t
 			return nil

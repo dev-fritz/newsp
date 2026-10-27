@@ -50,6 +50,7 @@ type UserTokenStore interface {
 	MarkUsed(ctx context.Context, id uuid.UUID, now time.Time) error
 	RevokeInvite(ctx context.Context, id uuid.UUID, now time.Time) error
 	RevokePendingResets(ctx context.Context, userID uuid.UUID, now time.Time) error
+	RevokePendingSelfResets(ctx context.Context, userID uuid.UUID, now time.Time) error
 	ListPendingInvites(ctx context.Context, now time.Time, limit, offset int) ([]models.UserToken, int, error)
 }
 

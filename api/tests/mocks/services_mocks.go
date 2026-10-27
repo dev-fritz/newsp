@@ -396,6 +396,20 @@ func (mr *MockUserTokenStoreMockRecorder) RevokePendingResets(ctx, userID, now a
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RevokePendingResets", reflect.TypeOf((*MockUserTokenStore)(nil).RevokePendingResets), ctx, userID, now)
 }
 
+// RevokePendingSelfResets mocks base method.
+func (m *MockUserTokenStore) RevokePendingSelfResets(ctx context.Context, userID uuid.UUID, now time.Time) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "RevokePendingSelfResets", ctx, userID, now)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// RevokePendingSelfResets indicates an expected call of RevokePendingSelfResets.
+func (mr *MockUserTokenStoreMockRecorder) RevokePendingSelfResets(ctx, userID, now any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RevokePendingSelfResets", reflect.TypeOf((*MockUserTokenStore)(nil).RevokePendingSelfResets), ctx, userID, now)
+}
+
 // MockSessionStore is a mock of SessionStore interface.
 type MockSessionStore struct {
 	ctrl     *gomock.Controller

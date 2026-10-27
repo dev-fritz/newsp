@@ -481,6 +481,12 @@ func (s *AuthService) RequestPasswordReset(ctx context.Context, email string) er
 	if ok, wait := s.resetLimiter.Allow("reset:" + email); !ok {
 		return apperrors.RateLimited(wait)
 	}
+	// Without a working mailer nobody can read the new link, and processing the
+	// job would revoke links the user could still use. Answer like any other
+	// e-mail so the response reveals nothing.
+	if !s.emails.Ready() {
+		return nil
+	}
 	_, err := s.queue.Enqueue(ctx, JobPasswordReset, passwordResetPayload{Email: email},
 		workers.EnqueueOptions{DedupeKey: JobPasswordReset + ":" + email})
 	if err != nil {
@@ -512,8 +518,8 @@ func (s *AuthService) SendPasswordReset(ctx context.Context, job models.Job) (an
 
 	err = s.tx.WithinTx(ctx, func(ctx context.Context) error {
 		now := s.now()
-		// Only the newest link works.
-		if err := s.tokens.RevokePendingResets(ctx, user.ID, now); err != nil {
+		// Only the newest self-service link works; links an admin created stay valid.
+		if err := s.tokens.RevokePendingSelfResets(ctx, user.ID, now); err != nil {
 			return err
 		}
 		plain, hash, err := auth.NewOpaqueToken()
