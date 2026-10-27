@@ -26,10 +26,19 @@ func TestDeleteReport(t *testing.T) {
 	mustExec(t, db, `INSERT INTO sources (id, kind, name) VALUES ($1, 'hackernews', 'HN')`, sourceID)
 	mustExec(t, db, `INSERT INTO items (id, source_id, external_id, url, title, published_at) VALUES ($1, $2, '1', 'https://x', 'T', now())`, itemID, sourceID)
 
+	res = s.Do(http.MethodGet, "/api/v1/me", member, nil)
+	require.Equal(t, http.StatusOK, res.Status, res.Body)
+	memberID := res.Data()["id"].(string)
+
+	// A user has at most one active report, so the running one belongs to the member.
 	newReport := func(status string, cite bool) string {
+		owner := adminID
+		if status == "running" {
+			owner = memberID
+		}
 		id := uuid.New()
 		mustExec(t, db, `INSERT INTO reports (id, user_id, kind, status, window_start, window_end, output_lang)
-			VALUES ($1, $2, 'manual', $3, now() - interval '1 day', now(), 'pt-BR')`, id, adminID, status)
+			VALUES ($1, $2, 'manual', $3, now() - interval '1 day', now(), 'pt-BR')`, id, owner, status)
 		if cite {
 			mustExec(t, db, `INSERT INTO report_items (report_id, item_id, ref) VALUES ($1, $2, 1)`, id, itemID)
 		}
@@ -62,8 +71,8 @@ func TestDeleteReport(t *testing.T) {
 	})
 
 	t.Run("in progress reports answer 409 and remain", func(t *testing.T) {
-		for _, id := range []string{pending, running} {
-			res := s.Do(http.MethodDelete, "/api/v1/reports/"+id, admin, nil)
+		for id, token := range map[string]string{pending: admin, running: member} {
+			res := s.Do(http.MethodDelete, "/api/v1/reports/"+id, token, nil)
 			assert.Equal(t, http.StatusConflict, res.Status, res.Body)
 			assert.Equal(t, "REPORT_IN_PROGRESS", res.ErrorCode())
 		}

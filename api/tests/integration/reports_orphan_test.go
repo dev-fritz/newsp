@@ -25,27 +25,35 @@ func TestReconcileOrphanedReports(t *testing.T) {
 	require.Equal(t, http.StatusOK, res.Status, res.Body)
 	userID := res.Data()["id"].(string)
 
-	// newReport inserts a report; jobStatus "" means no job at all.
-	newReport := func(status, jobStatus string) uuid.UUID {
+	// newReport inserts a report for owner; jobStatus "" means no job at all.
+	newReport := func(owner, status, jobStatus string) uuid.UUID {
 		id := uuid.New()
 		mustExec(t, db, `INSERT INTO reports (id, user_id, kind, status, window_start, window_end, output_lang)
-			VALUES ($1, $2, 'manual', $3, now() - interval '1 day', now(), 'pt-BR')`, id, userID, status)
+			VALUES ($1, $2, 'manual', $3, now() - interval '1 day', now(), 'pt-BR')`, id, owner, status)
 		if jobStatus != "" {
 			mustExec(t, db, `INSERT INTO jobs (id, kind, status, user_id, dedupe_key, payload)
 				VALUES ($1, $2, $3, $4, $5, jsonb_build_object('report_id', $6::text))`,
-				uuid.New(), services.JobGenerateReport, jobStatus, userID, "report:"+id.String(), id.String())
+				uuid.New(), services.JobGenerateReport, jobStatus, owner, "report:"+id.String(), id.String())
 		}
 		return id
 	}
+	// A user has at most one active report (reports_one_active_per_user), so each
+	// active report below belongs to its own user; finished ones can share.
+	newUser := func() string {
+		id := uuid.New()
+		mustExec(t, db, `INSERT INTO users (id, email, name, password_hash, role) VALUES ($1, $2, 'U', 'x', 'member')`,
+			id, id.String()+"@example.com")
+		return id.String()
+	}
 
-	failedJob := newReport("running", "failed")
-	canceledJob := newReport("pending", "canceled")
-	noJob := newReport("pending", "")
-	noJobRunning := newReport("running", "")
-	pendingJob := newReport("running", "pending")
-	runningJob := newReport("running", "running")
-	done := newReport("done", "")
-	failed := newReport("failed", "")
+	failedJob := newReport(newUser(), "running", "failed")
+	canceledJob := newReport(newUser(), "pending", "canceled")
+	noJob := newReport(userID, "pending", "") // the admin's orphan blocks new requests
+	noJobRunning := newReport(newUser(), "running", "")
+	pendingJob := newReport(newUser(), "running", "pending")
+	runningJob := newReport(newUser(), "running", "running")
+	done := newReport(userID, "done", "")
+	failed := newReport(userID, "failed", "")
 
 	state := func(id uuid.UUID) (status string, errMsg sql.NullString, completed bool) {
 		var at sql.NullTime
@@ -88,10 +96,6 @@ func TestReconcileOrphanedReports(t *testing.T) {
 	})
 
 	t.Run("a user with only orphans can request a report again", func(t *testing.T) {
-		// The two reports that still have an active job keep blocking, so finish them first.
-		mustExec(t, db, `UPDATE jobs SET status = 'failed' WHERE dedupe_key IN ($1, $2)`, "report:"+pendingJob.String(), "report:"+runningJob.String())
-		require.NoError(t, s.Container.Reports.ReconcileOrphans(context.Background(), time.Now()))
-
 		res := s.Do(http.MethodPost, "/api/v1/reports", admin, map[string]any{"window_hours": 24})
 		assert.Equal(t, http.StatusAccepted, res.Status, res.Body)
 	})

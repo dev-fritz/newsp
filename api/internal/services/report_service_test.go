@@ -63,6 +63,33 @@ func TestRequestReportOnePerUser(t *testing.T) {
 	requireCode(t, err, "REPORT_IN_PROGRESS")
 }
 
+func TestRequestReportLosingTheRaceIsReportInProgress(t *testing.T) {
+	t.Parallel()
+	svc, d := newReportService(t)
+	actor := auth.Identity{UserID: uuid.New(), Role: models.RoleMember}
+
+	d.prefs.EXPECT().EmailVerified(gomock.Any(), actor.UserID).Return(true, nil)
+	d.prefs.EXPECT().Get(gomock.Any(), actor.UserID).Return(models.UserPreferences{OutputLang: "en"}, nil)
+	d.reports.EXPECT().HasActive(gomock.Any(), actor.UserID).Return(false, nil)
+	d.reports.EXPECT().Create(gomock.Any(), gomock.Any()).Return(repositories.ErrDuplicate)
+	_, _, err := svc.Request(context.Background(), actor, services.ReportRequest{WindowHours: 24})
+	requireCode(t, err, "REPORT_IN_PROGRESS")
+}
+
+func TestEnqueueDueSkipsUsersWhoseReportWasCreatedConcurrently(t *testing.T) {
+	t.Parallel()
+	svc, d := newReportService(t)
+	userID := uuid.New()
+
+	d.prefs.EXPECT().DueReportUsers(gomock.Any(), fixedNow, gomock.Any()).Return([]uuid.UUID{userID}, nil)
+	d.prefs.EXPECT().Get(gomock.Any(), userID).Return(models.UserPreferences{OutputLang: "en", Timezone: "UTC", ReportTime: "08:00"}, nil)
+	d.prefs.EXPECT().SetNextReportAt(gomock.Any(), userID, gomock.Not(gomock.Nil())).Return(nil)
+	d.reports.EXPECT().HasActive(gomock.Any(), userID).Return(false, nil)
+	d.reports.EXPECT().Create(gomock.Any(), gomock.Any()).Return(repositories.ErrDuplicate)
+	// No enqueue: the report that won the race already has its job.
+	require.NoError(t, svc.EnqueueDue(context.Background(), fixedNow))
+}
+
 func TestRequestReportNeedsVerifiedEmail(t *testing.T) {
 	t.Parallel()
 	svc, d := newReportService(t)

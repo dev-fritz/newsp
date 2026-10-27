@@ -39,7 +39,7 @@ func TestSignupMigrationBackfillsVerifiedEmail(t *testing.T) {
 	m, err = database.NewMigrator(url)
 	require.NoError(t, err)
 	mustExec(t, db, `INSERT INTO user_tokens (id, kind, token_hash, user_id, expires_at) VALUES ($1, 'email_verification', '\x01', $2, now())`, uuid.New(), id)
-	require.NoError(t, m.Steps(-1))
+	require.NoError(t, m.Migrate(9)) // back to before 000010, whatever the latest version is
 	_, _ = m.Close()
 	var n int
 	require.NoError(t, db.QueryRowContext(ctx, `SELECT count(*) FROM user_tokens`).Scan(&n))

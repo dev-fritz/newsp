@@ -176,6 +176,10 @@ func (s *ReportService) Request(ctx context.Context, actor auth.Identity, in Rep
 			return apperrors.Conflict("REPORT_IN_PROGRESS", "a report is already being generated")
 		}
 		if err := s.reports.Create(ctx, rep); err != nil {
+			if errors.Is(err, repositories.ErrDuplicate) {
+				// reports_one_active_per_user: a concurrent request won the race.
+				return apperrors.Conflict("REPORT_IN_PROGRESS", "a report is already being generated")
+			}
 			return err
 		}
 		jobID, err = s.enqueue(ctx, rep)
@@ -303,6 +307,9 @@ func (s *ReportService) scheduleUser(ctx context.Context, userID uuid.UUID, now 
 			WindowStart: now.Add(-scheduledReportWindow), WindowEnd: now, OutputLang: p.OutputLang, CreatedAt: now,
 		}
 		if err := s.reports.Create(ctx, rep); err != nil {
+			if errors.Is(err, repositories.ErrDuplicate) {
+				return nil // a concurrent request created one: it covers this slot
+			}
 			return err
 		}
 		_, err = s.enqueue(ctx, rep)

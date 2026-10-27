@@ -34,14 +34,25 @@ func scanReport(row interface{ Scan(...any) error }) (models.Report, error) {
 	return r, err
 }
 
-// Create inserts a pending report.
+// Create inserts a pending report. It returns ErrDuplicate when the user
+// already has a pending or running report (reports_one_active_per_user). The
+// conflict is absorbed with ON CONFLICT DO NOTHING instead of raised, so it does
+// not abort the caller's transaction.
 func (r *ReportRepository) Create(ctx context.Context, rep models.Report) error {
 	const q = `INSERT INTO reports (id, user_id, kind, status, window_start, window_end, focus, output_lang, created_at)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`
-	_, err := database.Conn(ctx, r.db).ExecContext(ctx, q, rep.ID, rep.UserID, rep.Kind, rep.Status, rep.WindowStart,
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+		ON CONFLICT (user_id) WHERE status IN ('pending', 'running') DO NOTHING`
+	res, err := database.Conn(ctx, r.db).ExecContext(ctx, q, rep.ID, rep.UserID, rep.Kind, rep.Status, rep.WindowStart,
 		rep.WindowEnd, rep.Focus, rep.OutputLang, rep.CreatedAt)
 	if err != nil {
 		return fmt.Errorf("create report: %w", translate(err))
+	}
+	n, err := res.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("create report: %w", err)
+	}
+	if n == 0 {
+		return fmt.Errorf("create report: %w", ErrDuplicate)
 	}
 	return nil
 }
