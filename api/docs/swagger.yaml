@@ -1,0 +1,3484 @@
+basePath: /
+definitions:
+  auth.Permission:
+    enum:
+    - users:manage
+    - sources:manage
+    - providers:manage
+    - settings:manage
+    - jobs:view_system
+    type: string
+    x-enum-varnames:
+    - PermUsersManage
+    - PermSourcesManage
+    - PermProvidersManage
+    - PermSettingsManage
+    - PermJobsViewSystem
+  dtos.AcceptInviteRequest:
+    properties:
+      email:
+        maxLength: 254
+        type: string
+      name:
+        maxLength: 100
+        type: string
+      password:
+        maxLength: 72
+        type: string
+      token:
+        maxLength: 128
+        type: string
+    required:
+    - email
+    - name
+    - password
+    - token
+    type: object
+  dtos.AccountRequest:
+    properties:
+      email:
+        maxLength: 254
+        type: string
+      name:
+        maxLength: 100
+        type: string
+      password:
+        maxLength: 72
+        type: string
+    required:
+    - email
+    - name
+    - password
+    type: object
+  dtos.ChangePasswordRequest:
+    properties:
+      current_password:
+        maxLength: 72
+        type: string
+      new_password:
+        maxLength: 72
+        type: string
+    required:
+    - current_password
+    - new_password
+    type: object
+  dtos.ChatModelListEnvelope:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/dtos.ChatModelResponse'
+        type: array
+    type: object
+  dtos.ChatModelResponse:
+    properties:
+      display_name:
+        type: string
+      id:
+        type: string
+      local:
+        type: boolean
+      name:
+        type: string
+      provider_name:
+        type: string
+    type: object
+  dtos.CitationResponse:
+    properties:
+      author:
+        type: string
+      comments:
+        type: integer
+      excerpt:
+        description: Excerpt is a short plain-text preview of the item ("" when it
+          has none).
+        type: string
+      item_id:
+        type: string
+      metrics:
+        type: object
+      published_at:
+        type: string
+      ref:
+        type: integer
+      score:
+        type: integer
+      source_kind:
+        type: string
+      source_name:
+        type: string
+      title:
+        type: string
+      url:
+        type: string
+    type: object
+  dtos.ConnectionTestEnvelope:
+    properties:
+      data:
+        $ref: '#/definitions/dtos.ConnectionTestResponse'
+    type: object
+  dtos.ConnectionTestResponse:
+    properties:
+      error:
+        type: string
+      models:
+        items:
+          type: string
+        type: array
+      ok:
+        type: boolean
+    type: object
+  dtos.CreateInviteRequest:
+    properties:
+      email:
+        example: ana@example.com
+        maxLength: 254
+        type: string
+      role:
+        allOf:
+        - $ref: '#/definitions/models.Role'
+        enum:
+        - admin
+        - member
+    required:
+    - role
+    type: object
+  dtos.CreateModelRequest:
+    properties:
+      capability:
+        allOf:
+        - $ref: '#/definitions/models.ModelCapability'
+        enum:
+        - chat
+        - embedding
+      display_name:
+        maxLength: 100
+        type: string
+      name:
+        maxLength: 200
+        type: string
+    required:
+    - capability
+    - name
+    type: object
+  dtos.CreateProviderRequest:
+    properties:
+      api_key:
+        maxLength: 500
+        type: string
+      base_url:
+        maxLength: 500
+        type: string
+      kind:
+        allOf:
+        - $ref: '#/definitions/models.ProviderKind'
+        enum:
+        - openai_compatible
+        - openai
+        - anthropic
+        - gemini
+      name:
+        maxLength: 60
+        type: string
+    required:
+    - kind
+    - name
+    type: object
+  dtos.CreateReportRequest:
+    properties:
+      focus:
+        example: fintech no Brasil
+        maxLength: 200
+        type: string
+      window_hours:
+        example: 24
+        maximum: 720
+        minimum: 1
+        type: integer
+    required:
+    - window_hours
+    type: object
+  dtos.CreateSourceRequest:
+    properties:
+      config:
+        type: object
+      enabled:
+        type: boolean
+      interval_minutes:
+        example: 30
+        maximum: 1440
+        minimum: 5
+        type: integer
+      kind:
+        enum:
+        - hackernews
+        - tabnews
+        - reddit
+        - youtube
+        - rss
+        - lobsters
+        - devto
+        - mastodon
+        - bluesky
+        - github
+        - producthunt
+        example: rss
+        type: string
+      name:
+        example: BBC Technology
+        maxLength: 120
+        type: string
+      secret:
+        description: |-
+          Secret is the credential of kinds that take one (API token, app password).
+          It is encrypted at rest and never returned.
+        maxLength: 4096
+        type: string
+    required:
+    - config
+    - kind
+    - name
+    type: object
+  dtos.DeepenIdeaRequest:
+    properties:
+      aspects:
+        items:
+          enum:
+          - architecture
+          - mvp_plan
+          - market
+          - monetization
+          - audience
+          - competitors
+          type: string
+        maxItems: 6
+        type: array
+      instruction:
+        maxLength: 500
+        type: string
+    type: object
+  dtos.EditIdeaRequest:
+    properties:
+      content:
+        $ref: '#/definitions/dtos.IdeaContentDTO'
+      difficulty:
+        allOf:
+        - $ref: '#/definitions/models.Difficulty'
+        enum:
+        - beginner
+        - intermediate
+        - advanced
+      effort_weeks:
+        maximum: 104
+        minimum: 1
+        type: integer
+      summary:
+        maxLength: 1000
+        type: string
+      title:
+        maxLength: 120
+        type: string
+    required:
+    - content
+    - difficulty
+    - effort_weeks
+    - summary
+    - title
+    type: object
+  dtos.ErrorBody:
+    properties:
+      code:
+        example: VALIDATION_FAILED
+        type: string
+      fields:
+        additionalProperties:
+          type: string
+        type: object
+      message:
+        example: invalid request
+        type: string
+    type: object
+  dtos.ErrorResponse:
+    properties:
+      error:
+        $ref: '#/definitions/dtos.ErrorBody'
+    type: object
+  dtos.EvidenceResponse:
+    properties:
+      comments:
+        type: integer
+      excerpt:
+        description: Excerpt is a short plain-text preview of the item ("" when it
+          has none).
+        type: string
+      item_id:
+        type: string
+      published_at:
+        type: string
+      ref:
+        example: E1
+        type: string
+      score:
+        type: integer
+      source_kind:
+        type: string
+      source_name:
+        type: string
+      title:
+        type: string
+      url:
+        type: string
+    type: object
+  dtos.GenerateIdeasRequest:
+    properties:
+      count:
+        example: 3
+        maximum: 5
+        minimum: 1
+        type: integer
+      focus:
+        example: ferramentas para devs
+        maxLength: 200
+        type: string
+      item_ids:
+        description: |-
+          ItemIDs starts from news items the caller picked: they are cited first, then
+          the window and focus fill the rest. Not allowed with report_id.
+        example:
+        - 5f0c1f8e-3c8a-4c1e-9a43-2b7e0f1d6c11
+        items:
+          type: string
+        maxItems: 5
+        type: array
+      report_id:
+        description: |-
+          ReportID starts from one of the caller's finished reports: its cited items
+          first, then its window and focus (focus and window_days are ignored).
+        example: 5f0c1f8e-3c8a-4c1e-9a43-2b7e0f1d6c11
+        type: string
+      window_days:
+        example: 7
+        maximum: 30
+        minimum: 1
+        type: integer
+    required:
+    - count
+    type: object
+  dtos.HealthEnvelope:
+    properties:
+      data:
+        $ref: '#/definitions/dtos.HealthStatus'
+    type: object
+  dtos.HealthStatus:
+    properties:
+      status:
+        example: ok
+        type: string
+    type: object
+  dtos.IdeaContentDTO:
+    properties:
+      architecture_steps:
+        items:
+          type: string
+        maxItems: 20
+        type: array
+      audience:
+        items:
+          $ref: '#/definitions/models.AudienceSegment'
+        maxItems: 8
+        minItems: 1
+        type: array
+      competitors:
+        items:
+          $ref: '#/definitions/models.Competitor'
+        maxItems: 12
+        type: array
+      differentiator:
+        maxLength: 4000
+        type: string
+      how:
+        maxLength: 8000
+        type: string
+      monetization:
+        maxLength: 4000
+        type: string
+      mvp_plan:
+        items:
+          $ref: '#/definitions/models.PlanStep'
+        maxItems: 12
+        minItems: 2
+        type: array
+      stack:
+        items:
+          type: string
+        maxItems: 20
+        type: array
+      why_now:
+        maxLength: 8000
+        type: string
+    required:
+    - audience
+    - how
+    - mvp_plan
+    - why_now
+    type: object
+  dtos.IdeaEnvelope:
+    properties:
+      data:
+        $ref: '#/definitions/dtos.IdeaResponse'
+    type: object
+  dtos.IdeaListEnvelope:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/dtos.IdeaListItemResponse'
+        type: array
+      meta:
+        $ref: '#/definitions/dtos.PageMeta'
+    type: object
+  dtos.IdeaListItemResponse:
+    properties:
+      created_at:
+        type: string
+      current_version:
+        type: integer
+      difficulty:
+        allOf:
+        - $ref: '#/definitions/models.Difficulty'
+        enum:
+        - beginner
+        - intermediate
+        - advanced
+      effort_weeks:
+        type: integer
+      evidence_count:
+        type: integer
+      id:
+        type: string
+      last_origin:
+        allOf:
+        - $ref: '#/definitions/models.VersionOrigin'
+        enum:
+        - generated
+        - merged
+        - deepened
+        - manual
+      merged_candidates:
+        type: integer
+      primary_audience:
+        type: string
+      status:
+        allOf:
+        - $ref: '#/definitions/models.IdeaStatus'
+        enum:
+        - new
+        - saved
+        - discarded
+      summary:
+        type: string
+      title:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  dtos.IdeaResponse:
+    properties:
+      created_at:
+        type: string
+      current:
+        $ref: '#/definitions/dtos.IdeaVersionResponse'
+      current_version:
+        type: integer
+      id:
+        type: string
+      merged_candidates:
+        type: integer
+      status:
+        allOf:
+        - $ref: '#/definitions/models.IdeaStatus'
+        enum:
+        - new
+        - saved
+        - discarded
+      updated_at:
+        type: string
+      versions:
+        items:
+          $ref: '#/definitions/dtos.IdeaVersionSummaryResponse'
+        type: array
+    type: object
+  dtos.IdeaStatusRequest:
+    properties:
+      status:
+        allOf:
+        - $ref: '#/definitions/models.IdeaStatus'
+        enum:
+        - new
+        - saved
+        - discarded
+    required:
+    - status
+    type: object
+  dtos.IdeaVersionEnvelope:
+    properties:
+      data:
+        $ref: '#/definitions/dtos.IdeaVersionResponse'
+    type: object
+  dtos.IdeaVersionResponse:
+    properties:
+      change_note:
+        type: string
+      content:
+        $ref: '#/definitions/models.IdeaContent'
+      created_at:
+        type: string
+      difficulty:
+        allOf:
+        - $ref: '#/definitions/models.Difficulty'
+        enum:
+        - beginner
+        - intermediate
+        - advanced
+      effort_weeks:
+        type: integer
+      evidence:
+        items:
+          $ref: '#/definitions/dtos.EvidenceResponse'
+        type: array
+      model_name:
+        type: string
+      origin:
+        allOf:
+        - $ref: '#/definitions/models.VersionOrigin'
+        enum:
+        - generated
+        - merged
+        - deepened
+        - manual
+      similarity:
+        type: number
+      summary:
+        type: string
+      title:
+        type: string
+      version:
+        type: integer
+    type: object
+  dtos.IdeaVersionSummaryResponse:
+    properties:
+      change_note:
+        type: string
+      created_at:
+        type: string
+      model_name:
+        type: string
+      origin:
+        allOf:
+        - $ref: '#/definitions/models.VersionOrigin'
+        enum:
+        - generated
+        - merged
+        - deepened
+        - manual
+      similarity:
+        type: number
+      version:
+        type: integer
+    type: object
+  dtos.InviteInfoEnvelope:
+    properties:
+      data:
+        $ref: '#/definitions/dtos.InviteInfoResponse'
+    type: object
+  dtos.InviteInfoResponse:
+    properties:
+      email:
+        type: string
+      expires_at:
+        type: string
+      role:
+        allOf:
+        - $ref: '#/definitions/models.Role'
+        enum:
+        - admin
+        - member
+    type: object
+  dtos.InviteLinkEnvelope:
+    properties:
+      data:
+        $ref: '#/definitions/dtos.InviteLinkResponse'
+    type: object
+  dtos.InviteLinkResponse:
+    properties:
+      email:
+        type: string
+      emailed:
+        type: boolean
+      expires_at:
+        type: string
+      id:
+        type: string
+      url:
+        example: https://newsp.example.com/invite/k3Jx9...
+        type: string
+    type: object
+  dtos.InviteListEnvelope:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/dtos.InviteResponse'
+        type: array
+      meta:
+        $ref: '#/definitions/dtos.PageMeta'
+    type: object
+  dtos.InviteResponse:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      expires_at:
+        type: string
+      id:
+        type: string
+      role:
+        allOf:
+        - $ref: '#/definitions/models.Role'
+        enum:
+        - admin
+        - member
+    type: object
+  dtos.ItemListEnvelope:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/dtos.ItemResponse'
+        type: array
+      meta:
+        $ref: '#/definitions/dtos.PageMeta'
+    type: object
+  dtos.ItemResponse:
+    properties:
+      author:
+        type: string
+      cited:
+        description: Cited is true when a report or an idea cites the item.
+        type: boolean
+      collected_at:
+        type: string
+      comments:
+        type: integer
+      id:
+        type: string
+      metrics:
+        type: object
+      published_at:
+        type: string
+      score:
+        type: integer
+      source:
+        $ref: '#/definitions/dtos.ItemSourceResponse'
+      summary:
+        type: string
+      title:
+        type: string
+      url:
+        type: string
+    type: object
+  dtos.ItemSourceResponse:
+    properties:
+      id:
+        type: string
+      kind:
+        allOf:
+        - $ref: '#/definitions/models.SourceKind'
+        enum:
+        - hackernews
+        - tabnews
+        - reddit
+        - youtube
+        - rss
+        - lobsters
+        - devto
+        - mastodon
+        - bluesky
+        - github
+        - producthunt
+      name:
+        type: string
+    type: object
+  dtos.JobAccepted:
+    properties:
+      job_id:
+        type: string
+    type: object
+  dtos.JobAcceptedEnvelope:
+    properties:
+      data:
+        $ref: '#/definitions/dtos.JobAccepted'
+    type: object
+  dtos.JobEnvelope:
+    properties:
+      data:
+        $ref: '#/definitions/dtos.JobResponse'
+    type: object
+  dtos.JobResponse:
+    properties:
+      attempts:
+        type: integer
+      created_at:
+        type: string
+      error:
+        type: string
+      finished_at:
+        type: string
+      id:
+        type: string
+      kind:
+        example: report.generate
+        type: string
+      max_attempts:
+        type: integer
+      result:
+        type: object
+      run_at:
+        type: string
+      status:
+        allOf:
+        - $ref: '#/definitions/models.JobStatus'
+        enum:
+        - pending
+        - running
+        - done
+        - failed
+        - canceled
+    type: object
+  dtos.LinkEnvelope:
+    properties:
+      data:
+        $ref: '#/definitions/dtos.LinkResponse'
+    type: object
+  dtos.LinkResponse:
+    properties:
+      expires_at:
+        type: string
+      id:
+        type: string
+      url:
+        example: https://newsp.example.com/invite/k3Jx9...
+        type: string
+    type: object
+  dtos.LoginRequest:
+    properties:
+      email:
+        maxLength: 254
+        type: string
+      password:
+        maxLength: 72
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  dtos.ModelEnvelope:
+    properties:
+      data:
+        $ref: '#/definitions/dtos.ModelResponse'
+    type: object
+  dtos.ModelResponse:
+    properties:
+      capability:
+        allOf:
+        - $ref: '#/definitions/models.ModelCapability'
+        enum:
+        - chat
+        - embedding
+      display_name:
+        type: string
+      enabled:
+        type: boolean
+      id:
+        type: string
+      name:
+        example: qwen3:14b
+        type: string
+      provider_id:
+        type: string
+      tokens_last_7d:
+        type: integer
+    type: object
+  dtos.PageMeta:
+    properties:
+      limit:
+        example: 20
+        type: integer
+      offset:
+        example: 0
+        type: integer
+      total:
+        example: 42
+        type: integer
+    type: object
+  dtos.PasswordResetRequest:
+    properties:
+      email:
+        maxLength: 254
+        type: string
+    required:
+    - email
+    type: object
+  dtos.PreferencesEnvelope:
+    properties:
+      data:
+        $ref: '#/definitions/dtos.PreferencesResponse'
+    type: object
+  dtos.PreferencesRequest:
+    properties:
+      excluded_source_ids:
+        items:
+          type: string
+        maxItems: 500
+        type: array
+      idea_model_id:
+        type: string
+      ideas_per_day:
+        maximum: 10
+        minimum: 0
+        type: integer
+      output_lang:
+        enum:
+        - pt-BR
+        - en
+        type: string
+      report_enabled:
+        type: boolean
+      report_model_id:
+        type: string
+      report_time:
+        example: "08:00"
+        type: string
+      theme:
+        enum:
+        - light
+        - dark
+        - system
+        type: string
+      timezone:
+        example: America/Sao_Paulo
+        maxLength: 64
+        type: string
+      topics:
+        items:
+          type: string
+        maxItems: 20
+        type: array
+      ui_locale:
+        enum:
+        - pt-BR
+        - en
+        type: string
+    required:
+    - output_lang
+    - report_time
+    - theme
+    - timezone
+    - ui_locale
+    type: object
+  dtos.PreferencesResponse:
+    properties:
+      excluded_source_ids:
+        items:
+          type: string
+        type: array
+      idea_model_id:
+        type: string
+      ideas_per_day:
+        type: integer
+      next_report_at:
+        type: string
+      output_lang:
+        enum:
+        - pt-BR
+        - en
+        type: string
+      report_enabled:
+        type: boolean
+      report_model_id:
+        type: string
+      report_time:
+        type: string
+      theme:
+        enum:
+        - light
+        - dark
+        - system
+        type: string
+      timezone:
+        type: string
+      topics:
+        items:
+          type: string
+        type: array
+      topics_ranked:
+        description: |-
+          TopicsRanked is false when no embedding model is configured: reports then
+          rank items by recency and engagement only.
+        type: boolean
+      ui_locale:
+        enum:
+        - pt-BR
+        - en
+        type: string
+    type: object
+  dtos.ProviderEnvelope:
+    properties:
+      data:
+        $ref: '#/definitions/dtos.ProviderResponse'
+    type: object
+  dtos.ProviderListEnvelope:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/dtos.ProviderResponse'
+        type: array
+    type: object
+  dtos.ProviderResponse:
+    properties:
+      base_url:
+        type: string
+      enabled:
+        type: boolean
+      has_api_key:
+        type: boolean
+      id:
+        type: string
+      key_hint:
+        example: ••••a9Fk
+        type: string
+      kind:
+        allOf:
+        - $ref: '#/definitions/models.ProviderKind'
+        enum:
+        - openai_compatible
+        - openai
+        - anthropic
+        - gemini
+      last_check_at:
+        type: string
+      last_error:
+        type: string
+      models:
+        items:
+          $ref: '#/definitions/dtos.ModelResponse'
+        type: array
+      name:
+        type: string
+    type: object
+  dtos.RefreshRequest:
+    properties:
+      refresh_token:
+        maxLength: 128
+        type: string
+    required:
+    - refresh_token
+    type: object
+  dtos.ReportCreatedEnvelope:
+    properties:
+      data:
+        $ref: '#/definitions/dtos.ReportCreatedResponse'
+    type: object
+  dtos.ReportCreatedResponse:
+    properties:
+      job_id:
+        type: string
+      report:
+        $ref: '#/definitions/dtos.ReportSummaryResponse'
+    type: object
+  dtos.ReportEnvelope:
+    properties:
+      data:
+        $ref: '#/definitions/dtos.ReportResponse'
+    type: object
+  dtos.ReportListEnvelope:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/dtos.ReportSummaryResponse'
+        type: array
+      meta:
+        $ref: '#/definitions/dtos.PageMeta'
+    type: object
+  dtos.ReportResponse:
+    properties:
+      citations:
+        items:
+          $ref: '#/definitions/dtos.CitationResponse'
+        type: array
+      completed_at:
+        type: string
+      content_md:
+        type: string
+      created_at:
+        type: string
+      error:
+        description: |-
+          Error is a stable code (NO_ITEMS, REPORT_MODEL_NOT_SET, AI_REFUSED,
+          AI_INVALID_OUTPUT, AI_FAILURE) for failed reports.
+        type: string
+      focus:
+        type: string
+      id:
+        type: string
+      items_considered:
+        type: integer
+      kind:
+        allOf:
+        - $ref: '#/definitions/models.ReportKind'
+        enum:
+        - scheduled
+        - manual
+      model_name:
+        type: string
+      output_lang:
+        type: string
+      status:
+        allOf:
+        - $ref: '#/definitions/models.ReportStatus'
+        enum:
+        - pending
+        - running
+        - done
+        - failed
+      summary:
+        type: string
+      title:
+        type: string
+      window_end:
+        type: string
+      window_start:
+        type: string
+    type: object
+  dtos.ReportSummaryResponse:
+    properties:
+      completed_at:
+        type: string
+      created_at:
+        type: string
+      error:
+        description: |-
+          Error is a stable code (NO_ITEMS, REPORT_MODEL_NOT_SET, AI_REFUSED,
+          AI_INVALID_OUTPUT, AI_FAILURE) for failed reports.
+        type: string
+      focus:
+        type: string
+      id:
+        type: string
+      kind:
+        allOf:
+        - $ref: '#/definitions/models.ReportKind'
+        enum:
+        - scheduled
+        - manual
+      status:
+        allOf:
+        - $ref: '#/definitions/models.ReportStatus'
+        enum:
+        - pending
+        - running
+        - done
+        - failed
+      summary:
+        type: string
+      title:
+        type: string
+      window_end:
+        type: string
+      window_start:
+        type: string
+    type: object
+  dtos.ResetPasswordRequest:
+    properties:
+      password:
+        maxLength: 72
+        type: string
+      token:
+        maxLength: 128
+        type: string
+    required:
+    - password
+    - token
+    type: object
+  dtos.SessionEnvelope:
+    properties:
+      data:
+        $ref: '#/definitions/dtos.SessionResponse'
+    type: object
+  dtos.SessionResponse:
+    properties:
+      access_expires_at:
+        type: string
+      access_token:
+        type: string
+      refresh_expires_at:
+        type: string
+      refresh_token:
+        type: string
+      user:
+        $ref: '#/definitions/dtos.UserResponse'
+    type: object
+  dtos.SettingsEnvelope:
+    properties:
+      data:
+        $ref: '#/definitions/dtos.SettingsResponse'
+    type: object
+  dtos.SettingsResponse:
+    properties:
+      default_idea_model_id:
+        type: string
+      default_report_model_id:
+        type: string
+      embedding_model_id:
+        type: string
+      idea_similarity_threshold:
+        type: number
+      inactivity_pause_days:
+        description: |-
+          InactivityPauseDays pauses reports and ideas of accounts not seen for
+          this many days; 0 never pauses.
+        type: integer
+      mail_configured:
+        description: MailConfigured tells whether e-mail delivery works; signup needs
+          it.
+        type: boolean
+      reindex_job_id:
+        type: string
+      retention_days:
+        type: integer
+      signup_enabled:
+        type: boolean
+      updated_at:
+        type: string
+    type: object
+  dtos.SetupStatusEnvelope:
+    properties:
+      data:
+        $ref: '#/definitions/dtos.SetupStatusResponse'
+    type: object
+  dtos.SetupStatusResponse:
+    properties:
+      password_reset_enabled:
+        description: PasswordResetEnabled tells whether "forgot password" can e-mail
+          a link.
+        type: boolean
+      setup_required:
+        type: boolean
+      signup_enabled:
+        type: boolean
+    type: object
+  dtos.SignupRequest:
+    properties:
+      email:
+        maxLength: 254
+        type: string
+      locale:
+        description: Locale is the language of the account and its e-mails; pt-BR
+          by default.
+        enum:
+        - pt-BR
+        - en
+        example: pt-BR
+        type: string
+      name:
+        maxLength: 100
+        type: string
+      password:
+        maxLength: 72
+        type: string
+    required:
+    - email
+    - name
+    - password
+    type: object
+  dtos.SourceEnvelope:
+    properties:
+      data:
+        $ref: '#/definitions/dtos.SourceResponse'
+    type: object
+  dtos.SourceListEnvelope:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/dtos.SourceResponse'
+        type: array
+    type: object
+  dtos.SourceResponse:
+    properties:
+      config:
+        type: object
+      consecutive_failures:
+        type: integer
+      created_at:
+        type: string
+      enabled:
+        type: boolean
+      has_secret:
+        type: boolean
+      id:
+        type: string
+      interval_minutes:
+        type: integer
+      items_24h:
+        type: integer
+      kind:
+        allOf:
+        - $ref: '#/definitions/models.SourceKind'
+        enum:
+        - hackernews
+        - tabnews
+        - reddit
+        - youtube
+        - rss
+        - lobsters
+        - devto
+        - mastodon
+        - bluesky
+        - github
+        - producthunt
+      last_error:
+        type: string
+      last_run_at:
+        type: string
+      last_success_at:
+        type: string
+      name:
+        type: string
+      next_run_at:
+        type: string
+    type: object
+  dtos.SourceSummary:
+    properties:
+      enabled:
+        type: boolean
+      id:
+        type: string
+      kind:
+        allOf:
+        - $ref: '#/definitions/models.SourceKind'
+        enum:
+        - hackernews
+        - tabnews
+        - reddit
+        - youtube
+        - rss
+        - lobsters
+        - devto
+        - mastodon
+        - bluesky
+        - github
+        - producthunt
+      name:
+        type: string
+    type: object
+  dtos.SourceSummaryListEnvelope:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/dtos.SourceSummary'
+        type: array
+    type: object
+  dtos.TokenRequest:
+    properties:
+      token:
+        maxLength: 128
+        type: string
+    required:
+    - token
+    type: object
+  dtos.UpdateModelRequest:
+    properties:
+      display_name:
+        maxLength: 100
+        minLength: 1
+        type: string
+      enabled:
+        type: boolean
+    type: object
+  dtos.UpdateProviderRequest:
+    properties:
+      api_key:
+        maxLength: 500
+        type: string
+      base_url:
+        maxLength: 500
+        type: string
+      enabled:
+        type: boolean
+      name:
+        maxLength: 60
+        minLength: 1
+        type: string
+    type: object
+  dtos.UpdateSettingsRequest:
+    properties:
+      default_idea_model_id:
+        type: string
+      default_report_model_id:
+        type: string
+      embedding_model_id:
+        type: string
+      idea_similarity_threshold:
+        maximum: 0.99
+        minimum: 0.5
+        type: number
+      inactivity_pause_days:
+        maximum: 3650
+        minimum: 0
+        type: integer
+      retention_days:
+        maximum: 3650
+        minimum: 7
+        type: integer
+      signup_enabled:
+        type: boolean
+    type: object
+  dtos.UpdateSourceRequest:
+    properties:
+      config:
+        type: object
+      enabled:
+        type: boolean
+      interval_minutes:
+        maximum: 1440
+        minimum: 5
+        type: integer
+      name:
+        maxLength: 120
+        minLength: 1
+        type: string
+      secret:
+        description: Secret replaces the credential; an empty string removes it.
+        maxLength: 4096
+        type: string
+    type: object
+  dtos.UpdateUserAccessRequest:
+    properties:
+      role:
+        allOf:
+        - $ref: '#/definitions/models.Role'
+        enum:
+        - admin
+        - member
+      status:
+        allOf:
+        - $ref: '#/definitions/models.UserStatus'
+        enum:
+        - active
+        - disabled
+    type: object
+  dtos.UserEnvelope:
+    properties:
+      data:
+        $ref: '#/definitions/dtos.UserResponse'
+    type: object
+  dtos.UserListEnvelope:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/dtos.UserResponse'
+        type: array
+      meta:
+        $ref: '#/definitions/dtos.PageMeta'
+    type: object
+  dtos.UserResponse:
+    properties:
+      created_at:
+        type: string
+      email:
+        example: ana@example.com
+        type: string
+      email_verified:
+        type: boolean
+      id:
+        example: 6f1c1d0e-5a4b-4f1e-9b1c-2a3d4e5f6a7b
+        type: string
+      last_seen_at:
+        type: string
+      locale:
+        example: pt-BR
+        type: string
+      name:
+        example: Ana Costa
+        type: string
+      permissions:
+        items:
+          $ref: '#/definitions/auth.Permission'
+        type: array
+      role:
+        allOf:
+        - $ref: '#/definitions/models.Role'
+        enum:
+        - admin
+        - member
+        example: member
+      status:
+        allOf:
+        - $ref: '#/definitions/models.UserStatus'
+        enum:
+        - active
+        - disabled
+        example: active
+    type: object
+  models.AudienceKind:
+    enum:
+    - primary
+    - secondary
+    - out_of_scope
+    type: string
+    x-enum-varnames:
+    - AudiencePrimary
+    - AudienceSecondary
+    - AudienceOutOfScope
+  models.AudienceSegment:
+    properties:
+      description:
+        type: string
+      kind:
+        $ref: '#/definitions/models.AudienceKind'
+      label:
+        type: string
+    type: object
+  models.Competitor:
+    properties:
+      gap:
+        type: string
+      name:
+        type: string
+      strengths:
+        type: string
+    type: object
+  models.Difficulty:
+    enum:
+    - beginner
+    - intermediate
+    - advanced
+    type: string
+    x-enum-varnames:
+    - DifficultyBeginner
+    - DifficultyIntermediate
+    - DifficultyAdvanced
+  models.IdeaContent:
+    properties:
+      architecture_steps:
+        items:
+          type: string
+        type: array
+      audience:
+        items:
+          $ref: '#/definitions/models.AudienceSegment'
+        type: array
+      competitors:
+        items:
+          $ref: '#/definitions/models.Competitor'
+        type: array
+      differentiator:
+        type: string
+      how:
+        type: string
+      monetization:
+        type: string
+      mvp_plan:
+        items:
+          $ref: '#/definitions/models.PlanStep'
+        type: array
+      stack:
+        items:
+          type: string
+        type: array
+      why_now:
+        type: string
+    type: object
+  models.IdeaStatus:
+    enum:
+    - new
+    - saved
+    - discarded
+    type: string
+    x-enum-varnames:
+    - IdeaNew
+    - IdeaSaved
+    - IdeaDiscarded
+  models.JobStatus:
+    enum:
+    - pending
+    - running
+    - done
+    - failed
+    - canceled
+    type: string
+    x-enum-varnames:
+    - JobPending
+    - JobRunning
+    - JobDone
+    - JobFailed
+    - JobCanceled
+  models.ModelCapability:
+    enum:
+    - chat
+    - embedding
+    type: string
+    x-enum-varnames:
+    - CapabilityChat
+    - CapabilityEmbedding
+  models.PlanStep:
+    properties:
+      description:
+        type: string
+      period:
+        type: string
+      title:
+        type: string
+    type: object
+  models.ProviderKind:
+    enum:
+    - openai_compatible
+    - openai
+    - anthropic
+    - gemini
+    type: string
+    x-enum-varnames:
+    - ProviderOpenAICompatible
+    - ProviderOpenAI
+    - ProviderAnthropic
+    - ProviderGemini
+  models.ReportKind:
+    enum:
+    - scheduled
+    - manual
+    type: string
+    x-enum-varnames:
+    - ReportScheduled
+    - ReportManual
+  models.ReportStatus:
+    enum:
+    - pending
+    - running
+    - done
+    - failed
+    type: string
+    x-enum-varnames:
+    - ReportPending
+    - ReportRunning
+    - ReportDone
+    - ReportFailed
+  models.Role:
+    enum:
+    - admin
+    - member
+    type: string
+    x-enum-varnames:
+    - RoleAdmin
+    - RoleMember
+  models.SourceKind:
+    enum:
+    - hackernews
+    - tabnews
+    - reddit
+    - youtube
+    - rss
+    - lobsters
+    - devto
+    - mastodon
+    - bluesky
+    - github
+    - producthunt
+    type: string
+    x-enum-varnames:
+    - SourceHackerNews
+    - SourceTabNews
+    - SourceReddit
+    - SourceYouTube
+    - SourceRSS
+    - SourceLobsters
+    - SourceDevTo
+    - SourceMastodon
+    - SourceBluesky
+    - SourceGitHub
+    - SourceProductHunt
+  models.UserStatus:
+    enum:
+    - active
+    - disabled
+    type: string
+    x-enum-varnames:
+    - UserActive
+    - UserDisabled
+  models.VersionOrigin:
+    enum:
+    - generated
+    - merged
+    - deepened
+    - manual
+    type: string
+    x-enum-varnames:
+    - OriginGenerated
+    - OriginMerged
+    - OriginDeepened
+    - OriginManual
+info:
+  contact: {}
+  description: Collects market news and generates reports and project ideas.
+  license:
+    name: AGPL-3.0
+    url: https://www.gnu.org/licenses/agpl-3.0.html
+  title: newsp API
+  version: 0.1.0
+paths:
+  /api/v1/admin/ai/models/{id}:
+    delete:
+      parameters:
+      - description: Model ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete a model
+      tags:
+      - admin-ai
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: Model ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Changes
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.UpdateModelRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.ModelEnvelope'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Rename, enable or disable a model
+      tags:
+      - admin-ai
+  /api/v1/admin/ai/providers:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.ProviderListEnvelope'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List AI providers with their models
+      tags:
+      - admin-ai
+    post:
+      consumes:
+      - application/json
+      description: Use kind openai_compatible for Ollama, llama.cpp, LM Studio or
+        vLLM (base_url required). The key is encrypted and never returned.
+      parameters:
+      - description: Provider
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.CreateProviderRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dtos.ProviderEnvelope'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Register an AI provider
+      tags:
+      - admin-ai
+  /api/v1/admin/ai/providers/{id}:
+    delete:
+      parameters:
+      - description: Provider ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete an AI provider and its models
+      tags:
+      - admin-ai
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: Provider ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Changes
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.UpdateProviderRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.ProviderEnvelope'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update an AI provider
+      tags:
+      - admin-ai
+  /api/v1/admin/ai/providers/{id}/models:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Provider ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Model
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.CreateModelRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dtos.ModelEnvelope'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Register a model of a provider
+      tags:
+      - admin-ai
+  /api/v1/admin/ai/providers/{id}/test:
+    post:
+      description: Lists the provider's models. A failed test is a 200 with ok=false
+        and a readable error.
+      parameters:
+      - description: Provider ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.ConnectionTestEnvelope'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Test a provider connection
+      tags:
+      - admin-ai
+  /api/v1/admin/invites:
+    get:
+      parameters:
+      - description: Page size (max 100)
+        in: query
+        name: limit
+        type: integer
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.InviteListEnvelope'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List pending invites
+      tags:
+      - admin
+    post:
+      consumes:
+      - application/json
+      description: The link is shown only once. With an e-mail, the invite is bound
+        to that address and the link is also e-mailed (emailed = true); an address
+        that already has an account returns 409 EMAIL_TAKEN, and an instance without
+        e-mail delivery returns 422 MAILER_NOT_CONFIGURED.
+      parameters:
+      - description: Invite
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.CreateInviteRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dtos.InviteLinkEnvelope'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create an invite link
+      tags:
+      - admin
+  /api/v1/admin/invites/{id}:
+    delete:
+      parameters:
+      - description: Invite ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Revoke a pending invite
+      tags:
+      - admin
+  /api/v1/admin/settings:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.SettingsEnvelope'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Instance settings
+      tags:
+      - admin-settings
+    patch:
+      consumes:
+      - application/json
+      description: Changing the embedding model starts a reindex job; its id is returned
+        as reindex_job_id. Turning signup_enabled on without e-mail delivery returns
+        422 MAILER_NOT_CONFIGURED.
+      parameters:
+      - description: Changes
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.UpdateSettingsRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.SettingsEnvelope'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update instance settings
+      tags:
+      - admin-settings
+  /api/v1/admin/sources:
+    get:
+      description: Every source by name, with the number of items collected in the
+        last 24 hours.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.SourceListEnvelope'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List sources with their collection status
+      tags:
+      - admin-sources
+    post:
+      consumes:
+      - application/json
+      description: The config depends on the kind and is validated and completed with
+        defaults by its connector; invalid fields are reported as config.<field>.
+        Kinds that take a credential (github, producthunt, bluesky search) receive
+        it in secret, which is encrypted and never returned (see has_secret).
+      parameters:
+      - description: Source
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.CreateSourceRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dtos.SourceEnvelope'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Register a source
+      tags:
+      - admin-sources
+  /api/v1/admin/sources/{id}:
+    delete:
+      description: Fails with SOURCE_HAS_CITED_ITEMS while reports or ideas cite its
+        items; disable the source instead.
+      parameters:
+      - description: Source ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete a source and its items
+      tags:
+      - admin-sources
+    patch:
+      consumes:
+      - application/json
+      description: Omitted fields stay as they are. Changing the config re-validates
+        it; enabling a disabled source schedules it to run soon. secret replaces the
+        credential and an empty secret removes it.
+      parameters:
+      - description: Source ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Changes
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.UpdateSourceRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.SourceEnvelope'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update a source
+      tags:
+      - admin-sources
+  /api/v1/admin/sources/{id}/collect:
+    post:
+      description: Queues a collection ahead of the schedule. Poll the job at /api/v1/jobs/{id}.
+      parameters:
+      - description: Source ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+          schema:
+            $ref: '#/definitions/dtos.JobAcceptedEnvelope'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Collect a source now
+      tags:
+      - admin-sources
+  /api/v1/admin/users:
+    get:
+      parameters:
+      - description: Page size (max 100)
+        in: query
+        name: limit
+        type: integer
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.UserListEnvelope'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List users
+      tags:
+      - admin
+  /api/v1/admin/users/{id}:
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Changes
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.UpdateUserAccessRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.UserEnvelope'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Change a user's role or status
+      tags:
+      - admin
+  /api/v1/admin/users/{id}/password-reset:
+    post:
+      description: The link is shown only once and replaces older reset links.
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dtos.LinkEnvelope'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a password reset link for a user
+      tags:
+      - admin
+  /api/v1/ai/models:
+    get:
+      description: Enabled chat models of enabled providers, for the profile screen.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.ChatModelListEnvelope'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Chat models available to pick
+      tags:
+      - ai
+  /api/v1/auth/login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Credentials
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.SessionEnvelope'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "429":
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      summary: Sign in
+      tags:
+      - auth
+  /api/v1/auth/logout:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Refresh token
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.RefreshRequest'
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      summary: Sign out
+      tags:
+      - auth
+  /api/v1/auth/refresh:
+    post:
+      consumes:
+      - application/json
+      description: Returns a new access token and a new refresh token. Reusing an
+        old refresh token ends the session.
+      parameters:
+      - description: Refresh token
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.RefreshRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.SessionEnvelope'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "429":
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      summary: Rotate a refresh token
+      tags:
+      - auth
+  /api/v1/auth/signup:
+    post:
+      consumes:
+      - application/json
+      description: 'Works only when the admin enabled public signup and e-mail delivery
+        is configured. The account is a member and its e-mail starts unverified: a
+        verification link is e-mailed, and reports and ideas start after it is used.'
+      parameters:
+      - description: Account
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.SignupRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dtos.SessionEnvelope'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "429":
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      summary: Create an account without an invite
+      tags:
+      - auth
+  /api/v1/auth/verify-email:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Verification token
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.TokenRequest'
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "429":
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      summary: Confirm an e-mail address through its link
+      tags:
+      - auth
+  /api/v1/ideas:
+    get:
+      parameters:
+      - description: 'active (default: everything but discarded), new, saved, discarded
+          or all'
+        in: query
+        name: status
+        type: string
+      - description: Search in title and summary
+        in: query
+        name: q
+        type: string
+      - description: Page size (max 100)
+        in: query
+        name: limit
+        type: integer
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.IdeaListEnvelope'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: My ideas
+      tags:
+      - ideas
+  /api/v1/ideas/{id}:
+    get:
+      parameters:
+      - description: Idea ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.IdeaEnvelope'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: One of my ideas
+      tags:
+      - ideas
+    put:
+      consumes:
+      - application/json
+      description: Stores a new version with origin "manual"; evidence carries over.
+      parameters:
+      - description: Idea ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: New content
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.EditIdeaRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.IdeaEnvelope'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Edit an idea by hand
+      tags:
+      - ideas
+  /api/v1/ideas/{id}/deepen:
+    post:
+      consumes:
+      - application/json
+      description: Queues a deeper version using recent sources. Poll the job.
+      parameters:
+      - description: Idea ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: What to deepen
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.DeepenIdeaRequest'
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+          schema:
+            $ref: '#/definitions/dtos.JobAcceptedEnvelope'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Deepen an idea
+      tags:
+      - ideas
+  /api/v1/ideas/{id}/status:
+    patch:
+      consumes:
+      - application/json
+      description: Discarded ideas leave the default list but still prevent duplicates.
+      parameters:
+      - description: Idea ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Status
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.IdeaStatusRequest'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Triage an idea
+      tags:
+      - ideas
+  /api/v1/ideas/{id}/versions/{version}:
+    get:
+      parameters:
+      - description: Idea ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Version number
+        in: path
+        name: version
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.IdeaVersionEnvelope'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: One version of my idea (for comparing versions)
+      tags:
+      - ideas
+  /api/v1/ideas/generate:
+    post:
+      consumes:
+      - application/json
+      description: Queues a generation, optionally from one of the caller's finished
+        reports (report_id) or from news items the caller picked (item_ids, max 5,
+        not allowed with report_id; they are cited first and the window and focus
+        fill the rest). Ideas equivalent to existing ones become new versions instead
+        of duplicates. While one runs, the same job is returned.
+      parameters:
+      - description: How many and about what
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.GenerateIdeasRequest'
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+          schema:
+            $ref: '#/definitions/dtos.JobAcceptedEnvelope'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "404":
+          description: report_id is not one of the caller's reports
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Generate ideas now
+      tags:
+      - ideas
+  /api/v1/invites/accept:
+    post:
+      consumes:
+      - application/json
+      description: When the invite is bound to an e-mail, a different address returns
+        400 with fields.email = invite_mismatch.
+      parameters:
+      - description: Invite and account
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.AcceptInviteRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dtos.SessionEnvelope'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "429":
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      summary: Accept an invite and create the account
+      tags:
+      - auth
+  /api/v1/invites/inspect:
+    post:
+      consumes:
+      - application/json
+      description: email is set when the invite is bound to an address; accepting
+        it then requires that same e-mail.
+      parameters:
+      - description: Invite token
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.TokenRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.InviteInfoEnvelope'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "429":
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      summary: Check an invite link
+      tags:
+      - auth
+  /api/v1/items:
+    get:
+      description: Collected items, newest first by default. q is a full-text search
+        (web search syntax); sort=engagement orders by score plus comments. cited
+        tells whether a report or an idea cites the item.
+      parameters:
+      - description: Only items of this source
+        in: query
+        name: source_id
+        type: string
+      - description: Published at or after (RFC 3339)
+        in: query
+        name: since
+        type: string
+      - description: Published before (RFC 3339)
+        in: query
+        name: until
+        type: string
+      - description: Full-text search (max 200 characters)
+        in: query
+        name: q
+        type: string
+      - default: recent
+        description: Order
+        enum:
+        - recent
+        - engagement
+        in: query
+        name: sort
+        type: string
+      - description: Page size (max 100)
+        in: query
+        name: limit
+        type: integer
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.ItemListEnvelope'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Item feed
+      tags:
+      - items
+  /api/v1/jobs/{id}:
+    get:
+      description: Poll until status is done, failed or canceled. Users see their
+        own jobs; admins also see system jobs.
+      parameters:
+      - description: Job ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.JobEnvelope'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Job status
+      tags:
+      - jobs
+  /api/v1/me:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.UserEnvelope'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Current user
+      tags:
+      - me
+  /api/v1/me/password:
+    put:
+      consumes:
+      - application/json
+      description: Ends every other session and returns a new session for this device.
+      parameters:
+      - description: Passwords
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.ChangePasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.SessionEnvelope'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Change the current user's password
+      tags:
+      - me
+  /api/v1/me/preferences:
+    get:
+      description: Returns defaults until the user saves preferences.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.PreferencesEnvelope'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: My preferences
+      tags:
+      - me
+    put:
+      consumes:
+      - application/json
+      description: Topics are deduplicated; the next daily report is scheduled in
+        the given time zone.
+      parameters:
+      - description: Preferences
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.PreferencesRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.PreferencesEnvelope'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Replace my preferences
+      tags:
+      - me
+  /api/v1/me/verify-email/resend:
+    post:
+      responses:
+        "204":
+          description: No Content
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "429":
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: E-mail a new verification link to the current user
+      tags:
+      - me
+  /api/v1/password-resets/confirm:
+    post:
+      consumes:
+      - application/json
+      description: Ends every session of the user.
+      parameters:
+      - description: Reset
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.ResetPasswordRequest'
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "429":
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      summary: Set a new password through a reset link
+      tags:
+      - auth
+  /api/v1/password-resets/inspect:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Reset token
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.TokenRequest'
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "429":
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      summary: Check a password reset link
+      tags:
+      - auth
+  /api/v1/password-resets/request:
+    post:
+      consumes:
+      - application/json
+      description: Always answers 202 with no body, whether or not the e-mail belongs
+        to an account; the link is sent only to active accounts, and the answer and
+        its timing do not depend on that. Limited per e-mail and per client IP.
+      parameters:
+      - description: E-mail
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.PasswordResetRequest'
+      responses:
+        "202":
+          description: Accepted
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "429":
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      summary: Ask for a password reset link by e-mail
+      tags:
+      - auth
+  /api/v1/reports:
+    get:
+      parameters:
+      - description: scheduled or manual
+        in: query
+        name: kind
+        type: string
+      - description: Page size (max 100)
+        in: query
+        name: limit
+        type: integer
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.ReportListEnvelope'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: My reports
+      tags:
+      - reports
+    post:
+      consumes:
+      - application/json
+      description: Queues a report over the last window_hours. Poll the job, or the
+        report, until it is done. One report at a time per user.
+      parameters:
+      - description: Window and optional focus
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.CreateReportRequest'
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+          schema:
+            $ref: '#/definitions/dtos.ReportCreatedEnvelope'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Generate a report now
+      tags:
+      - reports
+  /api/v1/reports/{id}:
+    delete:
+      description: Permanently removes a finished (done or failed) report and its
+        citations; collected items are kept. Reports still being generated answer
+        409 REPORT_IN_PROGRESS.
+      parameters:
+      - description: Report ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete one of my reports
+      tags:
+      - reports
+    get:
+      parameters:
+      - description: Report ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.ReportEnvelope'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: One of my reports, with its citations
+      tags:
+      - reports
+  /api/v1/setup:
+    post:
+      consumes:
+      - application/json
+      description: Works once per instance; afterwards it returns 409.
+      parameters:
+      - description: First admin
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.AccountRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dtos.SessionEnvelope'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "429":
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      summary: Create the first admin
+      tags:
+      - auth
+  /api/v1/setup/status:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.SetupStatusEnvelope'
+      summary: First-run setup status
+      tags:
+      - auth
+  /api/v1/sources:
+    get:
+      description: Id, kind, name and enabled flag of every source, for feed filters.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.SourceSummaryListEnvelope'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List sources
+      tags:
+      - sources
+  /healthz:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.HealthEnvelope'
+      summary: Liveness probe
+      tags:
+      - health
+  /readyz:
+    get:
+      description: Checks that the database answers.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.HealthEnvelope'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      summary: Readiness probe
+      tags:
+      - health
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
