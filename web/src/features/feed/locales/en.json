@@ -1,0 +1,51 @@
+{
+  "title": "Feed",
+  "kicker": "Everything collected",
+  "filters": {
+    "search": "Search items",
+    "searchPlaceholder": "Search by title, author or excerpt…",
+    "source": "Source",
+    "allSources": "All sources",
+    "period": "Period",
+    "periods": { "24h": "24 h", "7d": "7 days", "30d": "30 days", "all": "All time" },
+    "sort": "Sort by",
+    "sorts": { "recent": "Recent", "engagement": "Trending" }
+  },
+  "list": {
+    "label": "Collected items",
+    "count_one": "{{value}} item",
+    "count_other": "{{value}} items",
+    "loadMoreError": "Could not load more items. Try again."
+  },
+  "item": {
+    "by": "by {{author}}",
+    "cited": "cited",
+    "untitled": "Untitled",
+    "openOriginal": "Open original in a new tab: {{title}}"
+  },
+  "engagement": {
+    "score": {
+      "default_one": "{{value}} point",
+      "default_other": "{{value}} points",
+      "hackernews": "{{value}} pts",
+      "tabnews": "{{value}} tabcoins",
+      "reddit": "{{value}} upvotes",
+      "youtube": "{{value}} views",
+      "lobsters": "{{value}} pts",
+      "devto": "{{value}} reactions",
+      "mastodon": "{{value}} favorites",
+      "bluesky": "{{value}} likes",
+      "github": "{{value}} stars",
+      "producthunt": "{{value}} votes"
+    },
+    "comments_one": "{{value}} comment",
+    "comments_other": "{{value}} comments"
+  },
+  "empty": {
+    "title": "No items collected yet",
+    "body": "Once the sources run, everything collected shows up here.",
+    "filteredTitle": "No items match these filters",
+    "filteredBody": "Adjust the search, source or period to see more results.",
+    "clear": "Clear filters"
+  }
+}

@@ -1,0 +1,19 @@
+[
+  {
+    "id": "333001",
+    "created_at": "2026-10-24T08:30:00Z",
+    "url": "https://social.example/@alice/333001",
+    "uri": "https://social.example/users/alice/statuses/333001",
+    "content": "<p>Weekly note: pricing experiments for a small SaaS.</p>",
+    "spoiler_text": "",
+    "sensitive": false,
+    "visibility": "public",
+    "language": "en",
+    "reblog": null,
+    "account": {"acct": "alice", "display_name": "Alice"},
+    "favourites_count": 7,
+    "reblogs_count": 1,
+    "replies_count": 0,
+    "card": null
+  }
+]

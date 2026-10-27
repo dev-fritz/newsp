@@ -1,0 +1,94 @@
+{
+  "brand": {
+    "headline": "The market, read every morning.",
+    "subtitle": "News and discussions from around the world become a daily report and project ideas that never repeat.",
+    "footer": "Open source · AGPL-3.0 · self-hosted"
+  },
+  "login": {
+    "title": "Sign in",
+    "subtitle": "Sign in with your e-mail and password.",
+    "email": "E-mail",
+    "password": "Password",
+    "submit": "Sign in",
+    "submitting": "Signing in…",
+    "forgot": "Forgot your password? Ask an admin of your instance for a reset link.",
+    "forgotLink": "Forgot your password?",
+    "noAccount": "Don't have an account?",
+    "createAccount": "Create account",
+    "INVALID_CREDENTIALS": "Wrong e-mail or password."
+  },
+  "setup": {
+    "steps": {
+      "account": "Admin account",
+      "ai": "AI provider",
+      "sources": "First sources"
+    },
+    "stepOf": "Step {{current}} of {{total}}",
+    "title": "Create the admin account",
+    "subtitle": "This account runs the instance: sources, AI providers and invites. There is only one first run.",
+    "name": "Name",
+    "email": "E-mail",
+    "password": "Password",
+    "passwordHint": "At least 12 characters.",
+    "confirm": "Confirm password",
+    "submit": "Create account and continue",
+    "SETUP_ALREADY_DONE": "This instance is already set up. Sign in with your account."
+  },
+  "invite": {
+    "title": "You were invited",
+    "subtitle": "Choose your name and a password to join the instance.",
+    "role": "You join as {{role}}. The invite expires on {{date}}.",
+    "submit": "Create account",
+    "EMAIL_TAKEN": "This e-mail is already in use.",
+    "INVALID_LINK": "This link is invalid, expired or already used. Ask the admin for a new one.",
+    "emailHint": "The invite was sent to this e-mail."
+  },
+  "reset": {
+    "title": "Set a new password",
+    "subtitle": "Saving signs you out of every device.",
+    "submit": "Save new password",
+    "done": "Password changed. Sign in with the new password.",
+    "INVALID_LINK": "This link is invalid, expired or already used.",
+    "requestNew": "Request a new link",
+    "orAskAdmin": "or ask an admin of your instance."
+  },
+  "goLogin": "Go to sign in",
+  "signup": {
+    "title": "Create your account",
+    "subtitle": "It takes a minute. We will send an e-mail to confirm your address.",
+    "submit": "Create account",
+    "submitting": "Creating account…",
+    "EMAIL_TAKEN": "This e-mail is already in use. Sign in or reset your password.",
+    "SIGNUP_DISABLED": "Sign-up is turned off on this instance. Ask an admin for an invite.",
+    "RATE_LIMITED": "Too many sign-up attempts. Wait a bit and try again.",
+    "hasAccount": "Already have an account?",
+    "signIn": "Sign in"
+  },
+  "verifyEmail": {
+    "title": "Confirm e-mail",
+    "subtitle": "Confirm this address is yours to start receiving reports and ideas.",
+    "submit": "Confirm e-mail",
+    "submitting": "Confirming…",
+    "done": "E-mail confirmed. Thank you!",
+    "goApp": "Go to the app",
+    "INVALID_LINK": "This link is invalid or expired. Sign in to the app and use “Resend e-mail” to get a new one."
+  },
+  "forgotPassword": {
+    "title": "Reset your password",
+    "subtitle": "Enter your account e-mail and we will send a link to choose a new password.",
+    "submit": "Send link",
+    "submitting": "Sending…",
+    "sent": "If an account exists for this e-mail, we sent a link to reset the password. It is valid for 1 hour.",
+    "RATE_LIMITED": "Too many requests. Wait a bit before asking again.",
+    "back": "Back to sign in"
+  },
+  "verifyBanner": {
+    "text": "Confirm your e-mail ({{email}}) to start receiving reports and ideas.",
+    "resend": "Resend e-mail",
+    "resending": "Sending…",
+    "sent": "E-mail sent. Check your inbox.",
+    "RATE_LIMITED": "Wait before asking again.",
+    "EMAIL_ALREADY_VERIFIED": "Your e-mail is already confirmed. Reload the page.",
+    "failed": "Could not resend the e-mail. Try again."
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "kicker": "Sua conta",
+  "title": "Perfil e preferências",
+  "description": "Estas escolhas decidem o que entra nos seus relatórios e quais ideias são geradas para você. Fontes e coleta são da instância e valem para todos.",
+  "interests": {
+    "title": "Interesses",
+    "hint": "Ranqueiam o que é relevante para você. Escreva como falaria: “ferramentas para devs”, “fintech no Brasil”.",
+    "label": "Adicionar interesse",
+    "placeholder": "Digite e pressione Enter",
+    "remove": "Remover {{topic}}",
+    "limit": "Até 20 interesses, de até 60 caracteres.",
+    "notRanked": "A instância não tem um modelo de embeddings configurado, então os relatórios ranqueiam por recência e engajamento. Seus interesses passam a valer quando um admin configurar um."
+  },
+  "report": {
+    "title": "Relatório diário",
+    "hint": "Cobre as últimas 24 h e fica pronto no horário escolhido.",
+    "enabled": "Gerar relatório todo dia",
+    "time": "Horário",
+    "timezone": "Fuso horário",
+    "browserZone": "{{zone}} (este navegador)",
+    "outputLang": "Idioma do conteúdo gerado",
+    "outputLangHint": "As fontes podem estar em qualquer idioma; relatórios e ideias saem neste.",
+    "next": "Próximo relatório: {{when}}",
+    "pt-BR": "Português",
+    "en": "English"
+  },
+  "ideas": {
+    "title": "Ideias",
+    "hint": "Geradas depois do relatório diário. Ideias repetidas viram novas versões, então o número pode variar.",
+    "perDay": "Ideias por dia",
+    "decrease": "Diminuir",
+    "increase": "Aumentar",
+    "range": "De 0 (desligado) a 10."
+  },
+  "models": {
+    "title": "Modelos",
+    "hint": "Escolha entre os modelos habilitados pelo admin. Um modelo local não tem custo por uso; um modelo maior costuma escrever ideias melhores.",
+    "report": "Relatórios",
+    "idea": "Ideias",
+    "default": "Padrão da instância",
+    "local": "local"
+  },
+  "sources": {
+    "title": "Fontes",
+    "hint": "Quais fontes da instância entram nas suas análises.",
+    "empty": "A instância ainda não tem fontes. Peça a um admin para adicionar."
+  },
+  "appearance": {
+    "title": "Aparência",
+    "hint": "Vale só para você, neste e nos outros dispositivos.",
+    "theme": "Tema",
+    "light": "Claro",
+    "dark": "Escuro",
+    "system": "Sistema",
+    "uiLocale": "Idioma da interface",
+    "pt-BR": "Português (Brasil)",
+    "en": "English"
+  },
+  "security": {
+    "title": "Segurança",
+    "hint": "Trocar a senha encerra as sessões nos outros dispositivos.",
+    "current": "Senha atual",
+    "new": "Nova senha",
+    "newHint": "Mínimo de 12 caracteres.",
+    "confirm": "Confirmar nova senha",
+    "submit": "Alterar senha",
+    "submitting": "Alterando…",
+    "done": "Senha alterada.",
+    "signOut": "Sair",
+    "WRONG_CURRENT_PASSWORD": "A senha atual está errada."
+  },
+  "bar": {
+    "label": "Alterações não salvas",
+    "unsaved_one": "Você tem {{count}} alteração não salva.",
+    "unsaved_other": "Você tem {{count}} alterações não salvas.",
+    "discard": "Descartar",
+    "save": "Salvar alterações",
+    "saving": "Salvando…"
+  },
+  "toast": {
+    "saved": "Preferências salvas.",
+    "failed": "Não foi possível salvar suas preferências."
+  }
+}

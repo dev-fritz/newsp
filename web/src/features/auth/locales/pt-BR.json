@@ -1,0 +1,94 @@
+{
+  "brand": {
+    "headline": "O mercado, lido toda manhã.",
+    "subtitle": "Notícias e discussões do mundo todo viram um relatório diário e ideias de projeto que nunca se repetem.",
+    "footer": "Open source · AGPL-3.0 · self-hosted"
+  },
+  "login": {
+    "title": "Entrar",
+    "subtitle": "Entre com seu e-mail e senha.",
+    "email": "E-mail",
+    "password": "Senha",
+    "submit": "Entrar",
+    "submitting": "Entrando…",
+    "forgot": "Esqueceu a senha? Peça a um admin da sua instância um link de redefinição.",
+    "forgotLink": "Esqueceu a senha?",
+    "noAccount": "Não tem conta?",
+    "createAccount": "Criar conta",
+    "INVALID_CREDENTIALS": "E-mail ou senha incorretos."
+  },
+  "setup": {
+    "steps": {
+      "account": "Conta de admin",
+      "ai": "Provedor de IA",
+      "sources": "Primeiras fontes"
+    },
+    "stepOf": "Etapa {{current}} de {{total}}",
+    "title": "Crie a conta de admin",
+    "subtitle": "Esta conta administra a instância: fontes, provedores de IA e convites. Só existe uma primeira execução.",
+    "name": "Nome",
+    "email": "E-mail",
+    "password": "Senha",
+    "passwordHint": "Mínimo de 12 caracteres.",
+    "confirm": "Confirmar senha",
+    "submit": "Criar conta e continuar",
+    "SETUP_ALREADY_DONE": "Esta instância já foi configurada. Entre com sua conta."
+  },
+  "invite": {
+    "title": "Você foi convidado",
+    "subtitle": "Escolha seu nome e uma senha para entrar na instância.",
+    "role": "Você entra como {{role}}. O convite expira em {{date}}.",
+    "submit": "Criar conta",
+    "EMAIL_TAKEN": "Este e-mail já está em uso.",
+    "INVALID_LINK": "Este link é inválido, expirou ou já foi usado. Peça um novo ao admin.",
+    "emailHint": "O convite foi enviado para este e-mail."
+  },
+  "reset": {
+    "title": "Defina uma nova senha",
+    "subtitle": "Ao salvar, você sai de todos os dispositivos.",
+    "submit": "Salvar nova senha",
+    "done": "Senha alterada. Entre com a nova senha.",
+    "INVALID_LINK": "Este link é inválido, expirou ou já foi usado.",
+    "requestNew": "Peça um novo link",
+    "orAskAdmin": "ou fale com um admin da sua instância."
+  },
+  "goLogin": "Ir para o login",
+  "signup": {
+    "title": "Crie sua conta",
+    "subtitle": "Leva um minuto. Enviaremos um e-mail para confirmar o endereço.",
+    "submit": "Criar conta",
+    "submitting": "Criando conta…",
+    "EMAIL_TAKEN": "Este e-mail já está em uso. Entre ou redefina a senha.",
+    "SIGNUP_DISABLED": "O cadastro está desativado nesta instância. Peça um convite a um admin.",
+    "RATE_LIMITED": "Muitas tentativas de cadastro. Aguarde um pouco e tente de novo.",
+    "hasAccount": "Já tem conta?",
+    "signIn": "Entrar"
+  },
+  "verifyEmail": {
+    "title": "Confirmar e-mail",
+    "subtitle": "Confirme que este endereço é seu para começar a receber relatórios e ideias.",
+    "submit": "Confirmar e-mail",
+    "submitting": "Confirmando…",
+    "done": "E-mail confirmado. Obrigado!",
+    "goApp": "Ir para o app",
+    "INVALID_LINK": "Este link é inválido ou expirou. Entre no app e use “Reenviar e-mail” para receber um novo."
+  },
+  "forgotPassword": {
+    "title": "Redefinir senha",
+    "subtitle": "Informe o e-mail da sua conta e enviaremos um link para criar uma nova senha.",
+    "submit": "Enviar link",
+    "submitting": "Enviando…",
+    "sent": "Se houver uma conta com este e-mail, enviamos um link para redefinir a senha. Ele vale por 1 hora.",
+    "RATE_LIMITED": "Muitos pedidos. Aguarde um pouco antes de pedir de novo.",
+    "back": "Voltar ao login"
+  },
+  "verifyBanner": {
+    "text": "Confirme seu e-mail ({{email}}) para começar a receber relatórios e ideias.",
+    "resend": "Reenviar e-mail",
+    "resending": "Enviando…",
+    "sent": "E-mail enviado. Confira sua caixa de entrada.",
+    "RATE_LIMITED": "Aguarde antes de pedir de novo.",
+    "EMAIL_ALREADY_VERIFIED": "Seu e-mail já está confirmado. Recarregue a página.",
+    "failed": "Não foi possível reenviar o e-mail. Tente de novo."
+  }
+}

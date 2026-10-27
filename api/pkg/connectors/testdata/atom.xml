@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Engineering Blog</title>
+  <entry>
+    <title>How we cut inference costs</title>
+    <link href="https://blog.example.com/inference"/>
+    <id>tag:blog.example.com,2026:inference</id>
+    <updated>2026-10-25T08:00:00Z</updated>
+    <author><name>Ana Costa</name></author>
+    <summary>Moving to an 8B model.</summary>
+  </entry>
+</feed>

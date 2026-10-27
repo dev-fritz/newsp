@@ -1,0 +1,2 @@
+DROP TABLE IF EXISTS report_items;
+DROP TABLE IF EXISTS reports;

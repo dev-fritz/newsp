@@ -1,0 +1,44 @@
+{
+  "data": {
+    "posts": {
+      "edges": [
+        {"node": {
+          "id": "700001",
+          "name": "Skybound",
+          "tagline": "Plan trips with an AI co-pilot",
+          "description": "Skybound builds <b>itineraries</b> from a single prompt.",
+          "url": "https://www.producthunt.com/posts/skybound",
+          "website": "https://skybound.example/?ref=producthunt",
+          "votesCount": 321,
+          "commentsCount": 24,
+          "createdAt": "2026-10-26T07:01:00Z",
+          "topics": {"edges": [{"node": {"name": "Travel"}}, {"node": {"name": "Artificial Intelligence"}}]}
+        }},
+        {"node": {
+          "id": "700002",
+          "name": "Tagless",
+          "tagline": "",
+          "description": "",
+          "url": "https://www.producthunt.com/posts/tagless",
+          "website": "https://tagless.example",
+          "votesCount": 12,
+          "commentsCount": 0,
+          "createdAt": "2026-10-26T08:00:00Z",
+          "topics": {"edges": []}
+        }},
+        {"node": {
+          "id": "700003",
+          "name": "",
+          "tagline": "Nameless entry",
+          "description": "",
+          "url": "https://www.producthunt.com/posts/nameless",
+          "website": "",
+          "votesCount": 1,
+          "commentsCount": 0,
+          "createdAt": "2026-10-26T09:00:00Z",
+          "topics": {"edges": []}
+        }}
+      ]
+    }
+  }
+}

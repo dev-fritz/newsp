@@ -1,0 +1,34 @@
+[
+  {
+    "id": 1001,
+    "title": "Building a CLI in Rust",
+    "description": "A short walkthrough of a command line tool.",
+    "url": "https://dev.example/carol/building-a-cli-in-rust-1abc",
+    "published_at": "2026-10-25T14:30:00Z",
+    "public_reactions_count": 55,
+    "comments_count": 4,
+    "reading_time_minutes": 6,
+    "tag_list": ["rust", "cli"],
+    "user": {"username": "carol", "name": "Carol Example"}
+  },
+  {
+    "id": 1002,
+    "title": "Caching tips",
+    "description": "",
+    "url": "https://dev.example/dave/caching-tips-2def",
+    "published_at": "2026-10-26T12:00:00-03:00",
+    "public_reactions_count": 3,
+    "comments_count": 0,
+    "reading_time_minutes": 2,
+    "tag_list": [],
+    "user": {"username": "dave", "name": "Dave Example"}
+  },
+  {
+    "id": 0,
+    "title": "Entry without id",
+    "description": "skipped",
+    "url": "https://dev.example/skip",
+    "published_at": "2026-10-26T12:00:00Z",
+    "user": {"username": "eve"}
+  }
+]

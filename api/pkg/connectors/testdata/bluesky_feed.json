@@ -1,0 +1,50 @@
+{
+  "feed": [
+    {
+      "post": {
+        "uri": "at://did:plc:aaaaaaaaaaaaaaaaaaaaaaaa/app.bsky.feed.post/3kaaaaaaaaaa2",
+        "cid": "bafyreiaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "author": {"did": "did:plc:aaaaaaaaaaaaaaaaaaaaaaaa", "handle": "builder.example.com", "displayName": "Example Builder"},
+        "record": {"$type": "app.bsky.feed.post", "text": "Shipped the invoicing beta today: 40 signups in the first hour.", "createdAt": "2026-10-25T10:00:00.000Z"},
+        "embed": {
+          "$type": "app.bsky.embed.external#view",
+          "external": {"uri": "https://example.com/invoicing-beta", "title": "Invoicing beta notes", "description": "Synthetic description"}
+        },
+        "replyCount": 4,
+        "repostCount": 7,
+        "likeCount": 31,
+        "quoteCount": 2,
+        "indexedAt": "2026-10-25T10:00:05.000Z"
+      }
+    },
+    {
+      "post": {
+        "uri": "at://did:plc:bbbbbbbbbbbbbbbbbbbbbbbb/app.bsky.feed.post/3kbbbbbbbbbb2",
+        "author": {"did": "did:plc:bbbbbbbbbbbbbbbbbbbbbbbb", "handle": "other.example.org", "displayName": "Other"},
+        "record": {"text": "A repost that must be skipped.", "createdAt": "2026-10-25T09:00:00.000Z"},
+        "replyCount": 0, "repostCount": 1, "likeCount": 1, "quoteCount": 0,
+        "indexedAt": "2026-10-25T09:00:05.000Z"
+      },
+      "reason": {"$type": "app.bsky.feed.defs#reasonRepost", "by": {"did": "did:plc:aaaaaaaaaaaaaaaaaaaaaaaa", "handle": "builder.example.com"}, "indexedAt": "2026-10-25T09:30:00.000Z"}
+    },
+    {
+      "post": {
+        "uri": "at://did:plc:aaaaaaaaaaaaaaaaaaaaaaaa/app.bsky.feed.post/3kaaaaaaaaaa3",
+        "author": {"did": "did:plc:aaaaaaaaaaaaaaaaaaaaaaaa", "handle": "builder.example.com"},
+        "record": {"text": "", "createdAt": "2026-10-25T08:00:00.000Z"},
+        "replyCount": 0, "repostCount": 0, "likeCount": 0, "quoteCount": 0,
+        "indexedAt": "2026-10-25T08:00:05.000Z"
+      }
+    },
+    {
+      "post": {
+        "uri": "at://did:plc:aaaaaaaaaaaaaaaaaaaaaaaa/app.bsky.feed.post/3kaaaaaaaaaa4",
+        "author": {"did": "did:plc:aaaaaaaaaaaaaaaaaaaaaaaa", "handle": "builder.example.com"},
+        "record": {"text": "No createdAt on this one, the index time wins."},
+        "replyCount": 1, "repostCount": 0, "likeCount": 3, "quoteCount": 0,
+        "indexedAt": "2026-10-24T12:30:00.000Z"
+      }
+    }
+  ],
+  "cursor": "synthetic-cursor"
+}

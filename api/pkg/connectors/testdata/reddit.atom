@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>top scoring links : SaaS</title>
+  <id>/r/SaaS/top/.rss?t=week</id>
+  <updated>2026-10-26T12:00:00+00:00</updated>
+  <entry>
+    <author><name>/u/indie_builder</name><uri>https://www.reddit.com/user/indie_builder</uri></author>
+    <category term="SaaS" label="r/SaaS"/>
+    <content type="html">&lt;!-- SC_OFF --&gt;&lt;div class=&quot;md&quot;&gt;&lt;p&gt;Here is what worked: cold outreach.&lt;/p&gt;&lt;/div&gt;&lt;!-- SC_ON --&gt; &amp;#32; submitted by &amp;#32; &lt;a href=&quot;https://www.reddit.com/user/indie_builder&quot;&gt; /u/indie_builder &lt;/a&gt; &lt;br/&gt; &lt;span&gt;&lt;a href=&quot;https://www.reddit.com/r/SaaS/comments/1abc23/invoicing/&quot;&gt;[link]&lt;/a&gt;&lt;/span&gt;</content>
+    <id>t3_1abc23</id>
+    <link href="https://www.reddit.com/r/SaaS/comments/1abc23/invoicing/"/>
+    <updated>2026-10-25T10:00:00+00:00</updated>
+    <published>2026-10-25T10:00:00+00:00</published>
+    <title>I built a niche invoicing SaaS</title>
+  </entry>
+</feed>

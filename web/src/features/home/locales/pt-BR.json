@@ -1,0 +1,42 @@
+{
+  "greeting": {
+    "neutral": "Olá, {{name}}.",
+    "morning": "Bom dia, {{name}}.",
+    "afternoon": "Boa tarde, {{name}}.",
+    "evening": "Boa noite, {{name}}."
+  },
+  "subtitle": "O que mudou no mercado desde a última vez que você olhou.",
+  "actions": {
+    "generateReport": "Gerar relatório agora",
+    "generateIdeas": "Gerar ideias"
+  },
+  "report": {
+    "badge": "Relatório do dia",
+    "readFull": "Ler relatório completo",
+    "empty": {
+      "title": "Nenhum relatório ainda",
+      "body": "O relatório diário resume o que importa nas suas fontes e sai no horário definido no seu perfil. Para ver um agora, gere um relatório sob demanda.",
+      "action": "Gerar agora"
+    }
+  },
+  "ideas": {
+    "title": "Ideias recentes",
+    "seeAll": "Ver todas",
+    "empty": {
+      "title": "Nenhuma ideia ainda",
+      "body": "As ideias de projeto nascem do que foi coletado e nunca se repetem: uma ideia parecida vira uma nova versão da existente.",
+      "action": "Gerar ideias"
+    }
+  },
+  "trending": {
+    "title": "Em alta agora",
+    "seeAll": "Ver no feed",
+    "untitled": "Sem título",
+    "empty": {
+      "title": "Nada coletado nas últimas 24 horas",
+      "adminBody": "Adicione ou ative fontes para começar a coletar notícias e discussões.",
+      "adminAction": "Configurar fontes",
+      "memberBody": "A coleta ainda não rodou. Assim que as fontes forem coletadas, os itens em alta aparecem aqui."
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "posts": [
+    {
+      "uri": "at://did:plc:cccccccccccccccccccccccc/app.bsky.feed.post/3kcccccccccc2",
+      "author": {"did": "did:plc:cccccccccccccccccccccccc", "handle": "founder.example.net", "displayName": "Example Founder"},
+      "record": {"text": "Looking for a simple way to track freelance invoices. Any tool recommendations?", "createdAt": "2026-10-25T11:15:00.000Z"},
+      "replyCount": 12,
+      "repostCount": 3,
+      "likeCount": 25,
+      "quoteCount": 1,
+      "indexedAt": "2026-10-25T11:15:03.000Z"
+    },
+    {
+      "uri": "at://did:plc:dddddddddddddddddddddddd/app.bsky.feed.post/3kdddddddddd2",
+      "author": {"did": "did:plc:dddddddddddddddddddddddd", "handle": "writer.example.dev"},
+      "record": {"text": "Invoice tooling roundup, link below.", "createdAt": "2026-10-25T07:00:00.000Z"},
+      "embed": {"$type": "app.bsky.embed.external#view", "external": {"uri": "ftp://example.com/not-http", "title": "Roundup", "description": "x"}},
+      "replyCount": 0, "repostCount": 0, "likeCount": 2, "quoteCount": 0,
+      "indexedAt": "2026-10-25T07:00:02.000Z"
+    }
+  ]
+}

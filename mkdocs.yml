@@ -1,0 +1,84 @@
+site_name: newsp
+site_description: >-
+  Self-hosted, multi-user market radar. Collects news, writes a daily report per user
+  and generates project ideas that never repeat, with local or hosted AI models.
+site_url: https://dev-fritz.github.io/newsp/
+repo_url: https://github.com/dev-fritz/newsp
+repo_name: dev-fritz/newsp
+edit_uri: edit/main/docs/
+docs_dir: docs
+copyright: Copyright &copy; newsp contributors. Licensed under AGPL-3.0.
+
+theme:
+  name: material
+  logo: assets/logo.svg
+  favicon: assets/logo.svg
+  icon:
+    repo: fontawesome/brands/github
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.instant
+    - navigation.top
+    - navigation.footer
+    - toc.follow
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
+    - search.suggest
+    - search.highlight
+
+nav:
+  - Home: index.md
+  - Guide:
+      - How it works: how-it-works.md
+      - Installation: installation.md
+      - Configuration: configuration.md
+      - Usage: usage.md
+      - FAQ: faq.md
+  - Reference:
+      - Architecture: architecture.md
+      - Development: development.md
+
+plugins:
+  # Naming a plugin replaces the default list, so keep `search` explicit.
+  - search
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/dev-fritz/newsp

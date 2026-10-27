@@ -1,0 +1,133 @@
+{
+  "title": "Relatórios",
+  "list": {
+    "label": "Lista de relatórios",
+    "generate": "Gerar agora",
+    "filterLabel": "Tipo",
+    "filters": { "all": "Todos", "scheduled": "Diários", "manual": "Sob demanda" },
+    "groups": { "thisWeek": "Esta semana", "lastWeek": "Semana passada" },
+    "empty": {
+      "title": "Nenhum relatório ainda",
+      "body": "O relatório diário sai no horário configurado no seu perfil. Para ver um agora, gere um relatório sob demanda."
+    },
+    "emptyFiltered": {
+      "title": "Nenhum relatório neste filtro",
+      "body": "Troque o filtro para ver os outros relatórios."
+    }
+  },
+  "kind": { "scheduled": "Diário", "manual": "Sob demanda" },
+  "status": { "failed": "Falhou" },
+  "window": {
+    "h6": "últimas 6 h",
+    "h24": "últimas 24 h",
+    "h168": "últimos 7 dias",
+    "h720": "últimos 30 dias",
+    "custom": "últimas {{hours}} h"
+  },
+  "progress": {
+    "title": "Gerando · {{window}}",
+    "titleWithFocus": "Gerando · {{window}}, foco “{{focus}}”",
+    "pending": "Na fila, começa em instantes…",
+    "running": "Lendo os itens coletados e escrevendo o relatório…"
+  },
+  "generate": {
+    "title": "Gerar relatório agora",
+    "description": "Escolha a janela de tempo dos itens coletados e, se quiser, um foco.",
+    "windowLabel": "Janela",
+    "windows": {
+      "6": "Últimas 6 h",
+      "24": "Últimas 24 h",
+      "168": "Últimos 7 dias",
+      "720": "Últimos 30 dias"
+    },
+    "focusLabel": "Foco (opcional)",
+    "focusHint": "Um assunto para o relatório priorizar. Até 200 caracteres.",
+    "focusPlaceholder": "Ex.: fintech no Brasil",
+    "submit": "Gerar relatório",
+    "submitting": "Enviando…",
+    "success": "Relatório na fila. Ele aparece na lista assim que ficar pronto.",
+    "retry": "Gerar de novo"
+  },
+  "reader": {
+    "back": "Relatórios",
+    "toolbar": "Ações do relatório",
+    "copyMarkdown": "Copiar Markdown",
+    "copied": "Markdown copiado",
+    "copyFailed": "Não foi possível copiar. Selecione o texto manualmente.",
+    "generateIdeas": "Gerar ideias deste relatório",
+    "model": "Modelo de IA",
+    "itemsAnalyzed_one": "{{count}} item analisado",
+    "itemsAnalyzed_other": "{{count}} itens analisados",
+    "cited_one": "{{count}} citado",
+    "cited_other": "{{count}} citados",
+    "reading": "Leitura de {{count}} min",
+    "emptyContent": "Este relatório não tem conteúdo.",
+    "generating": {
+      "title": "Este relatório ainda está sendo gerado",
+      "body": "A página atualiza sozinha quando ele ficar pronto."
+    },
+    "failed": {
+      "title": "Não foi possível gerar este relatório"
+    },
+    "notFound": {
+      "title": "Relatório não encontrado",
+      "body": "Ele pode ter sido removido ou o endereço está errado.",
+      "back": "Ver todos os relatórios"
+    },
+    "noneYet": {
+      "title": "Nenhum relatório para ler ainda",
+      "body": "Gere um relatório agora ou espere o próximo diário."
+    }
+  },
+  "delete": {
+    "button": "Excluir",
+    "menu": "Excluir…",
+    "actions": "Ações do relatório",
+    "inProgress": "Este relatório ainda está sendo gerado e não pode ser excluído por enquanto.",
+    "title": "Excluir este relatório?",
+    "description": "O relatório e suas citações serão excluídos permanentemente. Isso não pode ser desfeito. Os itens coletados continuam no feed.",
+    "confirm": "Excluir relatório",
+    "success": "Relatório excluído",
+    "errors": {
+      "REPORT_IN_PROGRESS": "Este relatório ainda está sendo gerado. Aguarde terminar para excluí-lo.",
+      "generic": "Não foi possível excluir o relatório. Tente novamente."
+    }
+  },
+  "citation": {
+    "open": "Fonte {{ref}}",
+    "openOriginal": "Abrir original ↗",
+    "close": "Fechar",
+    "by": "por {{author}}",
+    "excerpt": "“{{text}}”"
+  },
+  "sources": {
+    "title": "Fontes citadas",
+    "count_one": "{{count}} fonte",
+    "count_other": "{{count}} fontes"
+  },
+  "engagement": {
+    "score": {
+      "hackernews": "{{value}} pts",
+      "tabnews": "{{value}} tabcoins",
+      "reddit": "{{value}} pts",
+      "youtube": "{{value}} pts",
+      "lobsters": "{{value}} pts",
+      "devto": "{{value}} reações",
+      "mastodon": "{{value}} favoritos",
+      "bluesky": "{{value}} curtidas",
+      "github": "{{value}} estrelas",
+      "producthunt": "{{value}} votos",
+      "default": "{{value}} pts"
+    },
+    "comments": "{{value}} comentários"
+  },
+  "errors": {
+    "NO_ITEMS": "Não havia itens novos na janela escolhida (itens já citados em relatórios anteriores não se repetem)",
+    "REPORT_MODEL_NOT_SET": "Nenhum modelo de IA configurado para relatórios — peça a um admin",
+    "AI_REFUSED": "O modelo de IA recusou gerar este relatório. Tente outro foco ou outra janela.",
+    "AI_INVALID_OUTPUT": "O modelo respondeu em um formato inválido. Tente gerar de novo.",
+    "AI_FAILURE": "O provedor de IA falhou ao gerar o relatório. Tente de novo em instantes.",
+    "REPORT_IN_PROGRESS": "Já existe um relatório sendo gerado. Aguarde ele terminar.",
+    "generic": "Não foi possível gerar o relatório. Tente de novo."
+  }
+}

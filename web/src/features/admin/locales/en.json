@@ -1,0 +1,535 @@
+{
+  "kicker": "Administration · applies to the whole instance",
+  "link": {
+    "label": "Link",
+    "hint": "Expires on {{expires}} and works only once. This link will not be shown again.",
+    "once": "This link will not be shown again.",
+    "copyFailed": "Could not copy. Select the link and copy it by hand."
+  },
+  "sources": {
+    "title": "Sources",
+    "new": "New source",
+    "empty": {
+      "title": "No sources yet",
+      "body": "Sources feed the reports and the ideas. Add Hacker News, TabNews, Lobsters, dev.to, a subreddit, a YouTube channel, Mastodon, Bluesky, GitHub, Product Hunt or any RSS feed."
+    },
+    "stats": {
+      "active": "Active",
+      "failing": "With errors",
+      "items": "Items in 24 h",
+      "next": "Next collection"
+    },
+    "table": {
+      "source": "Source",
+      "interval": "Interval",
+      "status": "Status",
+      "lastRun": "Last collection",
+      "items": "Items 24 h",
+      "actions": "Actions"
+    },
+    "status": {
+      "ok": "OK",
+      "error": "Error",
+      "paused": "Paused",
+      "waiting": "Not collected yet"
+    },
+    "detail": {
+      "hackernews": "{{list}} · up to {{limit}}",
+      "tabnews": "{{strategy}} · up to {{limit}}",
+      "reddit": "r/{{subreddit}} · {{sort}} · up to {{limit}}",
+      "youtube": "channel {{channel}} · up to {{limit}}",
+      "lobsters": "{{list}} · up to {{limit}}",
+      "lobstersTag": "tag {{tag}} · up to {{limit}}",
+      "devto": "{{tag}} · {{top}} · up to {{limit}}",
+      "anyTag": "all tags",
+      "mastodon": "{{target}} on {{instance}} · up to {{limit}}",
+      "bluesky": "{{mode}} · {{target}} · up to {{limit}}",
+      "github": "{{query}} · ≥ {{stars}} stars · last {{days}} days · up to {{limit}}",
+      "producthunt": "{{order}} · last {{days}} days · up to {{limit}}"
+    },
+    "actions": {
+      "collect": "Collect {{name}} now",
+      "collectTitle": "Collect now",
+      "edit": "Edit {{name}}",
+      "delete": "Delete {{name}}",
+      "enabled": "{{name}} is active"
+    },
+    "collect": {
+      "started": "Collecting {{name}}…",
+      "done": "{{name}} collected.",
+      "failed": "The collection of {{name}} failed. See the status of the source."
+    },
+    "delete": {
+      "title": "Delete {{name}}?",
+      "body": "The source and the items it collected are removed. This cannot be undone.",
+      "confirm": "Delete source",
+      "hasCitedItems": "{{name}} cannot be deleted: reports or ideas cite its items. Disable it instead."
+    },
+    "toast": {
+      "created": "{{name}} added.",
+      "updated": "{{name}} updated.",
+      "deleted": "{{name}} deleted."
+    },
+    "sheet": {
+      "newTitle": "New source",
+      "newDescription": "Pick where the news come from. The first collection runs right after you save.",
+      "editTitle": "Edit source"
+    },
+    "kinds": {
+      "hackernews": "Hacker News",
+      "tabnews": "TabNews",
+      "reddit": "Reddit",
+      "youtube": "YouTube",
+      "rss": "RSS / Atom",
+      "lobsters": "Lobsters",
+      "devto": "dev.to",
+      "mastodon": "Mastodon",
+      "bluesky": "Bluesky",
+      "github": "GitHub (new repositories)",
+      "producthunt": "Product Hunt"
+    },
+    "form": {
+      "kind": "Type",
+      "name": "Name",
+      "hnList": "List",
+      "tnStrategy": "Strategy",
+      "subreddit": "Subreddit",
+      "subredditHint": "The prefix r/ is optional. Uses Reddit's public JSON.",
+      "redditSort": "Sort",
+      "redditTime": "Period",
+      "channelId": "Channel ID",
+      "channelIdHint": "We read the channel's public RSS; no key needed.",
+      "url": "Feed URL",
+      "urlHint": "RSS or Atom. The feed is validated when you save.",
+      "limit": "Items per collection",
+      "limitHint": "From 1 to {{max}}.",
+      "rangeHint": "From 1 to {{max}}.",
+      "lobstersList": "List",
+      "lobstersTag": "Tag",
+      "lobstersTagHint": "Optional. When set, the list above is ignored and the tag's stories are read.",
+      "devtoTag": "Tag",
+      "devtoTagHint": "Optional. Leave empty for articles of any tag.",
+      "devtoTop": "Ranking",
+      "mastodonInstance": "Instance",
+      "mastodonInstanceHint": "The server's host, without https://.",
+      "mastodonMode": "Follow",
+      "mastodonHashtag": "Hashtag",
+      "mastodonHashtagHint": "Without the #.",
+      "mastodonAccount": "Account",
+      "mastodonAccountHint": "user, or user@other.host when the account lives on another server.",
+      "bskyMode": "Source",
+      "bskyActor": "Handle or DID",
+      "bskyActorHint": "The posts of this account, for example bsky.app. No login needed.",
+      "bskyFeed": "Feed",
+      "bskyFeedHint": "An at:// URI or a https://bsky.app/profile/…/feed/… link. No login needed.",
+      "bskyQuery": "Search",
+      "bskyQueryHint": "Bluesky only allows searching when logged in.",
+      "bskySort": "Sort",
+      "bskyIdentifier": "Login",
+      "bskyIdentifierHint": "The handle or e-mail that logs in with the app password below.",
+      "ghQuery": "Search",
+      "ghQueryHint": "Optional. Words to look for in the repositories.",
+      "ghLanguage": "Language",
+      "ghTopic": "Topic",
+      "ghMinStars": "Minimum stars",
+      "ghCreatedWithin": "Created in the last (days)",
+      "phOrder": "Order",
+      "phTopic": "Topic",
+      "phTopicHint": "Optional. The topic's slug, as in producthunt.com/topics/<slug>.",
+      "phPostedWithin": "Posted in the last (days)",
+      "interval": "Collect every",
+      "intervalCustom": "Custom…",
+      "intervalMinutes": "Interval in minutes",
+      "minutes": "minutes",
+      "intervalHint": "Between {{min}} and {{max}} minutes.",
+      "save": "Save changes",
+      "add": "Add source"
+    },
+    "secret": {
+      "label": {
+        "bluesky": "App password",
+        "github": "Personal access token",
+        "producthunt": "Developer token"
+      },
+      "hint": {
+        "bluesky": "Create an app password in Bluesky under Settings → Privacy and security.",
+        "github": "A personal access token raises the GitHub rate limit.",
+        "producthunt": "Create a developer token at producthunt.com/v2/oauth/applications."
+      },
+      "requiredHint": "{{what}} Stored encrypted. It will not be shown again.",
+      "optionalHint": "Optional. {{what}} Stored encrypted. It will not be shown again.",
+      "placeholder": "Paste it here",
+      "savedPlaceholder": "Credential saved",
+      "savedHint": "A credential is configured. Leave empty to keep it, or paste a new one to replace it.",
+      "remove": "Remove saved credential"
+    },
+    "options": {
+      "hnList": {
+        "top": "Top stories",
+        "best": "Best",
+        "new": "New"
+      },
+      "tnStrategy": {
+        "relevant": "Relevant",
+        "new": "New",
+        "old": "Old"
+      },
+      "redditSort": {
+        "top": "Top",
+        "hot": "Hot",
+        "new": "New"
+      },
+      "redditTime": {
+        "hour": "Last hour",
+        "day": "Today",
+        "week": "This week"
+      },
+      "lobstersList": {
+        "hottest": "Hottest",
+        "newest": "Newest"
+      },
+      "devtoTop": {
+        "0": "Newest",
+        "1": "Top of the day",
+        "7": "Top of the week",
+        "30": "Top of the month"
+      },
+      "mastodonMode": {
+        "hashtag": "A hashtag",
+        "account": "An account"
+      },
+      "bskyMode": {
+        "author": "An account",
+        "feed": "A feed",
+        "search": "A search"
+      },
+      "bskySort": {
+        "top": "Top",
+        "latest": "Latest"
+      },
+      "phOrder": {
+        "ranking": "Ranking",
+        "votes": "Most voted",
+        "newest": "Newest"
+      }
+    }
+  },
+  "ai": {
+    "title": "AI providers",
+    "description": "Local models (Ollama, llama.cpp, LM Studio) use the OpenAI-compatible type. Keys are encrypted and never shown again.",
+    "empty": {
+      "title": "No AI provider yet",
+      "body": "Reports and ideas are written by a model. Connect a local server or a hosted provider to get started."
+    },
+    "kinds": {
+      "openai_compatible": {
+        "title": "Local / OpenAI-compatible",
+        "hint": "Ollama, llama.cpp, LM Studio",
+        "label": "OpenAI-compatible (local)"
+      },
+      "openai": {
+        "title": "OpenAI",
+        "hint": "API key",
+        "label": "OpenAI"
+      },
+      "anthropic": {
+        "title": "Anthropic",
+        "hint": "API key",
+        "label": "Anthropic"
+      },
+      "gemini": {
+        "title": "Google Gemini",
+        "hint": "API key",
+        "label": "Google Gemini"
+      }
+    },
+    "form": {
+      "kind": "Provider",
+      "recommended": "Recommended",
+      "name": "Name",
+      "baseUrl": "Base URL",
+      "baseUrlDefault": "Provider default",
+      "baseUrlRequired": "Where the server answers, for example http://ollama:11434/v1.",
+      "baseUrlOptional": "Optional. Leave empty to use the provider's address.",
+      "apiKey": "API key",
+      "apiKeyOptional": "API key (optional)",
+      "apiKeyPlaceholder": "Paste the key here",
+      "apiKeyHint": "Stored encrypted. It will not be shown again.",
+      "connecting": "Connecting…",
+      "connect": "Connect and test",
+      "newKey": "New API key",
+      "newKeyHint": "Current key: {{hint}}. Leave empty to keep it."
+    },
+    "toast": {
+      "created": "{{name}} added.",
+      "updated": "{{name}} updated.",
+      "keyUpdated": "Key of {{name}} updated.",
+      "deleted": "{{name}} deleted.",
+      "modelDeleted": "{{name}} deleted."
+    },
+    "found": {
+      "added": "{{name}} added.",
+      "filter": "Filter models",
+      "registered": "Added · {{capability}}",
+      "addAs": "Add {{name}} as {{capability}}",
+      "noMatch": "No model matches the filter.",
+      "hint": "Add the models you want to use: chat models write reports and ideas, embedding models rank and compare."
+    },
+    "capability": {
+      "chat": "Chat",
+      "embedding": "Embedding"
+    },
+    "test": {
+      "title": "Connection with {{name}}",
+      "body": "We list the models the provider offers. Add the ones you want to use.",
+      "running": "Testing the connection…",
+      "ok_zero": "Connection works · no models found",
+      "ok_one": "Connection works · {{count}} model found",
+      "ok_other": "Connection works · {{count}} models found",
+      "failed": "The connection failed",
+      "idle": "Not tested yet",
+      "again": "Test again",
+      "run": "Test connection",
+      "noDetail": "The provider gave no further details.",
+      "noModels": "The provider answered but lists no models. Pull or load one and test again."
+    },
+    "add": {
+      "title": "Add a provider",
+      "body": "We test the connection right after saving.",
+      "connectedTitle": "Provider added",
+      "connectedBody": "Check the connection and add the models you want to use.",
+      "done": "Done",
+      "card": "Add provider",
+      "cardHint": "OpenAI, Anthropic, Gemini or compatible",
+      "button": "Add provider"
+    },
+    "edit": {
+      "title": "Edit {{name}}",
+      "body": "Change the name or the address. A new key replaces the old one.",
+      "keyTitle": "Update key of {{name}}",
+      "keyBody": "The new key replaces the current one and is never shown again."
+    },
+    "status": {
+      "connected": "Connected",
+      "error": "Error",
+      "disabled": "Disabled",
+      "untested": "Not tested"
+    },
+    "card": {
+      "models_zero": "No models",
+      "models_one": "{{count}} model",
+      "models_other": "{{count}} models",
+      "key": "key {{hint}}",
+      "noKey": "no key",
+      "checked": "checked {{when}}",
+      "test": "Test connection",
+      "updateKey": "Update key",
+      "edit": "Edit",
+      "more": "More actions for {{name}}",
+      "disable": "Disable",
+      "enable": "Enable",
+      "delete": "Delete"
+    },
+    "delete": {
+      "title": "Delete {{name}}?",
+      "body": "The provider and its models are removed. Settings that use them are cleared.",
+      "confirm": "Delete provider"
+    },
+    "models": {
+      "title": "Enabled models",
+      "hint": "Only enabled models are offered to users.",
+      "empty": "No models yet. Test a provider connection and add the models you want to use.",
+      "model": "Model",
+      "provider": "Provider",
+      "use": "Use",
+      "tokens": "Tokens · 7 days",
+      "actions": "Enabled",
+      "defaultEmbedding": "instance embedding",
+      "defaultReports": "default · reports",
+      "defaultIdeas": "default · ideas",
+      "enabled": "{{name}} is enabled",
+      "delete": "Delete {{name}}",
+      "deleteTitle": "Delete {{name}}?",
+      "deleteBody": "The model is removed from the instance. Settings that use it are cleared.",
+      "deleteConfirm": "Delete model"
+    },
+    "settings": {
+      "title": "Instance settings",
+      "pick": "Pick a model",
+      "noEmbedding": "No embedding model yet. Add one from a provider connection test.",
+      "saved": "Settings saved.",
+      "save": "Save settings",
+      "embeddings": {
+        "title": "Embeddings",
+        "body": "Used to rank news and to avoid repeated ideas.",
+        "label": "Embedding model",
+        "warning": "Changing the embedding model reindexes everything: items, ideas and user interests. Reports and ideas wait until it finishes."
+      },
+      "defaults": {
+        "title": "Defaults for new users",
+        "body": "Each user can change them in their own profile.",
+        "reports": "Reports",
+        "ideas": "Ideas"
+      },
+      "similarity": {
+        "title": "Ideas without repetition",
+        "body": "Above this similarity, the model decides whether the candidate is the same idea and, if so, merges it into a new version.",
+        "label": "Similarity threshold",
+        "low": "More merges",
+        "high": "More new ideas"
+      },
+      "retention": {
+        "title": "Retention",
+        "body": "Items cited in reports or ideas are never deleted.",
+        "label": "Keep collected items for (days)",
+        "hint": "Between {{min}} and {{max}} days."
+      },
+      "reindex": {
+        "running": "Reindexing in progress. Reports and ideas wait until it finishes.",
+        "done": "Reindex finished.",
+        "failed": "The reindex failed. Try changing the embedding model again."
+      },
+      "accounts": {
+        "title": "Accounts",
+        "body": "Who can create an account and when idle accounts pause.",
+        "signup": "Public sign-up",
+        "signupBody": "Anyone can create a member account. The e-mail must be confirmed before reports and ideas are generated.",
+        "noMail": "Set up SMTP first (SMTP_HOST and MAIL_FROM) to turn sign-up on.",
+        "inactivity": "Pause accounts with no access after (days)",
+        "inactivityHint": "0 turns it off. Idle accounts get no reports or ideas until they come back."
+      }
+    }
+  },
+  "users": {
+    "title": "Users",
+    "description": "Invite people by link or e-mail; public sign-up is turned on in Settings. Links expire and work only once.",
+    "you": "you",
+    "neverSeen": "never",
+    "status": {
+      "active": "Active",
+      "disabled": "Disabled"
+    },
+    "table": {
+      "person": "Person",
+      "role": "Role",
+      "status": "Status",
+      "lastSeen": "Last seen",
+      "actions": "Actions"
+    },
+    "actions": {
+      "resetLink": "Reset link",
+      "reactivate": "Reactivate",
+      "disable": "Disable",
+      "more": "More actions for {{name}}",
+      "makeMember": "Make member",
+      "makeAdmin": "Make admin"
+    },
+    "toast": {
+      "disabled": "{{name}} disabled.",
+      "reactivated": "{{name}} reactivated.",
+      "madeAdmin": "{{name}} is now an admin.",
+      "madeMember": "{{name}} is now a member.",
+      "revoked": "Invite revoked."
+    },
+    "reset": {
+      "title": "Reset link for {{name}}",
+      "body": "Send it to the person by any channel. It replaces older reset links."
+    },
+    "confirm": {
+      "disable": {
+        "title": "Disable {{name}}?",
+        "body": "The person is signed out and cannot sign in until you reactivate the account.",
+        "confirm": "Disable"
+      },
+      "makeAdmin": {
+        "title": "Make {{name}} an admin?",
+        "body": "Admins manage sources, AI providers and users of the whole instance.",
+        "confirm": "Make admin"
+      },
+      "makeMember": {
+        "title": "Make {{name}} a member?",
+        "body": "The person loses access to the administration screens.",
+        "confirm": "Make member"
+      }
+    },
+    "invite": {
+      "button": "Invite person",
+      "title": "Invite a person",
+      "body": "Pick the role. The link is created in the next step.",
+      "readyTitle": "Invite link ready",
+      "readyBody": "Send it to the person by any channel. They choose name and password when they open it.",
+      "done": "Done",
+      "role": "Role",
+      "roleHint": {
+        "member": "Reads reports and generates ideas.",
+        "admin": "Also manages sources, AI providers and users."
+      },
+      "create": "Create link",
+      "email": "E-mail (optional)",
+      "emailHint": "We send the invite by e-mail and the account must use this address.",
+      "emailed": "Invite sent to {{email}}. You can still copy the link below."
+    },
+    "invites": {
+      "title": "Pending invites",
+      "empty": "No pending invites.",
+      "admin": "Admin invite",
+      "member": "Member invite",
+      "meta": "Created {{created}} · expires {{expires}} · not used yet",
+      "revoke": "Revoke",
+      "revokeTitle": "Revoke this invite?",
+      "revokeBody": "The link stops working right away."
+    },
+    "emailUnverified": "E-mail not verified"
+  },
+  "setup": {
+    "stepOf": "Step {{current}} of {{total}}",
+    "ai": {
+      "title": "Connect an AI model",
+      "body": "It writes the reports and the ideas. You can start with a local model and add other providers later, under Administration.",
+      "composeTitle": "Running with Docker Compose?",
+      "composeBody": "The Ollama of the compose file answers at {{url}}. Pull the models with make models.",
+      "chatModel": "Model for texts",
+      "embeddingModel": "Embedding model",
+      "noChat": "Add a chat model above to pick it here.",
+      "noEmbedding": "Add an embedding model above to pick it here.",
+      "embeddingWarning": "Without an embedding model, news ranking and idea de-duplication stay off. You can add one later.",
+      "addAnother": "Add another provider",
+      "later": "Configure later"
+    },
+    "sources": {
+      "title": "Pick your first sources",
+      "body": "Sources are where the news come from. Start with a few and add more later, under Administration.",
+      "suggested": "Suggested",
+      "presets": {
+        "hackernews-top": "Top stories · every 15 min",
+        "tabnews-relevant": "Relevant posts · every 30 min",
+        "bbc-technology": "BBC Technology feed · every hour"
+      },
+      "added": "Added",
+      "add": "Add",
+      "addNamed": "Add {{name}}",
+      "custom": "Add another source",
+      "count_zero": "No sources yet. You can finish and add them later.",
+      "count_one": "{{count}} source configured.",
+      "count_other": "{{count}} sources configured.",
+      "finish": "Finish"
+    }
+  },
+  "errors": {
+    "FORBIDDEN": "You are not allowed to do this.",
+    "SOURCE_NOT_FOUND": "This source no longer exists.",
+    "SOURCE_HAS_CITED_ITEMS": "This source has items cited by reports or ideas. Disable it instead.",
+    "PROVIDER_NOT_FOUND": "This provider no longer exists.",
+    "PROVIDER_NAME_TAKEN": "There is already a provider with this name.",
+    "MODEL_NOT_FOUND": "This model no longer exists.",
+    "MODEL_EXISTS": "This model is already added to the provider.",
+    "EMBEDDINGS_UNSUPPORTED": "This provider does not offer embedding models.",
+    "AI_MODEL_UNAVAILABLE": "The model is unavailable. Check the provider and try again.",
+    "USER_NOT_FOUND": "This user no longer exists.",
+    "INVITE_NOT_FOUND": "This invite no longer exists.",
+    "CANNOT_CHANGE_OWN_ACCESS": "You cannot change your own role or status.",
+    "LAST_ADMIN": "At least one active admin must remain.",
+    "EMAIL_TAKEN": "An account with this e-mail already exists.",
+    "MAILER_NOT_CONFIGURED": "E-mail delivery is not configured. Set SMTP_HOST and MAIL_FROM on the server."
+  }
+}

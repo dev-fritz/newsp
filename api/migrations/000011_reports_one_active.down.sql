@@ -1,0 +1,1 @@
+DROP INDEX reports_one_active_per_user;

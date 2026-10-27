@@ -1,0 +1,51 @@
+{
+  "title": "Feed",
+  "kicker": "Tudo o que foi coletado",
+  "filters": {
+    "search": "Buscar nos itens",
+    "searchPlaceholder": "Buscar por título, autor ou trecho…",
+    "source": "Fonte",
+    "allSources": "Todas as fontes",
+    "period": "Período",
+    "periods": { "24h": "24 h", "7d": "7 dias", "30d": "30 dias", "all": "Tudo" },
+    "sort": "Ordenar por",
+    "sorts": { "recent": "Recentes", "engagement": "Em alta" }
+  },
+  "list": {
+    "label": "Itens coletados",
+    "count_one": "{{value}} item",
+    "count_other": "{{value}} itens",
+    "loadMoreError": "Não foi possível carregar mais itens. Tente de novo."
+  },
+  "item": {
+    "by": "por {{author}}",
+    "cited": "citado",
+    "untitled": "Sem título",
+    "openOriginal": "Abrir original em nova aba: {{title}}"
+  },
+  "engagement": {
+    "score": {
+      "default_one": "{{value}} ponto",
+      "default_other": "{{value}} pontos",
+      "hackernews": "{{value}} pts",
+      "tabnews": "{{value}} tabcoins",
+      "reddit": "{{value}} upvotes",
+      "youtube": "{{value}} visualizações",
+      "lobsters": "{{value}} pts",
+      "devto": "{{value}} reações",
+      "mastodon": "{{value}} favoritos",
+      "bluesky": "{{value}} curtidas",
+      "github": "{{value}} estrelas",
+      "producthunt": "{{value}} votos"
+    },
+    "comments_one": "{{value}} comentário",
+    "comments_other": "{{value}} comentários"
+  },
+  "empty": {
+    "title": "Nenhum item coletado ainda",
+    "body": "Assim que as fontes rodarem, tudo o que for coletado aparece aqui.",
+    "filteredTitle": "Nenhum item com esses filtros",
+    "filteredBody": "Ajuste a busca, a fonte ou o período para ver mais resultados.",
+    "clear": "Limpar filtros"
+  }
+}
