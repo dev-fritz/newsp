@@ -1,0 +1,70 @@
+name: Bug report
+description: Something does not work as documented
+title: "bug: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time. For security problems, do not open an issue: use the
+        [private advisory form](https://github.com/dev-fritz/newsp/security/advisories/new).
+        Never paste API keys, tokens or `.env` contents.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What you did, what you expected and what you saw instead.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Add the source ...
+        2. Click "Collect now"
+        3. ...
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Collection (sources, connectors, worker)
+        - Reports
+        - Ideas (generation, dedup, versions)
+        - AI providers and models
+        - Accounts and admin
+        - Web interface
+        - Docker and installation
+        - Documentation
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: newsp version or commit
+      placeholder: v0.1.0 or a commit SHA
+    validations:
+      required: true
+  - type: dropdown
+    id: install
+    attributes:
+      label: How do you run it?
+      options:
+        - Docker Compose
+        - Local development (make / pnpm)
+        - Other
+  - type: input
+    id: provider
+    attributes:
+      label: AI provider and model, if relevant
+      placeholder: Ollama, qwen3:14b (chat) and nomic-embed-text (embeddings)
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: Output of `docker compose logs api worker web` around the problem. Remove secrets first.
+      render: shell
