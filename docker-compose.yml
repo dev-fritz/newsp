@@ -1,0 +1,117 @@
+# newsp, self-hosted stack.
+#
+#   ./scripts/init-env.sh && docker compose up -d --build
+#
+# Then open http://localhost:3000 (the first visit creates the admin account).
+# Local models: `docker compose --profile ollama up -d` and point the provider
+# at http://ollama:11434/v1 (or http://host.docker.internal:11434/v1 for an
+# Ollama running on the host).
+#
+# Development only needs the database: `make infra-up` in api/ starts `db`.
+# JWT_SECRET, ENCRYPTION_KEY and SESSION_SECRET default to empty so that command
+# works without a .env (compose interpolates every service); the app refuses to
+# start in production without them, so run ./scripts/init-env.sh first.
+name: newsp
+
+x-api-env: &api-env
+  APP_ENV: production
+  DATABASE_URL: postgres://newsp:${POSTGRES_PASSWORD:-newsp}@db:5432/newsp?sslmode=disable
+  # The database is only reachable on the compose network.
+  DATABASE_ALLOW_PLAINTEXT: "true"
+  JWT_SECRET: ${JWT_SECRET:-}
+  ENCRYPTION_KEY: ${ENCRYPTION_KEY:-}
+  APP_BASE_URL: ${APP_BASE_URL:-http://localhost:3000}
+  CORS_ALLOWED_ORIGINS: ${APP_BASE_URL:-http://localhost:3000}
+  # Only the web BFF reaches the API, from a private compose network.
+  TRUSTED_PROXIES: ${TRUSTED_PROXIES:-10.0.0.0/8,172.16.0.0/12,192.168.0.0/16}
+  SMTP_HOST: ${SMTP_HOST:-}
+  SMTP_PORT: ${SMTP_PORT:-587}
+  SMTP_USERNAME: ${SMTP_USERNAME:-}
+  SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+  SMTP_TLS: ${SMTP_TLS:-starttls}
+  MAIL_FROM: ${MAIL_FROM:-}
+  LOG_LEVEL: ${LOG_LEVEL:-info}
+
+services:
+  db:
+    image: pgvector/pgvector:0.8.7-pg17-bookworm
+    environment:
+      POSTGRES_USER: newsp
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-newsp}
+      POSTGRES_DB: newsp
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U newsp -d newsp"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  migrate:
+    build: ./api
+    image: newsp-api
+    entrypoint: ["/newsp-migrate", "up"]
+    environment: *api-env
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+
+  api:
+    build: ./api
+    image: newsp-api
+    environment: *api-env
+    # Loopback only: the web BFF is the public entry point; this port is for
+    # Swagger, scripts and debugging from the host.
+    ports:
+      - "127.0.0.1:${API_PORT:-8080}:8080"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+  worker:
+    build: ./api
+    image: newsp-api
+    entrypoint: ["/newsp-worker"]
+    environment: *api-env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+  web:
+    build: ./web
+    image: newsp-web
+    environment:
+      API_URL: http://api:8080
+      SESSION_SECRET: ${SESSION_SECRET:-}
+      APP_ORIGIN: ${APP_BASE_URL:-http://localhost:3000}
+    ports:
+      - "${WEB_PORT:-3000}:3000"
+    depends_on:
+      - api
+    restart: unless-stopped
+
+  # Optional local models: `docker compose --profile ollama up -d`
+  ollama:
+    image: ollama/ollama:0.40.11
+    profiles: ["ollama"]
+    environment:
+      # Ollama's default context (4096 tokens) silently cuts the start of long
+      # prompts, which drops the instructions of reports and ideas.
+      OLLAMA_CONTEXT_LENGTH: ${OLLAMA_CONTEXT_LENGTH:-16384}
+    ports:
+      - "127.0.0.1:${OLLAMA_PORT:-11434}:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+
+volumes:
+  db-data:
+  ollama-data:
