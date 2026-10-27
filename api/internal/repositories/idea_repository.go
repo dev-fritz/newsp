@@ -189,7 +189,7 @@ func (r *IdeaRepository) List(ctx context.Context, f IdeaFilter) ([]IdeaListItem
 		return nil, 0, fmt.Errorf("list ideas: %w", err)
 	}
 	defer func() { _ = rows.Close() }()
-	out := make([]IdeaListItem, 0, f.Limit)
+	out := make([]IdeaListItem, 0)
 	for rows.Next() {
 		var it IdeaListItem
 		idea, err := scanIdea(rows, &it.Origin, &it.Difficulty, &it.EffortWeeks, &it.EvidenceCount, &it.Audience)

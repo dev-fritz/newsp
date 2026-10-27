@@ -116,7 +116,7 @@ func (r *UserTokenRepository) ListPendingInvites(ctx context.Context, now time.T
 		return nil, 0, fmt.Errorf("list invites: %w", err)
 	}
 	defer func() { _ = rows.Close() }()
-	tokens := make([]models.UserToken, 0, limit)
+	tokens := make([]models.UserToken, 0)
 	for rows.Next() {
 		t, err := scanUserToken(rows)
 		if err != nil {

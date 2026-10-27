@@ -265,7 +265,7 @@ func (r *ItemRepository) List(ctx context.Context, f ItemFilter, limit, offset i
 	}
 	defer func() { _ = rows.Close() }()
 
-	out := make([]ItemView, 0, limit)
+	out := make([]ItemView, 0)
 	for rows.Next() {
 		var v ItemView
 		var metrics []byte

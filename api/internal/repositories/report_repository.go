@@ -100,7 +100,7 @@ func (r *ReportRepository) ListForUser(ctx context.Context, userID uuid.UUID, ki
 		return nil, 0, fmt.Errorf("list reports: %w", err)
 	}
 	defer func() { _ = rows.Close() }()
-	out := make([]models.Report, 0, limit)
+	out := make([]models.Report, 0)
 	for rows.Next() {
 		rep, err := scanReport(rows)
 		if err != nil {
