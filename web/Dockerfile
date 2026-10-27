@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM node:24.22.1-bookworm-slim AS base
+FROM node:26.12.1-bookworm-slim AS base
 ENV PNPM_HOME=/pnpm
 ENV PATH=$PNPM_HOME:$PATH
 # Keep in sync with "packageManager" in package.json.
@@ -21,7 +21,7 @@ COPY package.json pnpm-lock.yaml ./
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
     pnpm install --prod --frozen-lockfile
 
-FROM node:24.22.1-bookworm-slim AS runtime
+FROM node:26.12.1-bookworm-slim AS runtime
 ENV NODE_ENV=production
 ENV PORT=3000
 WORKDIR /app
