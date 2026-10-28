@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
@@ -15,7 +15,11 @@ import { ReportSection } from "@/features/profile/components/report-section";
 import { SecuritySection } from "@/features/profile/components/security-section";
 import { SourcesSection } from "@/features/profile/components/sources-section";
 import { UnsavedBar } from "@/features/profile/components/unsaved-bar";
-import { toFormValues, toRequest } from "@/features/profile/schemas/preferences-mapper";
+import {
+  DEFAULT_MODEL,
+  toFormValues,
+  toRequest,
+} from "@/features/profile/schemas/preferences-mapper";
 import {
   preferencesSchema,
   type PreferencesValues,
@@ -40,6 +44,19 @@ export function PreferencesForm({ preferences, models, sources }: PreferencesFor
     defaultValues: toFormValues(preferences, sources),
   });
   const { isDirty, dirtyFields } = form.formState;
+
+  // A model the user deletes is nulled on the server (FK SET NULL). Follow the saved ids in the
+  // model fields the user has not touched; remounting the form would drop the other edits.
+  const savedReportModel = preferences.report_model_id || DEFAULT_MODEL;
+  const savedIdeaModel = preferences.idea_model_id || DEFAULT_MODEL;
+  useEffect(() => {
+    for (const [name, id] of [
+      ["report_model_id", savedReportModel],
+      ["idea_model_id", savedIdeaModel],
+    ] as const) {
+      if (!form.getFieldState(name).isDirty) form.resetField(name, { defaultValue: id });
+    }
+  }, [form, savedReportModel, savedIdeaModel]);
   const changes = isDirty ? Object.keys(dirtyFields).length : 0;
 
   const onSubmit = form.handleSubmit((values) => {

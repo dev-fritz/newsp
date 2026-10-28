@@ -31,17 +31,7 @@ export function ProfileScreen() {
   } else if (!prefs.data || !models.data || !sources.data) {
     body = <ListSkeleton rows={5} />;
   } else {
-    // The form keeps its own copy of the saved state. A model the user deletes is nulled on the
-    // server (FK SET NULL), so remount when the saved model ids change to drop the stale id.
-    const formKey = `${prefs.data.report_model_id ?? ""}|${prefs.data.idea_model_id ?? ""}`;
-    body = (
-      <PreferencesForm
-        key={formKey}
-        preferences={prefs.data}
-        models={models.data}
-        sources={sources.data}
-      />
-    );
+    body = <PreferencesForm preferences={prefs.data} models={models.data} sources={sources.data} />;
   }
 
   return (
