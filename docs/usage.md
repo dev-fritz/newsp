@@ -60,6 +60,14 @@ Under **Profile**, each user sets:
 | **Excluded sources** | Sources you never want in your reports and ideas |
 | **Theme** and **interface language** | Light, dark or system; pt-BR or English |
 
+### My AI providers
+
+If the admin enables BYOK, **Profile → My AI providers** lets you use your own key. Add one
+provider per kind (OpenAI, Anthropic or Gemini), paste the key and run the connection test, then
+register the chat models you want from the list it returns. Keys are encrypted and never shown
+again. Your models appear under **Models**, marked *yours*, and you can pick them for reports and
+ideas. Usage of the last 7 days is shown per model. Provider costs are billed by the provider.
+
 !!! tip
     Write topics as short phrases ("developer tools for small teams", "LLM evaluation"). Ranking by
     topics needs an embedding model; without one, the profile shows that topics are not used.
@@ -115,6 +123,7 @@ is never lost.
 - **AI:** providers, models, connection tests and token usage of the last 7 days per model.
 - **Users:** invites, resets, roles and access.
 - **Settings:** embedding model, default models, retention, public signup, pausing inactive
-  accounts and similarity threshold.
+  accounts, similarity threshold and the BYOK switch (**Allow users' own AI keys**). Admins never
+  see users' own providers or keys.
 
 See [Configuration](configuration.md) for the options.

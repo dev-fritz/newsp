@@ -98,6 +98,24 @@ newsp still works, with lower quality: reports rank by engagement and recency on
 are not used for ranking), and idea dedup can only detect an exact title match. Set an embedding
 model before you rely on ideas.
 
+## Users' own keys (BYOK)
+
+Members can connect their own OpenAI, Anthropic or Gemini keys under **Profile → My AI providers**
+and use their own chat models for reports and ideas. Costs go to the user's provider account.
+The switch is in **Admin → Settings**: **Allow users' own AI keys (BYOK)**, on by default.
+
+- **Off:** stored keys are kept but unused, the profile section is hidden, and reports and ideas
+  use the instance default models.
+- **Hosted kinds only:** users cannot add local or OpenAI-compatible servers or custom URLs. Base
+  URLs are fixed to the official APIs, so a member cannot make the server reach the internal network.
+- **Embedding model stays instance-wide:** vectors from different models are not comparable.
+- **Admins do not see them:** admins never view or manage users' providers or keys, and the
+  instance default models can only be instance models.
+
+!!! info "No silent fallback"
+    If a provider rejects a user's key (HTTP 401 or 403), the report or idea fails with
+    `AI_KEY_REJECTED` and is not retried. newsp never falls back to an instance model.
+
 ## Instance settings
 
 In **Admin → Settings**:

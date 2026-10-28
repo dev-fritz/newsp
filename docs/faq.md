@@ -28,6 +28,13 @@ topics. It can take a while on large databases.
 Only to what you configure. Sources are fetched from their public endpoints, and prompts go to the
 AI provider you choose. With a local model nothing leaves your network. Keys are encrypted at rest.
 
+## Can I use my own API key?
+
+Yes, if the admin keeps BYOK enabled (on by default). Add your OpenAI, Anthropic or Gemini key under
+**Profile → My AI providers**. Keys are encrypted and never shown again, and costs go to your
+provider account. Local servers are not available for personal keys. See
+[Configuration](configuration.md#users-own-keys-byok).
+
 ## Why did my report fail with "no items"?
 
 No collected item matched the window and your filters. Check **Admin → Sources** for errors, use
