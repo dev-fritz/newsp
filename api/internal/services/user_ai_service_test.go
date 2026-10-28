@@ -158,6 +158,35 @@ func TestOwnModelsAreChatOnly(t *testing.T) {
 	require.NoError(t, err)
 }
 
+func TestOwnModelsRejectBlankNames(t *testing.T) {
+	t.Parallel()
+	owner := member.UserID
+	mp := modelOf(&owner)
+
+	t.Run("create with a blank name", func(t *testing.T) {
+		t.Parallel()
+		svc, d := newUserAIService(t, true, nil)
+		d.store.EXPECT().GetProvider(gomock.Any(), mp.Provider.ID).Return(mp.Provider, nil)
+		// CreateModel on the store is not expected.
+		_, err := svc.CreateModel(context.Background(), member, mp.Provider.ID, "   ", "")
+		requireCode(t, err, "VALIDATION_FAILED")
+		appErr, _ := asAppErr(err)
+		assert.Equal(t, map[string]string{"name": "required"}, appErr.Fields)
+	})
+
+	t.Run("update with a blank display name", func(t *testing.T) {
+		t.Parallel()
+		svc, d := newUserAIService(t, true, nil)
+		d.store.EXPECT().GetModel(gomock.Any(), mp.Model.ID).Return(mp, nil)
+		// UpdateModel on the store is not expected.
+		blank := "  "
+		_, err := svc.UpdateModel(context.Background(), member, mp.Model.ID, services.ModelChange{DisplayName: &blank})
+		requireCode(t, err, "VALIDATION_FAILED")
+		appErr, _ := asAppErr(err)
+		assert.Equal(t, map[string]string{"display_name": "required"}, appErr.Fields)
+	})
+}
+
 // failingProvider rejects every key.
 type failingProvider struct{ stubProvider }
 

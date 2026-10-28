@@ -214,6 +214,9 @@ func (s *UserAIService) CreateModel(ctx context.Context, actor auth.Identity, pr
 	}
 	now := s.now()
 	name = strings.TrimSpace(name)
+	if name == "" {
+		return models.AIModel{}, apperrors.Validation("invalid request", map[string]string{"name": "required"})
+	}
 	display := strings.TrimSpace(displayName)
 	if display == "" {
 		display = name
@@ -242,6 +245,9 @@ func (s *UserAIService) UpdateModel(ctx context.Context, actor auth.Identity, id
 	}
 	if change.DisplayName != nil {
 		m.DisplayName = strings.TrimSpace(*change.DisplayName)
+		if m.DisplayName == "" {
+			return models.AIModel{}, apperrors.Validation("invalid request", map[string]string{"display_name": "required"})
+		}
 	}
 	if change.Enabled != nil {
 		m.Enabled = *change.Enabled
