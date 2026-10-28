@@ -27,7 +27,7 @@ export function OwnProvidersSection() {
     <SettingsSection
       id="s-own-providers"
       title={t("ownProviders.title")}
-      hint={t("ownProviders.hint")}
+      hint={byokOff ? t("ownProviders.hintDisabled") : t("ownProviders.hint")}
     >
       {query.isPending ? (
         <ListSkeleton rows={3} />

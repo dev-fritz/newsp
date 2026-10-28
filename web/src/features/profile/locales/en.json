@@ -38,13 +38,14 @@
     "report": "Reports",
     "idea": "Ideas",
     "default": "Instance default",
-    "unavailable": "Unavailable — using the instance default",
+    "unavailable": "Unavailable — pick another model",
     "local": "local",
     "own": "yours"
   },
   "ownProviders": {
     "title": "My AI providers",
     "hint": "Use your own API key. Reports and ideas can then use these models: pick them in “Models” above. The key is encrypted and never shown again, and the costs go to your account at the provider.",
+    "hintDisabled": "API keys you connected. They are not used while the admin keeps this option off.",
     "disabledNotice": "The admin turned off personal AI keys on this instance. Your keys stay stored and are not used; reports and ideas use the instance models. You can remove them.",
     "kinds": {
       "openai": "OpenAI",

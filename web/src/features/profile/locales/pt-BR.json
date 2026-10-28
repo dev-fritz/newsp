@@ -38,13 +38,14 @@
     "report": "Relatórios",
     "idea": "Ideias",
     "default": "Padrão da instância",
-    "unavailable": "Indisponível — usando o padrão da instância",
+    "unavailable": "Indisponível — escolha outro modelo",
     "local": "local",
     "own": "seu"
   },
   "ownProviders": {
     "title": "Meus provedores de IA",
     "hint": "Use a sua própria chave de API. Relatórios e ideias passam a poder usar esses modelos: escolha-os em “Modelos”, acima. A chave é criptografada e nunca mais é exibida, e os custos vão para a sua conta no provedor.",
+    "hintDisabled": "Chaves de API que você conectou. Elas não são usadas enquanto o admin mantiver esta opção desligada.",
     "disabledNotice": "O admin desativou as chaves de IA próprias nesta instância. Suas chaves continuam guardadas e não são usadas; relatórios e ideias usam os modelos da instância. Você pode removê-las.",
     "kinds": {
       "openai": "OpenAI",

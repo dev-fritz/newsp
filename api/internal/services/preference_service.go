@@ -125,8 +125,9 @@ func (s *PreferenceService) Update(ctx context.Context, actor auth.Identity, in 
 		return PreferenceView{}, fmt.Errorf("update preferences: %w", err)
 	}
 	// A model already saved for the field is kept as is: it was checked when it
-	// was chosen, and EffectiveModels falls back while it is unusable (BYOK off,
-	// disabled). Revalidating it would block saving unrelated fields.
+	// was chosen, and revalidating it would block saving unrelated fields. While
+	// it is unusable, EffectiveModels falls back for own models (BYOK off,
+	// disabled); a disabled instance model fails until the user picks another.
 	for _, pick := range []struct {
 		field    string
 		id, kept *uuid.UUID
