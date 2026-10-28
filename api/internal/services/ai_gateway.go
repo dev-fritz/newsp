@@ -50,8 +50,9 @@ func NewAIGateway(store AIStore, settings SettingsStore, box SecretBox, factory 
 	return &AIGateway{store: store, settings: settings, box: box, factory: factory, now: now}
 }
 
-// client resolves an enabled model of the wanted capability.
-func (g *AIGateway) client(ctx context.Context, modelID uuid.UUID, capability models.ModelCapability) (ai.Provider, ResolvedModel, error) {
+// client resolves an enabled model of the wanted capability. A model of a
+// user's own provider (BYOK) serves only that user, and only while BYOK is on.
+func (g *AIGateway) client(ctx context.Context, modelID uuid.UUID, capability models.ModelCapability, userID *uuid.UUID) (ai.Provider, ResolvedModel, error) {
 	mp, err := g.store.GetModel(ctx, modelID)
 	if errors.Is(err, repositories.ErrNotFound) {
 		return nil, ResolvedModel{}, ErrModelUnavailable
@@ -61,6 +62,18 @@ func (g *AIGateway) client(ctx context.Context, modelID uuid.UUID, capability mo
 	}
 	if !mp.Model.Enabled || !mp.Provider.Enabled || mp.Model.Capability != capability {
 		return nil, ResolvedModel{}, ErrModelUnavailable
+	}
+	if owner := mp.Provider.UserID; owner != nil {
+		if userID == nil || *userID != *owner {
+			return nil, ResolvedModel{}, ErrModelUnavailable
+		}
+		settings, err := g.settings.Get(ctx)
+		if err != nil {
+			return nil, ResolvedModel{}, err
+		}
+		if !settings.BYOKEnabled {
+			return nil, ResolvedModel{}, ErrModelUnavailable
+		}
 	}
 	provider, err := providerClient(mp.Provider, g.box, g.factory)
 	if err != nil {
@@ -84,7 +97,7 @@ func providerClient(p models.AIProvider, box SecretBox, factory ProviderFactory)
 
 // Chat sends req to the chat model modelID and records its usage.
 func (g *AIGateway) Chat(ctx context.Context, modelID uuid.UUID, purpose models.UsagePurpose, userID *uuid.UUID, req ai.ChatRequest) (ai.ChatResponse, ResolvedModel, error) {
-	provider, model, err := g.client(ctx, modelID, models.CapabilityChat)
+	provider, model, err := g.client(ctx, modelID, models.CapabilityChat, userID)
 	if err != nil {
 		return ai.ChatResponse{}, model, err
 	}
@@ -98,7 +111,7 @@ func (g *AIGateway) Chat(ctx context.Context, modelID uuid.UUID, purpose models.
 func (g *AIGateway) GenerateJSON(ctx context.Context, modelID uuid.UUID, purpose models.UsagePurpose, userID *uuid.UUID,
 	req ai.ChatRequest, dst any, validate func() error,
 ) (ResolvedModel, error) {
-	provider, model, err := g.client(ctx, modelID, models.CapabilityChat)
+	provider, model, err := g.client(ctx, modelID, models.CapabilityChat, userID)
 	if err != nil {
 		return model, err
 	}
@@ -122,7 +135,7 @@ func (g *AIGateway) embedder(ctx context.Context) (ai.Provider, ResolvedModel, e
 	if settings.EmbeddingModelID == nil {
 		return nil, ResolvedModel{}, ErrEmbeddingModelNotSet
 	}
-	return g.client(ctx, *settings.EmbeddingModelID, models.CapabilityEmbedding)
+	return g.client(ctx, *settings.EmbeddingModelID, models.CapabilityEmbedding, nil)
 }
 
 // Embed embeds texts with the instance embedding model, in batches. It returns

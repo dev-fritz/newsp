@@ -76,6 +76,7 @@
     "NO_ITEMS": "Não há notícias coletadas no período para gerar ideias.",
     "AI_REFUSED": "O modelo recusou o pedido. Tente com outro foco.",
     "AI_INVALID_OUTPUT": "O modelo devolveu uma resposta inválida. Tente de novo.",
+    "AI_KEY_REJECTED": "O provedor de IA recusou a chave de API. Se o modelo é seu, confira a chave em Perfil → Meus provedores; senão, avise um admin.",
     "AI_FAILURE": "A geração falhou. Tente de novo em instantes.",
     "CANCELED": "A geração foi cancelada.",
     "IDEA_NOT_FOUND": "Ideia não encontrada.",

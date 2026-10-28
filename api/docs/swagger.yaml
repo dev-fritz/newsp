@@ -79,6 +79,10 @@ definitions:
         type: boolean
       name:
         type: string
+      own:
+        description: Own is true when the caller's own provider (BYOK) serves the
+          model.
+        type: boolean
       provider_name:
         type: string
     type: object
@@ -159,6 +163,33 @@ definitions:
     required:
     - capability
     - name
+    type: object
+  dtos.CreateOwnModelRequest:
+    properties:
+      display_name:
+        maxLength: 100
+        type: string
+      name:
+        maxLength: 200
+        type: string
+    required:
+    - name
+    type: object
+  dtos.CreateOwnProviderRequest:
+    properties:
+      api_key:
+        maxLength: 500
+        type: string
+      kind:
+        allOf:
+        - $ref: '#/definitions/models.ProviderKind'
+        enum:
+        - openai
+        - anthropic
+        - gemini
+    required:
+    - api_key
+    - kind
     type: object
   dtos.CreateProviderRequest:
     properties:
@@ -806,6 +837,20 @@ definitions:
       tokens_last_7d:
         type: integer
     type: object
+  dtos.OwnProvidersEnvelope:
+    properties:
+      data:
+        $ref: '#/definitions/dtos.OwnProvidersResponse'
+    type: object
+  dtos.OwnProvidersResponse:
+    properties:
+      byok_enabled:
+        type: boolean
+      providers:
+        items:
+          $ref: '#/definitions/dtos.ProviderResponse'
+        type: array
+    type: object
   dtos.PageMeta:
     properties:
       limit:
@@ -1022,7 +1067,7 @@ definitions:
       error:
         description: |-
           Error is a stable code (NO_ITEMS, REPORT_MODEL_NOT_SET, AI_REFUSED,
-          AI_INVALID_OUTPUT, AI_FAILURE) for failed reports.
+          AI_INVALID_OUTPUT, AI_KEY_REJECTED, AI_FAILURE) for failed reports.
         type: string
       focus:
         type: string
@@ -1066,7 +1111,7 @@ definitions:
       error:
         description: |-
           Error is a stable code (NO_ITEMS, REPORT_MODEL_NOT_SET, AI_REFUSED,
-          AI_INVALID_OUTPUT, AI_FAILURE) for failed reports.
+          AI_INVALID_OUTPUT, AI_KEY_REJECTED, AI_FAILURE) for failed reports.
         type: string
       focus:
         type: string
@@ -1132,6 +1177,10 @@ definitions:
     type: object
   dtos.SettingsResponse:
     properties:
+      byok_enabled:
+        description: BYOKEnabled lets users connect their own AI providers (bring
+          your own key).
+        type: boolean
       default_idea_model_id:
         type: string
       default_report_model_id:
@@ -1302,6 +1351,15 @@ definitions:
       enabled:
         type: boolean
     type: object
+  dtos.UpdateOwnProviderRequest:
+    properties:
+      api_key:
+        maxLength: 500
+        minLength: 1
+        type: string
+      enabled:
+        type: boolean
+    type: object
   dtos.UpdateProviderRequest:
     properties:
       api_key:
@@ -1319,6 +1377,8 @@ definitions:
     type: object
   dtos.UpdateSettingsRequest:
     properties:
+      byok_enabled:
+        type: boolean
       default_idea_model_id:
         type: string
       default_report_model_id:
@@ -2423,7 +2483,9 @@ paths:
       - admin
   /api/v1/ai/models:
     get:
-      description: Enabled chat models of enabled providers, for the profile screen.
+      description: Enabled chat models of the instance's enabled providers, plus the
+        caller's own models while using own keys is allowed (own=true), for the profile
+        screen.
       produces:
       - application/json
       responses:
@@ -3051,6 +3113,302 @@ paths:
       summary: Current user
       tags:
       - me
+  /api/v1/me/ai/models/{id}:
+    delete:
+      description: Preferences pointing at it fall back to the instance defaults.
+      parameters:
+      - description: Model ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete a model of my own provider
+      tags:
+      - me-ai
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: Model ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Changes
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.UpdateModelRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.ModelEnvelope'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Rename, enable or disable a model of my own provider
+      tags:
+      - me-ai
+  /api/v1/me/ai/providers:
+    get:
+      description: Works while own keys are turned off (byok_enabled=false), so the
+        profile can explain why the section is hidden.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.OwnProvidersEnvelope'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List my own AI providers with their models
+      tags:
+      - me-ai
+    post:
+      consumes:
+      - application/json
+      description: Only openai, anthropic and gemini, at their official URLs, one
+        per kind. The key is encrypted and never returned. Returns 409 PROVIDER_KIND_TAKEN
+        when the kind is already connected and 422 BYOK_DISABLED when an admin turned
+        own keys off.
+      parameters:
+      - description: Provider
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.CreateOwnProviderRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dtos.ProviderEnvelope'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Connect my own AI provider
+      tags:
+      - me-ai
+  /api/v1/me/ai/providers/{id}:
+    delete:
+      description: Works while own keys are turned off, so users can always take their
+        key back out.
+      parameters:
+      - description: Provider ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete my own AI provider, its key and its models
+      tags:
+      - me-ai
+    patch:
+      consumes:
+      - application/json
+      description: 'The key can be replaced but not removed: delete the provider instead.
+        Another user''s or an instance provider answers 404.'
+      parameters:
+      - description: Provider ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Changes
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.UpdateOwnProviderRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.ProviderEnvelope'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Replace the key of, enable or disable my own AI provider
+      tags:
+      - me-ai
+  /api/v1/me/ai/providers/{id}/models:
+    post:
+      consumes:
+      - application/json
+      description: Users' models are always chat models.
+      parameters:
+      - description: Provider ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Model
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.CreateOwnModelRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dtos.ModelEnvelope'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Register a chat model of my own provider
+      tags:
+      - me-ai
+  /api/v1/me/ai/providers/{id}/test:
+    post:
+      description: Lists the provider's models. A failed test is a 200 with ok=false
+        and a readable error.
+      parameters:
+      - description: Provider ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.ConnectionTestEnvelope'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/dtos.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Test my own provider connection
+      tags:
+      - me-ai
   /api/v1/me/password:
     put:
       consumes:

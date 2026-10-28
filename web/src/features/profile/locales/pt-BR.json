@@ -34,11 +34,108 @@
   },
   "models": {
     "title": "Modelos",
-    "hint": "Escolha entre os modelos habilitados pelo admin. Um modelo local não tem custo por uso; um modelo maior costuma escrever ideias melhores.",
+    "hint": "Escolha entre os modelos habilitados pelo admin e os dos seus próprios provedores. Um modelo local não tem custo por uso; um modelo maior costuma escrever ideias melhores.",
     "report": "Relatórios",
     "idea": "Ideias",
     "default": "Padrão da instância",
-    "local": "local"
+    "unavailable": "Indisponível — escolha outro modelo",
+    "local": "local",
+    "own": "seu"
+  },
+  "ownProviders": {
+    "title": "Meus provedores de IA",
+    "hint": "Use a sua própria chave de API. Relatórios e ideias passam a poder usar esses modelos: escolha-os em “Modelos”, acima. A chave é criptografada e nunca mais é exibida, e os custos vão para a sua conta no provedor.",
+    "hintDisabled": "Chaves de API que você conectou. Elas não são usadas enquanto o admin mantiver esta opção desligada.",
+    "disabledNotice": "O admin desativou as chaves de IA próprias nesta instância. Suas chaves continuam guardadas e não são usadas; relatórios e ideias usam os modelos da instância. Você pode removê-las.",
+    "kinds": {
+      "openai": "OpenAI",
+      "anthropic": "Anthropic",
+      "gemini": "Google Gemini"
+    },
+    "status": {
+      "connected": "Conectado",
+      "error": "Erro",
+      "untested": "Não testado",
+      "disabled": "Desativado"
+    },
+    "card": {
+      "key": "Chave {{hint}}",
+      "noKey": "Sem chave",
+      "checked": "verificado {{when}}",
+      "noModels": "Nenhum modelo cadastrado ainda. Teste a conexão e adicione os que quiser usar.",
+      "test": "Testar conexão",
+      "replaceKey": "Trocar chave",
+      "remove": "Remover",
+      "enabled": "Ativado",
+      "connect": "Conectar {{name}}",
+      "notConnected": "Não conectado"
+    },
+    "connect": {
+      "title": "Conectar {{name}}",
+      "body": "Cole a sua chave de API da {{name}}. Testamos a conexão e listamos os modelos que você pode usar.",
+      "doneTitle": "{{name}} conectado",
+      "doneBody": "Adicione os modelos de chat que quer usar. Você pode mudar isso depois.",
+      "done": "Concluir"
+    },
+    "form": {
+      "apiKey": "Chave de API",
+      "apiKeyHint": "Criptografada no servidor e nunca mais exibida. O uso é cobrado na sua conta da {{name}}.",
+      "connect": "Conectar",
+      "connecting": "Conectando…"
+    },
+    "replace": {
+      "title": "Trocar a chave da {{name}}",
+      "body": "A nova chave substitui a atual. Os modelos cadastrados são mantidos.",
+      "submit": "Trocar chave",
+      "submitting": "Trocando…"
+    },
+    "remove": {
+      "title": "Remover {{name}}?",
+      "body": "A chave e os modelos cadastrados são apagados. As preferências que usam esses modelos voltam ao padrão da instância.",
+      "confirm": "Remover provedor"
+    },
+    "test": {
+      "running": "Testando a conexão…",
+      "idle": "Ainda não testado",
+      "ok_zero": "Conexão funcionando · nenhum modelo encontrado",
+      "ok_one": "Conexão funcionando · {{count}} modelo encontrado",
+      "ok_other": "Conexão funcionando · {{count}} modelos encontrados",
+      "failed": "A conexão falhou",
+      "again": "Testar de novo",
+      "run": "Testar conexão",
+      "noDetail": "O provedor não deu mais detalhes.",
+      "noModels": "O provedor respondeu, mas não lista modelos."
+    },
+    "found": {
+      "added": "{{name}} adicionado.",
+      "filter": "Filtrar modelos",
+      "registered": "Adicionado",
+      "add": "Adicionar",
+      "addNamed": "Adicionar {{name}}",
+      "noMatch": "Nenhum modelo corresponde ao filtro.",
+      "hint": "Adicione os modelos de chat que quer usar. Modelos de embedding não são oferecidos."
+    },
+    "models": {
+      "tokens": "{{tokens}} tokens em 7 dias",
+      "enabled": "Usar {{name}}",
+      "remove": "Remover {{name}}",
+      "removeTitle": "Remover {{name}}?",
+      "removeBody": "As preferências que usam este modelo voltam ao padrão da instância.",
+      "removeConfirm": "Remover modelo"
+    },
+    "toast": {
+      "connected": "{{name}} conectado.",
+      "keyReplaced": "Chave da {{name}} trocada.",
+      "removed": "{{name}} removido.",
+      "modelRemoved": "{{name}} removido."
+    },
+    "errors": {
+      "BYOK_DISABLED": "O admin desativou os provedores de IA pessoais nesta instância.",
+      "PROVIDER_KIND_TAKEN": "Você já tem um provedor deste tipo.",
+      "MODEL_EXISTS": "Este modelo já está cadastrado.",
+      "PROVIDER_NOT_FOUND": "Provedor não encontrado. Recarregue a página.",
+      "MODEL_NOT_FOUND": "Modelo não encontrado. Recarregue a página."
+    }
   },
   "sources": {
     "title": "Fontes",

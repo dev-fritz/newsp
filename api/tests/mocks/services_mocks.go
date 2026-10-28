@@ -843,6 +843,36 @@ func (mr *MockAIStoreMockRecorder) ListProviders(ctx any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListProviders", reflect.TypeOf((*MockAIStore)(nil).ListProviders), ctx)
 }
 
+// ListUserModels mocks base method.
+func (m *MockAIStore) ListUserModels(ctx context.Context, userID uuid.UUID) ([]models.AIModel, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListUserModels", ctx, userID)
+	ret0, _ := ret[0].([]models.AIModel)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListUserModels indicates an expected call of ListUserModels.
+func (mr *MockAIStoreMockRecorder) ListUserModels(ctx, userID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListUserModels", reflect.TypeOf((*MockAIStore)(nil).ListUserModels), ctx, userID)
+}
+
+// ListUserProviders mocks base method.
+func (m *MockAIStore) ListUserProviders(ctx context.Context, userID uuid.UUID) ([]models.AIProvider, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListUserProviders", ctx, userID)
+	ret0, _ := ret[0].([]models.AIProvider)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListUserProviders indicates an expected call of ListUserProviders.
+func (mr *MockAIStoreMockRecorder) ListUserProviders(ctx, userID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListUserProviders", reflect.TypeOf((*MockAIStore)(nil).ListUserProviders), ctx, userID)
+}
+
 // RecordUsage mocks base method.
 func (m *MockAIStore) RecordUsage(ctx context.Context, u models.AIUsage) error {
 	m.ctrl.T.Helper()

@@ -8,7 +8,8 @@ import type { PreferencesValues } from "@/features/profile/schemas/profile.schem
 
 export function ModelsSection({ models }: { models: ChatModel[] }) {
   const { t } = useTranslation("profile");
-  const { control } = useFormContext<PreferencesValues>();
+  const { control, formState } = useFormContext<PreferencesValues>();
+  const { errors } = formState;
   return (
     <SettingsSection id="s-models" title={t("models.title")} hint={t("models.hint")}>
       <Controller
@@ -21,6 +22,7 @@ export function ModelsSection({ models }: { models: ChatModel[] }) {
             models={models}
             value={field.value}
             onChange={field.onChange}
+            error={errors.report_model_id?.message}
           />
         )}
       />
@@ -34,6 +36,7 @@ export function ModelsSection({ models }: { models: ChatModel[] }) {
             models={models}
             value={field.value}
             onChange={field.onChange}
+            error={errors.idea_model_id?.message}
           />
         )}
       />

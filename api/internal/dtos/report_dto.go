@@ -24,7 +24,7 @@ type ReportSummaryResponse struct {
 	Title       *string             `json:"title"`
 	Summary     *string             `json:"summary"`
 	// Error is a stable code (NO_ITEMS, REPORT_MODEL_NOT_SET, AI_REFUSED,
-	// AI_INVALID_OUTPUT, AI_FAILURE) for failed reports.
+	// AI_INVALID_OUTPUT, AI_KEY_REJECTED, AI_FAILURE) for failed reports.
 	Error       *string    `json:"error"`
 	CreatedAt   time.Time  `json:"created_at"`
 	CompletedAt *time.Time `json:"completed_at"`

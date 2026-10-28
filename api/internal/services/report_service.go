@@ -34,6 +34,8 @@ const (
 	ReportErrRefused   = "AI_REFUSED"
 	ReportErrInvalid   = "AI_INVALID_OUTPUT"
 	ReportErrAIFailure = "AI_FAILURE"
+	// ReportErrKeyRejected: the provider answered 401/403 to the API key.
+	ReportErrKeyRejected = "AI_KEY_REJECTED"
 )
 
 // errEmailNotVerified blocks manual generations until the account confirms its
@@ -545,7 +547,15 @@ func aiErrorCode(err error) string {
 		return ReportErrRefused
 	case strings.Contains(err.Error(), "did not match the schema"):
 		return ReportErrInvalid
+	case isKeyRejected(err):
+		return ReportErrKeyRejected
 	default:
 		return ReportErrAIFailure
 	}
+}
+
+// isKeyRejected reports whether the provider refused the API key.
+func isKeyRejected(err error) bool {
+	var apiErr *ai.APIError
+	return errors.As(err, &apiErr) && apiErr.KeyRejected()
 }

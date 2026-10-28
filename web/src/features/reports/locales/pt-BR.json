@@ -126,6 +126,7 @@
     "REPORT_MODEL_NOT_SET": "Nenhum modelo de IA configurado para relatórios — peça a um admin",
     "AI_REFUSED": "O modelo de IA recusou gerar este relatório. Tente outro foco ou outra janela.",
     "AI_INVALID_OUTPUT": "O modelo respondeu em um formato inválido. Tente gerar de novo.",
+    "AI_KEY_REJECTED": "O provedor de IA recusou a chave de API. Se o modelo é seu, confira a chave em Perfil → Meus provedores; senão, avise um admin.",
     "AI_FAILURE": "O provedor de IA falhou ao gerar o relatório. Tente de novo em instantes.",
     "REPORT_IN_PROGRESS": "Já existe um relatório sendo gerado. Aguarde ele terminar.",
     "generic": "Não foi possível gerar o relatório. Tente de novo."

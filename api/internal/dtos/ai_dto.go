@@ -29,6 +29,27 @@ type CreateModelRequest struct {
 	Capability  models.ModelCapability `json:"capability" validate:"required,oneof=chat embedding" enums:"chat,embedding"`
 }
 
+// CreateOwnProviderRequest connects one of the caller's own hosted providers.
+// The base URL is fixed to the official one and the name comes from the kind.
+type CreateOwnProviderRequest struct {
+	Kind   models.ProviderKind `json:"kind" validate:"required,oneof=openai anthropic gemini" enums:"openai,anthropic,gemini"`
+	APIKey string              `json:"api_key" validate:"required,max=500"`
+}
+
+// UpdateOwnProviderRequest changes one of the caller's own providers. The key
+// can be replaced but not removed: delete the provider instead.
+type UpdateOwnProviderRequest struct {
+	APIKey  *string `json:"api_key" validate:"omitempty,min=1,max=500"`
+	Enabled *bool   `json:"enabled"`
+}
+
+// CreateOwnModelRequest registers a chat model of the caller's own provider.
+// Users' models are always chat models.
+type CreateOwnModelRequest struct {
+	Name        string `json:"name" validate:"required,max=200"`
+	DisplayName string `json:"display_name" validate:"omitempty,max=100"`
+}
+
 // UpdateModelRequest changes a model.
 type UpdateModelRequest struct {
 	DisplayName *string `json:"display_name" validate:"omitempty,min=1,max=100"`
@@ -76,6 +97,18 @@ func NewProviderResponse(p models.AIProvider, keyHint string) ProviderResponse {
 	}
 }
 
+// OwnProvidersResponse is what the profile shows: whether users' own keys are
+// allowed on this instance and the caller's own providers.
+type OwnProvidersResponse struct {
+	BYOKEnabled bool               `json:"byok_enabled"`
+	Providers   []ProviderResponse `json:"providers"`
+}
+
+// OwnProvidersEnvelope wraps OwnProvidersResponse.
+type OwnProvidersEnvelope struct {
+	Data OwnProvidersResponse `json:"data"`
+}
+
 // ConnectionTestResponse is the result of a connection test.
 type ConnectionTestResponse struct {
 	OK     bool     `json:"ok"`
@@ -90,6 +123,8 @@ type ChatModelResponse struct {
 	Name         string `json:"name"`
 	ProviderName string `json:"provider_name"`
 	Local        bool   `json:"local"`
+	// Own is true when the caller's own provider (BYOK) serves the model.
+	Own bool `json:"own"`
 }
 
 // SettingsResponse is the instance configuration.
@@ -103,6 +138,8 @@ type SettingsResponse struct {
 	// InactivityPauseDays pauses reports and ideas of accounts not seen for
 	// this many days; 0 never pauses.
 	InactivityPauseDays int `json:"inactivity_pause_days"`
+	// BYOKEnabled lets users connect their own AI providers (bring your own key).
+	BYOKEnabled bool `json:"byok_enabled"`
 	// MailConfigured tells whether e-mail delivery works; signup needs it.
 	MailConfigured bool      `json:"mail_configured"`
 	UpdatedAt      time.Time `json:"updated_at"`
@@ -118,6 +155,7 @@ type UpdateSettingsRequest struct {
 	IdeaSimilarityThreshold *float32 `json:"idea_similarity_threshold" validate:"omitempty,min=0.5,max=0.99"`
 	SignupEnabled           *bool    `json:"signup_enabled"`
 	InactivityPauseDays     *int     `json:"inactivity_pause_days" validate:"omitempty,min=0,max=3650"`
+	BYOKEnabled             *bool    `json:"byok_enabled"`
 }
 
 // ProviderEnvelope wraps ProviderResponse.

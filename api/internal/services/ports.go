@@ -97,12 +97,14 @@ type AIStore interface {
 	SetProviderCheck(ctx context.Context, id uuid.UUID, at time.Time, checkErr *string) error
 	GetProvider(ctx context.Context, id uuid.UUID) (models.AIProvider, error)
 	ListProviders(ctx context.Context) ([]models.AIProvider, error)
+	ListUserProviders(ctx context.Context, userID uuid.UUID) ([]models.AIProvider, error)
 	DeleteProvider(ctx context.Context, id uuid.UUID) error
 	CreateModel(ctx context.Context, m models.AIModel) error
 	UpdateModel(ctx context.Context, m models.AIModel) error
 	DeleteModel(ctx context.Context, id uuid.UUID) error
 	GetModel(ctx context.Context, id uuid.UUID) (repositories.ModelWithProvider, error)
 	ListModels(ctx context.Context) ([]models.AIModel, error)
+	ListUserModels(ctx context.Context, userID uuid.UUID) ([]models.AIModel, error)
 	RecordUsage(ctx context.Context, u models.AIUsage) error
 	TokensSince(ctx context.Context, since time.Time) (map[uuid.UUID]int64, error)
 }

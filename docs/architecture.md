@@ -34,7 +34,8 @@ web app's types are generated from it.
 - **Collection:** `sources` (kind, config as JSON, interval, next run, last error) one-to-many
   `items` (unique `external_id` per source, URL, title, summary, author, date, metrics, extracted
   text, `embedding vector(768)`, embedding model).
-- **AI:** `ai_providers` (kind, base URL, encrypted key) one-to-many `ai_models` (chat or
+- **AI:** `ai_providers` (kind, base URL, encrypted key, `user_id`: null for an instance provider,
+  the owner for a user's own provider, one per kind) one-to-many `ai_models` (chat or
   embedding), `instance_settings` (embedding model, defaults, retention, dedup threshold) and
   `ai_usage` (tokens per user, model and purpose).
 - **Profile:** `user_preferences`, one per user.
@@ -69,8 +70,8 @@ deepen an idea, send an e-mail, send a password reset, retention and embedding r
 | Requests | The browser calls `/api/*` on the web origin. The BFF adds the bearer token, refreshes it when needed and forwards to the API. Mutations must come from `APP_ORIGIN` (origin check against CSRF). |
 | API auth | Short-lived JWT access tokens (15 minutes by default), rotating refresh tokens stored hashed, role-based permissions for admin routes. |
 | Passwords and links | bcrypt (cost 12), 12 to 72 characters. Links are random 256-bit tokens, stored as SHA-256 hashes and single use: e-mail verification 24 hours, self-service reset 1 hour, invite and admin reset 7 days. Links sent by e-mail sit encrypted in the job queue and are deleted after sending. |
-| AI keys | Provider keys are encrypted with **AES-256-GCM** using `ENCRYPTION_KEY` (`pkg/secretbox`) and never returned by the API. |
-| Outbound fetches | Feeds and articles use the **SSRF-safe client** (`pkg/safehttp`): it refuses private, loopback, link-local, CGNAT, multicast and unspecified addresses, checks the resolved IP of every connection (so DNS rebinding and redirects are covered), ignores proxies, caps redirects and body size. Provider URLs are the deliberate exception, admin-only. |
+| AI keys | Provider keys are encrypted with **AES-256-GCM** using `ENCRYPTION_KEY` (`pkg/secretbox`) and never returned by the API. Users' own providers (BYOK) are limited to hosted kinds with fixed official URLs. |
+| Outbound fetches | Feeds and articles use the **SSRF-safe client** (`pkg/safehttp`): it refuses private, loopback, link-local, CGNAT, multicast and unspecified addresses, checks the resolved IP of every connection (so DNS rebinding and redirects are covered), ignores proxies, caps redirects and body size. Provider URLs are the deliberate exception, admin-only; users' own providers cannot set a URL, so they cannot reach internal addresses. |
 | Rate limits | Unauthenticated auth endpoints: 60 requests per 10 minutes per client IP. Logins: 10 attempts per 15 minutes per e-mail. Signup: 5 per hour per IP. Verification resend: 3 per hour. Password reset request: 5 per hour per IP and 3 per hour per e-mail. The client IP comes from `X-Forwarded-For` only when the direct peer is in `TRUSTED_PROXIES`. |
 | Headers and CORS | Security headers on every response, strict CORS allow-list, `*` refused in production. |
 | Production guard | `APP_ENV=production` refuses development secrets, `sslmode=disable` (unless explicitly allowed), `http://` public URLs and wildcard CORS. |

@@ -34,11 +34,108 @@
   },
   "models": {
     "title": "Models",
-    "hint": "Pick among the models enabled by the admin. A local model has no per-use cost; a larger model usually writes better ideas.",
+    "hint": "Pick among the models enabled by the admin and those of your own providers. A local model has no per-use cost; a larger model usually writes better ideas.",
     "report": "Reports",
     "idea": "Ideas",
     "default": "Instance default",
-    "local": "local"
+    "unavailable": "Unavailable — pick another model",
+    "local": "local",
+    "own": "yours"
+  },
+  "ownProviders": {
+    "title": "My AI providers",
+    "hint": "Use your own API key. Reports and ideas can then use these models: pick them in “Models” above. The key is encrypted and never shown again, and the costs go to your account at the provider.",
+    "hintDisabled": "API keys you connected. They are not used while the admin keeps this option off.",
+    "disabledNotice": "The admin turned off personal AI keys on this instance. Your keys stay stored and are not used; reports and ideas use the instance models. You can remove them.",
+    "kinds": {
+      "openai": "OpenAI",
+      "anthropic": "Anthropic",
+      "gemini": "Google Gemini"
+    },
+    "status": {
+      "connected": "Connected",
+      "error": "Error",
+      "untested": "Not tested",
+      "disabled": "Disabled"
+    },
+    "card": {
+      "key": "Key {{hint}}",
+      "noKey": "No key",
+      "checked": "checked {{when}}",
+      "noModels": "No models registered yet. Test the connection and add the ones you want to use.",
+      "test": "Test connection",
+      "replaceKey": "Replace key",
+      "remove": "Remove",
+      "enabled": "Enabled",
+      "connect": "Connect {{name}}",
+      "notConnected": "Not connected"
+    },
+    "connect": {
+      "title": "Connect {{name}}",
+      "body": "Paste your {{name}} API key. We test the connection and list the models you can use.",
+      "doneTitle": "{{name}} connected",
+      "doneBody": "Add the chat models you want to use. You can change this later.",
+      "done": "Done"
+    },
+    "form": {
+      "apiKey": "API key",
+      "apiKeyHint": "Encrypted on the server and never shown again. Usage is billed to your {{name}} account.",
+      "connect": "Connect",
+      "connecting": "Connecting…"
+    },
+    "replace": {
+      "title": "Replace {{name}} key",
+      "body": "The new key replaces the current one. Your registered models are kept.",
+      "submit": "Replace key",
+      "submitting": "Replacing…"
+    },
+    "remove": {
+      "title": "Remove {{name}}?",
+      "body": "The key and the registered models are deleted. Preferences using these models go back to the instance default.",
+      "confirm": "Remove provider"
+    },
+    "test": {
+      "running": "Testing the connection…",
+      "idle": "Not tested yet",
+      "ok_zero": "Connection works · no models found",
+      "ok_one": "Connection works · {{count}} model found",
+      "ok_other": "Connection works · {{count}} models found",
+      "failed": "The connection failed",
+      "again": "Test again",
+      "run": "Test connection",
+      "noDetail": "The provider gave no further details.",
+      "noModels": "The provider answered but lists no models."
+    },
+    "found": {
+      "added": "{{name}} added.",
+      "filter": "Filter models",
+      "registered": "Added",
+      "add": "Add",
+      "addNamed": "Add {{name}}",
+      "noMatch": "No model matches the filter.",
+      "hint": "Add the chat models you want to use. Embedding models are not offered."
+    },
+    "models": {
+      "tokens": "{{tokens}} tokens in 7 days",
+      "enabled": "Use {{name}}",
+      "remove": "Remove {{name}}",
+      "removeTitle": "Remove {{name}}?",
+      "removeBody": "Preferences using this model go back to the instance default.",
+      "removeConfirm": "Remove model"
+    },
+    "toast": {
+      "connected": "{{name}} connected.",
+      "keyReplaced": "{{name}} key replaced.",
+      "removed": "{{name}} removed.",
+      "modelRemoved": "{{name}} removed."
+    },
+    "errors": {
+      "BYOK_DISABLED": "The admin turned off personal AI providers on this instance.",
+      "PROVIDER_KIND_TAKEN": "You already have a provider of this type.",
+      "MODEL_EXISTS": "This model is already registered.",
+      "PROVIDER_NOT_FOUND": "Provider not found. Reload the page.",
+      "MODEL_NOT_FOUND": "Model not found. Reload the page."
+    }
   },
   "sources": {
     "title": "Sources",

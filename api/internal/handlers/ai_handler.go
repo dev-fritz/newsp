@@ -37,6 +37,11 @@ func (h *AIHandler) ListProviders(w http.ResponseWriter, r *http.Request) {
 		respondError(w, r, err)
 		return
 	}
+	respondJSON(w, http.StatusOK, providerResponses(views))
+}
+
+// providerResponses maps provider views with their models.
+func providerResponses(views []services.ProviderView) []dtos.ProviderResponse {
 	out := make([]dtos.ProviderResponse, len(views))
 	for i, v := range views {
 		out[i] = dtos.NewProviderResponse(v.Provider, v.KeyHint)
@@ -44,7 +49,7 @@ func (h *AIHandler) ListProviders(w http.ResponseWriter, r *http.Request) {
 			out[i].Models = append(out[i].Models, dtos.NewModelResponse(m.Model, m.TokensLast7d))
 		}
 	}
-	respondJSON(w, http.StatusOK, out)
+	return out
 }
 
 // CreateProvider godoc
@@ -262,28 +267,6 @@ func (h *AIHandler) DeleteModel(w http.ResponseWriter, r *http.Request) {
 	respondNoContent(w)
 }
 
-// ChatModels godoc
-// @Summary      Chat models available to pick
-// @Description  Enabled chat models of enabled providers, for the profile screen.
-// @Tags         ai
-// @Produce      json
-// @Success      200 {object} dtos.ChatModelListEnvelope
-// @Failure      401 {object} dtos.ErrorResponse
-// @Security     BearerAuth
-// @Router       /api/v1/ai/models [get]
-func (h *AIHandler) ChatModels(w http.ResponseWriter, r *http.Request) {
-	options, err := h.service.ChatModels(r.Context())
-	if err != nil {
-		respondError(w, r, err)
-		return
-	}
-	out := make([]dtos.ChatModelResponse, len(options))
-	for i, o := range options {
-		out[i] = dtos.ChatModelResponse{ID: o.Model.ID.String(), DisplayName: o.Model.DisplayName, Name: o.Model.Name, ProviderName: o.ProviderName, Local: o.Local}
-	}
-	respondJSON(w, http.StatusOK, out)
-}
-
 func settingsResponse(s models.InstanceSettings, reindex *uuid.UUID, mailReady bool) dtos.SettingsResponse {
 	str := func(id *uuid.UUID) *string {
 		if id == nil {
@@ -296,7 +279,7 @@ func settingsResponse(s models.InstanceSettings, reindex *uuid.UUID, mailReady b
 		EmbeddingModelID: str(s.EmbeddingModelID), DefaultReportModelID: str(s.DefaultReportModelID),
 		DefaultIdeaModelID: str(s.DefaultIdeaModelID), RetentionDays: s.RetentionDays,
 		IdeaSimilarityThreshold: s.IdeaSimilarityThreshold, SignupEnabled: s.SignupEnabled,
-		InactivityPauseDays: s.InactivityPauseDays, MailConfigured: mailReady, UpdatedAt: s.UpdatedAt, ReindexJobID: str(reindex),
+		InactivityPauseDays: s.InactivityPauseDays, BYOKEnabled: s.BYOKEnabled, MailConfigured: mailReady, UpdatedAt: s.UpdatedAt, ReindexJobID: str(reindex),
 	}
 }
 
@@ -354,7 +337,7 @@ func (h *AIHandler) UpdateSettings(w http.ResponseWriter, r *http.Request) {
 		EmbeddingModelID: parse(req.EmbeddingModelID), DefaultReportModelID: parse(req.DefaultReportModelID),
 		DefaultIdeaModelID: parse(req.DefaultIdeaModelID), RetentionDays: req.RetentionDays,
 		IdeaSimilarityThreshold: req.IdeaSimilarityThreshold, SignupEnabled: req.SignupEnabled,
-		InactivityPauseDays: req.InactivityPauseDays,
+		InactivityPauseDays: req.InactivityPauseDays, BYOKEnabled: req.BYOKEnabled,
 	})
 	if err != nil {
 		respondError(w, r, err)

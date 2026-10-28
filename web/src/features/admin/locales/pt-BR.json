@@ -371,6 +371,12 @@
         "reports": "Relatórios",
         "ideas": "Ideias"
       },
+      "byok": {
+        "title": "Chaves de IA dos usuários",
+        "body": "Se os membros podem usar as próprias chaves de provedores de IA, além dos modelos da instância.",
+        "label": "Permitir chaves de IA próprias (BYOK)",
+        "hint": "Cada usuário pode conectar a própria chave da OpenAI, Anthropic ou Gemini e usar esses modelos nos relatórios e ideias. Desligado, as chaves ficam guardadas e todos usam os modelos da instância."
+      },
       "similarity": {
         "title": "Ideias sem repetição",
         "body": "Acima deste limiar de semelhança, o modelo decide se a candidata é a mesma ideia e, se for, mescla numa nova versão.",

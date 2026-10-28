@@ -11,6 +11,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 
+	"github.com/dev-fritz/newsp/api/internal/apperrors"
 	"github.com/dev-fritz/newsp/api/internal/auth"
 	"github.com/dev-fritz/newsp/api/internal/models"
 	"github.com/dev-fritz/newsp/api/internal/repositories"
@@ -83,6 +84,7 @@ func TestUpdatePreferencesValidation(t *testing.T) {
 	svc, d := newPreferenceService(t)
 	disabled := uuid.New()
 	in.ReportModelID = &disabled
+	d.prefs.EXPECT().Get(gomock.Any(), actor.UserID).Return(models.UserPreferences{}, repositories.ErrNotFound)
 	d.models.EXPECT().GetModel(gomock.Any(), disabled).Return(repositories.ModelWithProvider{
 		Model: models.AIModel{Enabled: false, Capability: models.CapabilityChat}, Provider: models.AIProvider{Enabled: true},
 	}, nil)
@@ -147,11 +149,147 @@ func TestEffectiveModelsFallBackToDefaults(t *testing.T) {
 
 	d.settings.EXPECT().Get(gomock.Any()).Return(models.InstanceSettings{DefaultReportModelID: &defReport, DefaultIdeaModelID: &defIdea}, nil)
 	d.prefs.EXPECT().Get(gomock.Any(), userID).Return(models.UserPreferences{IdeaModelID: &own}, nil)
+	d.models.EXPECT().GetModel(gomock.Any(), own).Return(modelOf(nil), nil)
 
 	report, idea, err := svc.EffectiveModels(context.Background(), userID)
 	require.NoError(t, err)
 	assert.Equal(t, defReport, *report)
 	assert.Equal(t, own, *idea)
+}
+
+// modelOf is an enabled chat model of a provider owned by owner (nil = instance).
+func modelOf(owner *uuid.UUID) repositories.ModelWithProvider {
+	providerID := uuid.New()
+	return repositories.ModelWithProvider{
+		Model:    models.AIModel{ID: uuid.New(), ProviderID: providerID, Capability: models.CapabilityChat, Enabled: true},
+		Provider: models.AIProvider{ID: providerID, UserID: owner, Enabled: true},
+	}
+}
+
+func TestEffectiveModelsWithBYOKModels(t *testing.T) {
+	t.Parallel()
+	userID, other, def, picked := uuid.New(), uuid.New(), uuid.New(), uuid.New()
+	tests := []struct {
+		name  string
+		owner *uuid.UUID
+		byok  bool
+		tweak func(*repositories.ModelWithProvider)
+		want  uuid.UUID
+	}{
+		{"own model while BYOK is on", &userID, true, nil, picked},
+		{"own model falls back while BYOK is off", &userID, false, nil, def},
+		{"another user's model falls back", &other, true, nil, def},
+		{"own disabled model falls back", &userID, true, func(mp *repositories.ModelWithProvider) { mp.Model.Enabled = false }, def},
+		{"own model of a disabled provider falls back", &userID, true, func(mp *repositories.ModelWithProvider) { mp.Provider.Enabled = false }, def},
+		{"instance disabled model is returned as is", nil, true, func(mp *repositories.ModelWithProvider) { mp.Model.Enabled = false }, picked},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			svc, d := newPreferenceService(t)
+			mp := modelOf(tt.owner)
+			if tt.tweak != nil {
+				tt.tweak(&mp)
+			}
+			d.settings.EXPECT().Get(gomock.Any()).Return(models.InstanceSettings{DefaultReportModelID: &def, BYOKEnabled: tt.byok}, nil)
+			d.prefs.EXPECT().Get(gomock.Any(), userID).Return(models.UserPreferences{ReportModelID: &picked}, nil)
+			d.models.EXPECT().GetModel(gomock.Any(), picked).Return(mp, nil)
+
+			report, idea, err := svc.EffectiveModels(context.Background(), userID)
+			require.NoError(t, err)
+			assert.Equal(t, tt.want, *report)
+			assert.Nil(t, idea)
+		})
+	}
+}
+
+func TestUpdatePreferencesRejectsForeignOrDisabledBYOKModels(t *testing.T) {
+	t.Parallel()
+	actor := auth.Identity{UserID: uuid.New(), Role: models.RoleMember}
+	other := uuid.New()
+	tests := []struct {
+		name  string
+		owner *uuid.UUID
+		byok  bool
+	}{
+		{"another user's model", &other, true},
+		{"own model while BYOK is off", &actor.UserID, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			svc, d := newPreferenceService(t)
+			picked := uuid.New()
+			d.prefs.EXPECT().Get(gomock.Any(), actor.UserID).Return(models.UserPreferences{}, repositories.ErrNotFound)
+			d.models.EXPECT().GetModel(gomock.Any(), picked).Return(modelOf(tt.owner), nil)
+			d.settings.EXPECT().Get(gomock.Any()).Return(models.InstanceSettings{BYOKEnabled: tt.byok}, nil).AnyTimes()
+			in := validInput()
+			in.ReportModelID = &picked
+
+			_, err := svc.Update(context.Background(), actor, in)
+			appErr, ok := apperrors.As(err)
+			require.True(t, ok, "expected validation error, got %v", err)
+			assert.Equal(t, "unavailable", appErr.Fields["report_model_id"])
+		})
+	}
+}
+
+func TestUpdatePreferencesKeepsSavedModelWhileUnusable(t *testing.T) {
+	t.Parallel()
+	actor := auth.Identity{UserID: uuid.New(), Role: models.RoleMember}
+	saved, fresh := uuid.New(), uuid.New()
+
+	t.Run("re-saving the stored own model while BYOK is off succeeds", func(t *testing.T) {
+		t.Parallel()
+		svc, d := newPreferenceService(t)
+		in := validInput()
+		in.ReportModelID, in.IdeaModelID = &saved, &saved
+		// GetModel and settings are not expected: the stored choice is not revalidated.
+		d.prefs.EXPECT().Get(gomock.Any(), actor.UserID).Return(models.UserPreferences{ReportModelID: &saved, IdeaModelID: &saved}, nil).Times(2)
+		d.prefs.EXPECT().Save(gomock.Any(), gomock.Any()).DoAndReturn(func(_ context.Context, p models.UserPreferences) error {
+			require.NotNil(t, p.ReportModelID)
+			require.NotNil(t, p.IdeaModelID)
+			assert.Equal(t, saved, *p.ReportModelID)
+			assert.Equal(t, saved, *p.IdeaModelID)
+			return nil
+		})
+		d.accounts.EXPECT().UpdateLocale(gomock.Any(), actor.UserID, "pt-BR", fixedNow).Return(nil)
+		d.embedder.EXPECT().Embed(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil, "", services.ErrEmbeddingModelNotSet)
+		d.accounts.EXPECT().GetByID(gomock.Any(), actor.UserID).Return(models.User{Locale: "pt-BR"}, nil)
+
+		_, err := svc.Update(context.Background(), actor, in)
+		require.NoError(t, err)
+	})
+
+	t.Run("a new own model while BYOK is off is still rejected", func(t *testing.T) {
+		t.Parallel()
+		svc, d := newPreferenceService(t)
+		in := validInput()
+		in.ReportModelID = &fresh
+		d.prefs.EXPECT().Get(gomock.Any(), actor.UserID).Return(models.UserPreferences{ReportModelID: &saved}, nil)
+		d.models.EXPECT().GetModel(gomock.Any(), fresh).Return(modelOf(&actor.UserID), nil)
+		d.settings.EXPECT().Get(gomock.Any()).Return(models.InstanceSettings{BYOKEnabled: false}, nil)
+
+		_, err := svc.Update(context.Background(), actor, in)
+		appErr, ok := apperrors.As(err)
+		require.True(t, ok, "expected validation error, got %v", err)
+		assert.Equal(t, "unavailable", appErr.Fields["report_model_id"])
+	})
+
+	t.Run("the saved id of the other field does not exempt this one", func(t *testing.T) {
+		t.Parallel()
+		svc, d := newPreferenceService(t)
+		in := validInput()
+		in.IdeaModelID = &saved
+		d.prefs.EXPECT().Get(gomock.Any(), actor.UserID).Return(models.UserPreferences{ReportModelID: &saved}, nil)
+		d.models.EXPECT().GetModel(gomock.Any(), saved).Return(modelOf(&actor.UserID), nil)
+		d.settings.EXPECT().Get(gomock.Any()).Return(models.InstanceSettings{BYOKEnabled: false}, nil)
+
+		_, err := svc.Update(context.Background(), actor, in)
+		appErr, ok := apperrors.As(err)
+		require.True(t, ok, "expected validation error, got %v", err)
+		assert.Equal(t, "unavailable", appErr.Fields["idea_model_id"])
+	})
 }
 
 func TestGetPreferencesDefaults(t *testing.T) {

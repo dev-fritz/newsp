@@ -76,6 +76,7 @@
     "NO_ITEMS": "There are no collected items in the period to generate ideas from.",
     "AI_REFUSED": "The model refused the request. Try another focus.",
     "AI_INVALID_OUTPUT": "The model returned an invalid answer. Try again.",
+    "AI_KEY_REJECTED": "The AI provider rejected the API key. If the model is yours, check the key in Profile → My providers; otherwise, tell an admin.",
     "AI_FAILURE": "Generation failed. Try again in a moment.",
     "CANCELED": "Generation was canceled.",
     "IDEA_NOT_FOUND": "Idea not found.",

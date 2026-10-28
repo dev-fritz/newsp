@@ -1239,7 +1239,7 @@
                         "BearerAuth": []
                     }
                 ],
-                "description": "Enabled chat models of enabled providers, for the profile screen.",
+                "description": "Enabled chat models of the instance's enabled providers, plus the caller's own models while using own keys is allowed (own=true), for the profile screen.",
                 "produces": [
                     "application/json"
                 ],
@@ -2195,6 +2195,459 @@
                 }
             }
         },
+        "/api/v1/me/ai/models/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Preferences pointing at it fall back to the instance defaults.",
+                "tags": [
+                    "me-ai"
+                ],
+                "summary": "Delete a model of my own provider",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Model ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "me-ai"
+                ],
+                "summary": "Rename, enable or disable a model of my own provider",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Model ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Changes",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dtos.UpdateModelRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.ModelEnvelope"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.ErrorResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/me/ai/providers": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Works while own keys are turned off (byok_enabled=false), so the profile can explain why the section is hidden.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "me-ai"
+                ],
+                "summary": "List my own AI providers with their models",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.OwnProvidersEnvelope"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Only openai, anthropic and gemini, at their official URLs, one per kind. The key is encrypted and never returned. Returns 409 PROVIDER_KIND_TAKEN when the kind is already connected and 422 BYOK_DISABLED when an admin turned own keys off.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "me-ai"
+                ],
+                "summary": "Connect my own AI provider",
+                "parameters": [
+                    {
+                        "description": "Provider",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dtos.CreateOwnProviderRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.ProviderEnvelope"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.ErrorResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/me/ai/providers/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Works while own keys are turned off, so users can always take their key back out.",
+                "tags": [
+                    "me-ai"
+                ],
+                "summary": "Delete my own AI provider, its key and its models",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Provider ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "The key can be replaced but not removed: delete the provider instead. Another user's or an instance provider answers 404.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "me-ai"
+                ],
+                "summary": "Replace the key of, enable or disable my own AI provider",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Provider ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Changes",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dtos.UpdateOwnProviderRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.ProviderEnvelope"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.ErrorResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/me/ai/providers/{id}/models": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Users' models are always chat models.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "me-ai"
+                ],
+                "summary": "Register a chat model of my own provider",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Provider ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Model",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dtos.CreateOwnModelRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.ModelEnvelope"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.ErrorResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/me/ai/providers/{id}/test": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Lists the provider's models. A failed test is a 200 with ok=false and a readable error.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "me-ai"
+                ],
+                "summary": "Test my own provider connection",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Provider ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.ConnectionTestEnvelope"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.ErrorResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/me/password": {
             "put": {
                 "security": [
@@ -2966,6 +3419,10 @@
                 "name": {
                     "type": "string"
                 },
+                "own": {
+                    "description": "Own is true when the caller's own provider (BYOK) serves the model.",
+                    "type": "boolean"
+                },
                 "provider_name": {
                     "type": "string"
                 }
@@ -3087,6 +3544,47 @@
                 "name": {
                     "type": "string",
                     "maxLength": 200
+                }
+            }
+        },
+        "dtos.CreateOwnModelRequest": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "display_name": {
+                    "type": "string",
+                    "maxLength": 100
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 200
+                }
+            }
+        },
+        "dtos.CreateOwnProviderRequest": {
+            "type": "object",
+            "required": [
+                "api_key",
+                "kind"
+            ],
+            "properties": {
+                "api_key": {
+                    "type": "string",
+                    "maxLength": 500
+                },
+                "kind": {
+                    "enum": [
+                        "openai",
+                        "anthropic",
+                        "gemini"
+                    ],
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/models.ProviderKind"
+                        }
+                    ]
                 }
             }
         },
@@ -4043,6 +4541,28 @@
                 }
             }
         },
+        "dtos.OwnProvidersEnvelope": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/dtos.OwnProvidersResponse"
+                }
+            }
+        },
+        "dtos.OwnProvidersResponse": {
+            "type": "object",
+            "properties": {
+                "byok_enabled": {
+                    "type": "boolean"
+                },
+                "providers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dtos.ProviderResponse"
+                    }
+                }
+            }
+        },
         "dtos.PageMeta": {
             "type": "object",
             "properties": {
@@ -4355,7 +4875,7 @@
                     "type": "string"
                 },
                 "error": {
-                    "description": "Error is a stable code (NO_ITEMS, REPORT_MODEL_NOT_SET, AI_REFUSED,\nAI_INVALID_OUTPUT, AI_FAILURE) for failed reports.",
+                    "description": "Error is a stable code (NO_ITEMS, REPORT_MODEL_NOT_SET, AI_REFUSED,\nAI_INVALID_OUTPUT, AI_KEY_REJECTED, AI_FAILURE) for failed reports.",
                     "type": "string"
                 },
                 "focus": {
@@ -4421,7 +4941,7 @@
                     "type": "string"
                 },
                 "error": {
-                    "description": "Error is a stable code (NO_ITEMS, REPORT_MODEL_NOT_SET, AI_REFUSED,\nAI_INVALID_OUTPUT, AI_FAILURE) for failed reports.",
+                    "description": "Error is a stable code (NO_ITEMS, REPORT_MODEL_NOT_SET, AI_REFUSED,\nAI_INVALID_OUTPUT, AI_KEY_REJECTED, AI_FAILURE) for failed reports.",
                     "type": "string"
                 },
                 "focus": {
@@ -4524,6 +5044,10 @@
         "dtos.SettingsResponse": {
             "type": "object",
             "properties": {
+                "byok_enabled": {
+                    "description": "BYOKEnabled lets users connect their own AI providers (bring your own key).",
+                    "type": "boolean"
+                },
                 "default_idea_model_id": {
                     "type": "string"
                 },
@@ -4765,6 +5289,19 @@
                 }
             }
         },
+        "dtos.UpdateOwnProviderRequest": {
+            "type": "object",
+            "properties": {
+                "api_key": {
+                    "type": "string",
+                    "maxLength": 500,
+                    "minLength": 1
+                },
+                "enabled": {
+                    "type": "boolean"
+                }
+            }
+        },
         "dtos.UpdateProviderRequest": {
             "type": "object",
             "properties": {
@@ -4789,6 +5326,9 @@
         "dtos.UpdateSettingsRequest": {
             "type": "object",
             "properties": {
+                "byok_enabled": {
+                    "type": "boolean"
+                },
                 "default_idea_model_id": {
                     "type": "string"
                 },

@@ -12,7 +12,7 @@ import (
 	"github.com/dev-fritz/newsp/api/internal/models"
 )
 
-const providerColumns = `id, name, kind, base_url, api_key_enc, enabled, last_check_at, last_error, created_at, updated_at`
+const providerColumns = `id, user_id, name, kind, base_url, api_key_enc, enabled, last_check_at, last_error, created_at, updated_at`
 
 const modelColumns = `m.id, m.provider_id, m.name, m.display_name, m.capability, m.enabled, m.created_at, m.updated_at`
 
@@ -34,7 +34,7 @@ func NewAIRepository(db *sql.DB) *AIRepository {
 
 func scanProvider(row interface{ Scan(...any) error }) (models.AIProvider, error) {
 	var p models.AIProvider
-	err := row.Scan(&p.ID, &p.Name, &p.Kind, &p.BaseURL, &p.APIKeyEnc, &p.Enabled, &p.LastCheckAt, &p.LastError, &p.CreatedAt, &p.UpdatedAt)
+	err := row.Scan(&p.ID, &p.UserID, &p.Name, &p.Kind, &p.BaseURL, &p.APIKeyEnc, &p.Enabled, &p.LastCheckAt, &p.LastError, &p.CreatedAt, &p.UpdatedAt)
 	return p, err
 }
 
@@ -47,9 +47,9 @@ func scanModel(row interface{ Scan(...any) error }, extra ...any) (models.AIMode
 
 // CreateProvider inserts a provider. A taken name returns ErrDuplicate.
 func (r *AIRepository) CreateProvider(ctx context.Context, p models.AIProvider) error {
-	const q = `INSERT INTO ai_providers (id, name, kind, base_url, api_key_enc, enabled, created_at, updated_at)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $7)`
-	_, err := database.Conn(ctx, r.db).ExecContext(ctx, q, p.ID, p.Name, p.Kind, p.BaseURL, p.APIKeyEnc, p.Enabled, p.CreatedAt)
+	const q = `INSERT INTO ai_providers (id, user_id, name, kind, base_url, api_key_enc, enabled, created_at, updated_at)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $8)`
+	_, err := database.Conn(ctx, r.db).ExecContext(ctx, q, p.ID, p.UserID, p.Name, p.Kind, p.BaseURL, p.APIKeyEnc, p.Enabled, p.CreatedAt)
 	if err != nil {
 		return fmt.Errorf("create provider: %w", translate(err))
 	}
@@ -79,9 +79,18 @@ func (r *AIRepository) GetProvider(ctx context.Context, id uuid.UUID) (models.AI
 	return p, nil
 }
 
-// ListProviders returns every provider by name (a handful at most).
+// ListProviders returns the instance providers (admin-managed) by name (a handful at most).
 func (r *AIRepository) ListProviders(ctx context.Context) ([]models.AIProvider, error) {
-	rows, err := database.Conn(ctx, r.db).QueryContext(ctx, `SELECT `+providerColumns+` FROM ai_providers ORDER BY lower(name)`)
+	return r.queryProviders(ctx, `SELECT `+providerColumns+` FROM ai_providers WHERE user_id IS NULL ORDER BY lower(name)`)
+}
+
+// ListUserProviders returns the providers owned by a user, ordered by kind.
+func (r *AIRepository) ListUserProviders(ctx context.Context, userID uuid.UUID) ([]models.AIProvider, error) {
+	return r.queryProviders(ctx, `SELECT `+providerColumns+` FROM ai_providers WHERE user_id = $1 ORDER BY kind`, userID)
+}
+
+func (r *AIRepository) queryProviders(ctx context.Context, q string, args ...any) ([]models.AIProvider, error) {
+	rows, err := database.Conn(ctx, r.db).QueryContext(ctx, q, args...)
 	if err != nil {
 		return nil, fmt.Errorf("list providers: %w", err)
 	}
@@ -129,22 +138,31 @@ func (r *AIRepository) DeleteModel(ctx context.Context, id uuid.UUID) error {
 
 // GetModel returns a model with its provider, or ErrNotFound.
 func (r *AIRepository) GetModel(ctx context.Context, id uuid.UUID) (ModelWithProvider, error) {
-	q := `SELECT ` + modelColumns + `, p.id, p.name, p.kind, p.base_url, p.api_key_enc, p.enabled, p.last_check_at, p.last_error, p.created_at, p.updated_at
+	q := `SELECT ` + modelColumns + `, p.id, p.user_id, p.name, p.kind, p.base_url, p.api_key_enc, p.enabled, p.last_check_at, p.last_error, p.created_at, p.updated_at
 		FROM ai_models m JOIN ai_providers p ON p.id = m.provider_id WHERE m.id = $1`
 	var p models.AIProvider
 	m, err := scanModel(database.Conn(ctx, r.db).QueryRowContext(ctx, q, id),
-		&p.ID, &p.Name, &p.Kind, &p.BaseURL, &p.APIKeyEnc, &p.Enabled, &p.LastCheckAt, &p.LastError, &p.CreatedAt, &p.UpdatedAt)
+		&p.ID, &p.UserID, &p.Name, &p.Kind, &p.BaseURL, &p.APIKeyEnc, &p.Enabled, &p.LastCheckAt, &p.LastError, &p.CreatedAt, &p.UpdatedAt)
 	if err != nil {
 		return ModelWithProvider{}, fmt.Errorf("get model: %w", translate(err))
 	}
 	return ModelWithProvider{Model: m, Provider: p}, nil
 }
 
-// ListModels returns every model ordered by provider and name.
+// ListModels returns the models of instance providers ordered by provider and name.
 func (r *AIRepository) ListModels(ctx context.Context) ([]models.AIModel, error) {
-	q := `SELECT ` + modelColumns + ` FROM ai_models m JOIN ai_providers p ON p.id = m.provider_id
+	return r.queryModels(ctx, `WHERE p.user_id IS NULL`)
+}
+
+// ListUserModels returns the models of the providers owned by a user, ordered by provider and name.
+func (r *AIRepository) ListUserModels(ctx context.Context, userID uuid.UUID) ([]models.AIModel, error) {
+	return r.queryModels(ctx, `WHERE p.user_id = $1`, userID)
+}
+
+func (r *AIRepository) queryModels(ctx context.Context, where string, args ...any) ([]models.AIModel, error) {
+	q := `SELECT ` + modelColumns + ` FROM ai_models m JOIN ai_providers p ON p.id = m.provider_id ` + where + `
 		ORDER BY lower(p.name), lower(m.display_name)`
-	rows, err := database.Conn(ctx, r.db).QueryContext(ctx, q)
+	rows, err := database.Conn(ctx, r.db).QueryContext(ctx, q, args...)
 	if err != nil {
 		return nil, fmt.Errorf("list models: %w", err)
 	}
