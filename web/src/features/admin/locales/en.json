@@ -369,9 +369,13 @@
         "title": "Defaults for new users",
         "body": "Each user can change them in their own profile.",
         "reports": "Reports",
-        "ideas": "Ideas",
-        "byok": "Allow users' own AI keys (BYOK)",
-        "byokBody": "Each user can connect their own OpenAI, Anthropic or Gemini key and use those models in reports and ideas. When off, the keys stay stored and everyone uses the instance models."
+        "ideas": "Ideas"
+      },
+      "byok": {
+        "title": "Users' own AI keys",
+        "body": "Whether members can use their own AI provider keys, on top of the instance models.",
+        "label": "Allow users' own AI keys (BYOK)",
+        "hint": "Each user can connect their own OpenAI, Anthropic or Gemini key and use those models in reports and ideas. When off, the keys stay stored and everyone uses the instance models."
       },
       "similarity": {
         "title": "Ideas without repetition",

@@ -164,15 +164,18 @@ function SettingsForm({ settings, providers }: { settings: Settings; providers: 
             )}
           />
         </div>
+      </SettingsSection>
+
+      <SettingsSection title={t("ai.settings.byok.title")} description={t("ai.settings.byok.body")}>
         <Controller
           control={form.control}
           name="byokEnabled"
           render={({ field }) => (
             <div className="flex items-start justify-between gap-4">
               <Label htmlFor="byok-enabled" className="flex flex-col items-start gap-1">
-                {t("ai.settings.defaults.byok")}
+                {t("ai.settings.byok.label")}
                 <span className="text-xs font-normal text-subtle-foreground">
-                  {t("ai.settings.defaults.byokBody")}
+                  {t("ai.settings.byok.hint")}
                 </span>
               </Label>
               <Switch
