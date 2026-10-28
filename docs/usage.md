@@ -67,6 +67,9 @@ provider per kind (OpenAI, Anthropic or Gemini), paste the key and run the conne
 register the chat models you want from the list it returns. Keys are encrypted and never shown
 again. Your models appear under **Models**, marked *yours*, and you can pick them for reports and
 ideas. Usage of the last 7 days is shown per model. Provider costs are billed by the provider.
+If the admin turns BYOK off, your models are not used (reports and ideas use the instance
+defaults), but you can still remove your keys there. If you disable your own provider or model,
+the instance default is used instead.
 
 !!! tip
     Write topics as short phrases ("developer tools for small teams", "LLM evaluation"). Ranking by
