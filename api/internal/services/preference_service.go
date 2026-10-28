@@ -120,8 +120,22 @@ func (s *PreferenceService) Update(ctx context.Context, actor auth.Identity, in 
 	if !ok {
 		fields["report_time"] = "time"
 	}
-	for field, id := range map[string]*uuid.UUID{"report_model_id": in.ReportModelID, "idea_model_id": in.IdeaModelID} {
-		if id == nil {
+	previous, err := s.prefs.Get(ctx, actor.UserID)
+	if err != nil && !errors.Is(err, repositories.ErrNotFound) {
+		return PreferenceView{}, fmt.Errorf("update preferences: %w", err)
+	}
+	// A model already saved for the field is kept as is: it was checked when it
+	// was chosen, and EffectiveModels falls back while it is unusable (BYOK off,
+	// disabled). Revalidating it would block saving unrelated fields.
+	for _, pick := range []struct {
+		field    string
+		id, kept *uuid.UUID
+	}{
+		{"report_model_id", in.ReportModelID, previous.ReportModelID},
+		{"idea_model_id", in.IdeaModelID, previous.IdeaModelID},
+	} {
+		id, field := pick.id, pick.field
+		if id == nil || (pick.kept != nil && *pick.kept == *id) {
 			continue
 		}
 		usable, err := s.chatModelUsable(ctx, *id, actor.UserID)
@@ -137,10 +151,6 @@ func (s *PreferenceService) Update(ctx context.Context, actor auth.Identity, in 
 	}
 
 	now := s.now()
-	previous, err := s.prefs.Get(ctx, actor.UserID)
-	if err != nil && !errors.Is(err, repositories.ErrNotFound) {
-		return PreferenceView{}, fmt.Errorf("update preferences: %w", err)
-	}
 	p := models.UserPreferences{
 		UserID: actor.UserID, Topics: topics, OutputLang: in.OutputLang, Timezone: in.Timezone,
 		ReportEnabled: in.ReportEnabled, ReportTime: fmt.Sprintf("%02d:%02d", hour, minute), IdeasPerDay: in.IdeasPerDay,
@@ -190,7 +200,8 @@ func TopicsText(topics []string) string {
 
 // EffectiveModels returns the user's report and idea models, falling back to
 // the instance defaults. Either may be nil when nothing is configured. A model
-// of the user's own provider falls back too while BYOK is switched off.
+// of the user's own provider falls back too while BYOK is switched off or when
+// the user disabled the model or its provider.
 func (s *PreferenceService) EffectiveModels(ctx context.Context, userID uuid.UUID) (report, idea *uuid.UUID, err error) {
 	settings, err := s.settings.Get(ctx)
 	if err != nil {
@@ -208,21 +219,23 @@ func (s *PreferenceService) EffectiveModels(ctx context.Context, userID uuid.UUI
 		if *pick.chosen == nil {
 			continue
 		}
-		allowed, err := s.ownerAllowed(ctx, **pick.chosen, userID, settings.BYOKEnabled)
+		usable, err := s.usableChoice(ctx, **pick.chosen, userID, settings.BYOKEnabled)
 		if err != nil {
 			return nil, nil, fmt.Errorf("effective models: %w", err)
 		}
-		if allowed {
+		if usable {
 			*pick.effective = *pick.chosen
 		}
 	}
 	return report, idea, nil
 }
 
-// ownerAllowed tells whether userID may use the model as far as ownership goes:
-// instance models are for everyone, BYOK models only for their owner while
-// BYOK is on. A model that no longer exists is not allowed.
-func (s *PreferenceService) ownerAllowed(ctx context.Context, id, userID uuid.UUID, byok bool) (bool, error) {
+// usableChoice tells whether a saved model choice still applies to userID.
+// Instance models are returned as they are (the gateway decides about them).
+// User-owned models apply only to their owner, while BYOK is on and while both
+// the model and its provider are enabled. A model that no longer exists does
+// not apply.
+func (s *PreferenceService) usableChoice(ctx context.Context, id, userID uuid.UUID, byok bool) (bool, error) {
 	mp, err := s.models.GetModel(ctx, id)
 	if errors.Is(err, repositories.ErrNotFound) {
 		return false, nil
@@ -231,7 +244,10 @@ func (s *PreferenceService) ownerAllowed(ctx context.Context, id, userID uuid.UU
 		return false, err
 	}
 	owner := mp.Provider.UserID
-	return owner == nil || (byok && *owner == userID), nil
+	if owner == nil {
+		return true, nil
+	}
+	return byok && *owner == userID && mp.Model.Enabled && mp.Provider.Enabled, nil
 }
 
 func (s *PreferenceService) chatModelUsable(ctx context.Context, id, userID uuid.UUID) (bool, error) {
