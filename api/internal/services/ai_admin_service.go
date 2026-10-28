@@ -93,6 +93,7 @@ type SettingsChange struct {
 	IdeaSimilarityThreshold *float32
 	SignupEnabled           *bool
 	InactivityPauseDays     *int
+	BYOKEnabled             *bool
 }
 
 var errMailerNotConfigured = apperrors.Unprocessable("MAILER_NOT_CONFIGURED",
@@ -109,6 +110,7 @@ type ChatModelOption struct {
 	Model        models.AIModel
 	ProviderName string
 	Local        bool
+	Own          bool // served by the user's own provider (BYOK)
 }
 
 // AIAdminService manages providers, models and instance AI settings.
@@ -148,16 +150,27 @@ func (s *AIAdminService) ListProviders(ctx context.Context, actor auth.Identity)
 	if err != nil {
 		return nil, fmt.Errorf("list providers: %w", err)
 	}
-	usage, err := s.store.TokensSince(ctx, s.now().Add(-7*24*time.Hour))
+	views, err := providerViews(ctx, s.store, s.box, s.now(), providers, allModels)
 	if err != nil {
 		return nil, fmt.Errorf("list providers: %w", err)
 	}
+	return views, nil
+}
 
+// providerViews groups models under their providers with the token usage of
+// the last 7 days and a key hint.
+func providerViews(ctx context.Context, store AIStore, box SecretBox, now time.Time,
+	providers []models.AIProvider, allModels []models.AIModel,
+) ([]ProviderView, error) {
+	usage, err := store.TokensSince(ctx, now.Add(-7*24*time.Hour))
+	if err != nil {
+		return nil, err
+	}
 	views := make([]ProviderView, 0, len(providers))
 	index := make(map[uuid.UUID]int, len(providers))
 	for _, p := range providers {
 		index[p.ID] = len(views)
-		views = append(views, ProviderView{Provider: p, KeyHint: s.keyHint(p)})
+		views = append(views, ProviderView{Provider: p, KeyHint: keyHint(box, p)})
 	}
 	for _, m := range allModels {
 		if i, ok := index[m.ProviderID]; ok {
@@ -167,11 +180,11 @@ func (s *AIAdminService) ListProviders(ctx context.Context, actor auth.Identity)
 	return views, nil
 }
 
-func (s *AIAdminService) keyHint(p models.AIProvider) string {
+func keyHint(box SecretBox, p models.AIProvider) string {
 	if len(p.APIKeyEnc) == 0 {
 		return ""
 	}
-	plain, err := s.box.Open(p.APIKeyEnc)
+	plain, err := box.Open(p.APIKeyEnc)
 	if err != nil || len(plain) < 8 {
 		return "••••"
 	}
@@ -192,7 +205,7 @@ func (s *AIAdminService) CreateProvider(ctx context.Context, actor auth.Identity
 		ID: uuid.New(), Name: strings.TrimSpace(in.Name), Kind: in.Kind, BaseURL: baseURL,
 		Enabled: true, CreatedAt: now, UpdatedAt: now,
 	}
-	if p.APIKeyEnc, err = s.sealKey(in.APIKey); err != nil {
+	if p.APIKeyEnc, err = sealKey(s.box, in.APIKey); err != nil {
 		return models.AIProvider{}, err
 	}
 	if err := s.store.CreateProvider(ctx, p); err != nil {
@@ -209,10 +222,7 @@ func (s *AIAdminService) UpdateProvider(ctx context.Context, actor auth.Identity
 	if !auth.Can(actor, auth.PermProvidersManage) {
 		return models.AIProvider{}, errForbidden
 	}
-	p, err := s.store.GetProvider(ctx, id)
-	if errors.Is(err, repositories.ErrNotFound) {
-		return models.AIProvider{}, errProviderNotFound
-	}
+	p, err := s.instanceProvider(ctx, id)
 	if err != nil {
 		return models.AIProvider{}, fmt.Errorf("update provider: %w", err)
 	}
@@ -225,7 +235,7 @@ func (s *AIAdminService) UpdateProvider(ctx context.Context, actor auth.Identity
 		}
 	}
 	if change.APIKey != nil {
-		if p.APIKeyEnc, err = s.sealKey(*change.APIKey); err != nil {
+		if p.APIKeyEnc, err = sealKey(s.box, *change.APIKey); err != nil {
 			return models.AIProvider{}, err
 		}
 	}
@@ -247,6 +257,9 @@ func (s *AIAdminService) DeleteProvider(ctx context.Context, actor auth.Identity
 	if !auth.Can(actor, auth.PermProvidersManage) {
 		return errForbidden
 	}
+	if _, err := s.instanceProvider(ctx, id); err != nil {
+		return fmt.Errorf("delete provider: %w", err)
+	}
 	err := s.store.DeleteProvider(ctx, id)
 	if errors.Is(err, repositories.ErrNotFound) {
 		return errProviderNotFound
@@ -262,16 +275,24 @@ func (s *AIAdminService) TestConnection(ctx context.Context, actor auth.Identity
 	if !auth.Can(actor, auth.PermProvidersManage) {
 		return ConnectionResult{}, errForbidden
 	}
-	p, err := s.store.GetProvider(ctx, id)
-	if errors.Is(err, repositories.ErrNotFound) {
-		return ConnectionResult{}, errProviderNotFound
-	}
+	p, err := s.instanceProvider(ctx, id)
 	if err != nil {
 		return ConnectionResult{}, fmt.Errorf("test connection: %w", err)
 	}
+	result, err := checkConnection(ctx, s.store, s.box, s.factory, s.now(), p)
+	if err != nil {
+		return ConnectionResult{}, fmt.Errorf("test connection: %w", err)
+	}
+	return result, nil
+}
 
+// checkConnection lists the provider's models and records the outcome on it.
+// A provider failure is a result, not an error.
+func checkConnection(ctx context.Context, store AIStore, box SecretBox, factory ProviderFactory, now time.Time,
+	p models.AIProvider,
+) (ConnectionResult, error) {
 	result := ConnectionResult{}
-	client, err := providerClient(p, s.box, s.factory)
+	client, err := providerClient(p, box, factory)
 	if err == nil {
 		callCtx, cancel := context.WithTimeout(ctx, 20*time.Second)
 		result.Models, err = client.ListModels(callCtx)
@@ -284,8 +305,8 @@ func (s *AIAdminService) TestConnection(ctx context.Context, actor auth.Identity
 	} else {
 		result.OK = true
 	}
-	if err := s.store.SetProviderCheck(ctx, p.ID, s.now(), checkErr); err != nil {
-		return ConnectionResult{}, fmt.Errorf("test connection: %w", err)
+	if err := store.SetProviderCheck(ctx, p.ID, now, checkErr); err != nil {
+		return ConnectionResult{}, err
 	}
 	return result, nil
 }
@@ -310,10 +331,7 @@ func (s *AIAdminService) CreateModel(ctx context.Context, actor auth.Identity, p
 	if !auth.Can(actor, auth.PermProvidersManage) {
 		return models.AIModel{}, errForbidden
 	}
-	p, err := s.store.GetProvider(ctx, providerID)
-	if errors.Is(err, repositories.ErrNotFound) {
-		return models.AIModel{}, errProviderNotFound
-	}
+	p, err := s.instanceProvider(ctx, providerID)
 	if err != nil {
 		return models.AIModel{}, fmt.Errorf("create model: %w", err)
 	}
@@ -343,14 +361,10 @@ func (s *AIAdminService) UpdateModel(ctx context.Context, actor auth.Identity, i
 	if !auth.Can(actor, auth.PermProvidersManage) {
 		return models.AIModel{}, errForbidden
 	}
-	mp, err := s.store.GetModel(ctx, id)
-	if errors.Is(err, repositories.ErrNotFound) {
-		return models.AIModel{}, errModelNotFound
-	}
+	m, err := s.instanceModel(ctx, id)
 	if err != nil {
 		return models.AIModel{}, fmt.Errorf("update model: %w", err)
 	}
-	m := mp.Model
 	if change.DisplayName != nil {
 		m.DisplayName = strings.TrimSpace(*change.DisplayName)
 	}
@@ -369,6 +383,9 @@ func (s *AIAdminService) DeleteModel(ctx context.Context, actor auth.Identity, i
 	if !auth.Can(actor, auth.PermProvidersManage) {
 		return errForbidden
 	}
+	if _, err := s.instanceModel(ctx, id); err != nil {
+		return fmt.Errorf("delete model: %w", err)
+	}
 	err := s.store.DeleteModel(ctx, id)
 	if errors.Is(err, repositories.ErrNotFound) {
 		return errModelNotFound
@@ -379,19 +396,30 @@ func (s *AIAdminService) DeleteModel(ctx context.Context, actor auth.Identity, i
 	return nil
 }
 
-// ChatModels lists the chat models any signed-in user may choose.
-func (s *AIAdminService) ChatModels(ctx context.Context) ([]ChatModelOption, error) {
-	providers, err := s.store.ListProviders(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("chat models: %w", err)
+// instanceProvider loads an admin-managed provider. Providers owned by users
+// (BYOK) answer not found: admins neither see nor change them.
+func (s *AIAdminService) instanceProvider(ctx context.Context, id uuid.UUID) (models.AIProvider, error) {
+	p, err := s.store.GetProvider(ctx, id)
+	if errors.Is(err, repositories.ErrNotFound) || (err == nil && p.UserID != nil) {
+		return models.AIProvider{}, errProviderNotFound
 	}
+	return p, err
+}
+
+// instanceModel loads a model of an admin-managed provider; see instanceProvider.
+func (s *AIAdminService) instanceModel(ctx context.Context, id uuid.UUID) (models.AIModel, error) {
+	mp, err := s.store.GetModel(ctx, id)
+	if errors.Is(err, repositories.ErrNotFound) || (err == nil && mp.Provider.UserID != nil) {
+		return models.AIModel{}, errModelNotFound
+	}
+	return mp.Model, err
+}
+
+// chatOptions keeps the enabled chat models of enabled providers.
+func chatOptions(providers []models.AIProvider, all []models.AIModel) []ChatModelOption {
 	byID := make(map[uuid.UUID]models.AIProvider, len(providers))
 	for _, p := range providers {
 		byID[p.ID] = p
-	}
-	all, err := s.store.ListModels(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("chat models: %w", err)
 	}
 	var out []ChatModelOption
 	for _, m := range all {
@@ -399,9 +427,11 @@ func (s *AIAdminService) ChatModels(ctx context.Context) ([]ChatModelOption, err
 		if !ok || !p.Enabled || !m.Enabled || m.Capability != models.CapabilityChat {
 			continue
 		}
-		out = append(out, ChatModelOption{Model: m, ProviderName: p.Name, Local: p.Kind == models.ProviderOpenAICompatible})
+		out = append(out, ChatModelOption{
+			Model: m, ProviderName: p.Name, Local: p.Kind == models.ProviderOpenAICompatible, Own: p.UserID != nil,
+		})
 	}
-	return out, nil
+	return out
 }
 
 // GetSettings returns the instance settings.
@@ -466,6 +496,9 @@ func (s *AIAdminService) UpdateSettings(ctx context.Context, actor auth.Identity
 		if change.RetentionDays != nil {
 			settings.RetentionDays = *change.RetentionDays
 		}
+		if change.BYOKEnabled != nil {
+			settings.BYOKEnabled = *change.BYOKEnabled
+		}
 		if change.IdeaSimilarityThreshold != nil {
 			settings.IdeaSimilarityThreshold = *change.IdeaSimilarityThreshold
 		}
@@ -510,15 +543,15 @@ func (s *AIAdminService) modelUsable(ctx context.Context, id uuid.UUID, capabili
 	if err != nil {
 		return false, err
 	}
-	return mp.Model.Enabled && mp.Provider.Enabled && mp.Model.Capability == capability, nil
+	return mp.Provider.UserID == nil && mp.Model.Enabled && mp.Provider.Enabled && mp.Model.Capability == capability, nil
 }
 
-func (s *AIAdminService) sealKey(key string) ([]byte, error) {
+func sealKey(box SecretBox, key string) ([]byte, error) {
 	key = strings.TrimSpace(key)
 	if key == "" {
 		return nil, nil
 	}
-	sealed, err := s.box.Seal([]byte(key))
+	sealed, err := box.Seal([]byte(key))
 	if err != nil {
 		return nil, fmt.Errorf("encrypt provider key: %w", err)
 	}

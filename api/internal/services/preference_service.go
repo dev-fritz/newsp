@@ -124,7 +124,7 @@ func (s *PreferenceService) Update(ctx context.Context, actor auth.Identity, in 
 		if id == nil {
 			continue
 		}
-		usable, err := s.chatModelUsable(ctx, *id)
+		usable, err := s.chatModelUsable(ctx, *id, actor.UserID)
 		if err != nil {
 			return PreferenceView{}, fmt.Errorf("update preferences: %w", err)
 		}
@@ -189,7 +189,8 @@ func TopicsText(topics []string) string {
 }
 
 // EffectiveModels returns the user's report and idea models, falling back to
-// the instance defaults. Either may be nil when nothing is configured.
+// the instance defaults. Either may be nil when nothing is configured. A model
+// of the user's own provider falls back too while BYOK is switched off.
 func (s *PreferenceService) EffectiveModels(ctx context.Context, userID uuid.UUID) (report, idea *uuid.UUID, err error) {
 	settings, err := s.settings.Get(ctx)
 	if err != nil {
@@ -203,16 +204,25 @@ func (s *PreferenceService) EffectiveModels(ctx context.Context, userID uuid.UUI
 	if err != nil {
 		return nil, nil, fmt.Errorf("effective models: %w", err)
 	}
-	if p.ReportModelID != nil {
-		report = p.ReportModelID
-	}
-	if p.IdeaModelID != nil {
-		idea = p.IdeaModelID
+	for _, pick := range []struct{ chosen, effective **uuid.UUID }{{&p.ReportModelID, &report}, {&p.IdeaModelID, &idea}} {
+		if *pick.chosen == nil {
+			continue
+		}
+		allowed, err := s.ownerAllowed(ctx, **pick.chosen, userID, settings.BYOKEnabled)
+		if err != nil {
+			return nil, nil, fmt.Errorf("effective models: %w", err)
+		}
+		if allowed {
+			*pick.effective = *pick.chosen
+		}
 	}
 	return report, idea, nil
 }
 
-func (s *PreferenceService) chatModelUsable(ctx context.Context, id uuid.UUID) (bool, error) {
+// ownerAllowed tells whether userID may use the model as far as ownership goes:
+// instance models are for everyone, BYOK models only for their owner while
+// BYOK is on. A model that no longer exists is not allowed.
+func (s *PreferenceService) ownerAllowed(ctx context.Context, id, userID uuid.UUID, byok bool) (bool, error) {
 	mp, err := s.models.GetModel(ctx, id)
 	if errors.Is(err, repositories.ErrNotFound) {
 		return false, nil
@@ -220,7 +230,32 @@ func (s *PreferenceService) chatModelUsable(ctx context.Context, id uuid.UUID) (
 	if err != nil {
 		return false, err
 	}
-	return mp.Model.Enabled && mp.Provider.Enabled && mp.Model.Capability == models.CapabilityChat, nil
+	owner := mp.Provider.UserID
+	return owner == nil || (byok && *owner == userID), nil
+}
+
+func (s *PreferenceService) chatModelUsable(ctx context.Context, id, userID uuid.UUID) (bool, error) {
+	mp, err := s.models.GetModel(ctx, id)
+	if errors.Is(err, repositories.ErrNotFound) {
+		return false, nil
+	}
+	if err != nil {
+		return false, err
+	}
+	if !mp.Model.Enabled || !mp.Provider.Enabled || mp.Model.Capability != models.CapabilityChat {
+		return false, nil
+	}
+	if owner := mp.Provider.UserID; owner != nil {
+		if *owner != userID {
+			return false, nil
+		}
+		settings, err := s.settings.Get(ctx)
+		if err != nil {
+			return false, err
+		}
+		return settings.BYOKEnabled, nil
+	}
+	return true, nil
 }
 
 // NextReportAt is the next moment, strictly after now, when the wall clock in

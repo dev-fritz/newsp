@@ -61,6 +61,7 @@ type Container struct {
 	UserHandler       *handlers.UserHandler
 	JobHandler        *handlers.JobHandler
 	AIHandler         *handlers.AIHandler
+	UserAIHandler     *handlers.UserAIHandler
 	SourceHandler     *handlers.SourceHandler
 	ItemHandler       *handlers.ItemHandler
 	PreferenceHandler *handlers.PreferenceHandler
@@ -151,6 +152,7 @@ func NewContainer(cfg config.Config, logger *slog.Logger, db *sql.DB, opts Optio
 	return &Container{
 		AI:                gateway,
 		AIHandler:         handlers.NewAIHandler(aiAdmin),
+		UserAIHandler:     handlers.NewUserAIHandler(services.NewUserAIService(aiStore, settings, box, factory, now)),
 		Sources:           sources,
 		SourceHandler:     handlers.NewSourceHandler(sources),
 		ItemHandler:       handlers.NewItemHandler(services.NewItemService(itemRepo)),
