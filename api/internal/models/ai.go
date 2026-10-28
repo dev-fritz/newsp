@@ -17,9 +17,10 @@ const (
 	ProviderGemini           ProviderKind = "gemini"
 )
 
-// AIProvider is an AI endpoint configured by an admin.
+// AIProvider is an AI endpoint, configured by an admin or owned by a user (BYOK).
 type AIProvider struct {
 	ID          uuid.UUID
+	UserID      *uuid.UUID // nil = instance provider (admin-managed)
 	Name        string
 	Kind        ProviderKind
 	BaseURL     string
@@ -62,6 +63,7 @@ type InstanceSettings struct {
 	IdeaSimilarityThreshold float32
 	SignupEnabled           bool
 	InactivityPauseDays     int
+	BYOKEnabled             bool
 	SetupCompletedAt        *time.Time
 	UpdatedAt               time.Time
 }

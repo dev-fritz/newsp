@@ -97,3 +97,65 @@ func mustExec(t *testing.T, db *sql.DB, q string, args ...any) {
 	_, err := db.ExecContext(context.Background(), q, args...)
 	require.NoError(t, err)
 }
+
+func insertUser(t *testing.T, db *sql.DB, email string) uuid.UUID {
+	t.Helper()
+	id := uuid.New()
+	mustExec(t, db, `INSERT INTO users (id, email, name, password_hash, role) VALUES ($1, $2, 'U', 'x', 'member')`, id, email)
+	return id
+}
+
+const insertProviderSQL = `INSERT INTO ai_providers (id, user_id, name, kind, base_url) VALUES ($1, $2, $3, $4, 'https://x')`
+
+func TestUserProviderMustBeHostedKind(t *testing.T) {
+	t.Parallel()
+	db := testdb.New(t)
+	userID := insertUser(t, db, "a@b.c")
+
+	_, err := db.ExecContext(context.Background(), insertProviderSQL, uuid.New(), userID, "Local", "openai_compatible")
+	assert.Equal(t, "23514", pgCode(t, err), "check_violation")
+
+	_, err = db.ExecContext(context.Background(), insertProviderSQL, uuid.New(), nil, "Local", "openai_compatible")
+	assert.NoError(t, err, "instance providers keep every kind")
+}
+
+func TestUserProviderIsUniquePerKind(t *testing.T) {
+	t.Parallel()
+	db := testdb.New(t)
+	ctx := context.Background()
+	ana, bob := insertUser(t, db, "ana@b.c"), insertUser(t, db, "bob@b.c")
+
+	mustExec(t, db, insertProviderSQL, uuid.New(), ana, "OpenAI", "openai")
+	_, err := db.ExecContext(ctx, insertProviderSQL, uuid.New(), ana, "Other", "openai")
+	assert.Equal(t, "23505", pgCode(t, err), "second provider of the same kind for the same user")
+
+	_, err = db.ExecContext(ctx, insertProviderSQL, uuid.New(), bob, "OpenAI", "openai")
+	assert.NoError(t, err, "another user may use the same kind and name")
+	_, err = db.ExecContext(ctx, insertProviderSQL, uuid.New(), nil, "OpenAI", "openai")
+	assert.NoError(t, err, "an instance provider may share the name of a user one")
+	_, err = db.ExecContext(ctx, insertProviderSQL, uuid.New(), nil, "openai", "openai")
+	assert.Equal(t, "23505", pgCode(t, err), "instance provider names stay unique")
+}
+
+func TestDeletingUserCascadesToProviders(t *testing.T) {
+	t.Parallel()
+	db := testdb.New(t)
+	userID := insertUser(t, db, "a@b.c")
+	mustExec(t, db, insertProviderSQL, uuid.New(), userID, "OpenAI", "openai")
+	mustExec(t, db, insertProviderSQL, uuid.New(), nil, "Local", "openai_compatible")
+
+	mustExec(t, db, `DELETE FROM users WHERE id = $1`, userID)
+
+	var n int
+	require.NoError(t, db.QueryRow(`SELECT count(*) FROM ai_providers`).Scan(&n))
+	assert.Equal(t, 1, n, "only the instance provider remains")
+}
+
+func TestBYOKEnabledByDefault(t *testing.T) {
+	t.Parallel()
+	db := testdb.New(t)
+
+	var enabled bool
+	require.NoError(t, db.QueryRow(`SELECT byok_enabled FROM instance_settings`).Scan(&enabled))
+	assert.True(t, enabled)
+}

@@ -11,7 +11,7 @@ import (
 )
 
 const settingsColumns = `id, embedding_model_id, default_report_model_id, default_idea_model_id,
-	retention_days, idea_similarity_threshold, signup_enabled, inactivity_pause_days, setup_completed_at, updated_at`
+	retention_days, idea_similarity_threshold, signup_enabled, inactivity_pause_days, byok_enabled, setup_completed_at, updated_at`
 
 // SettingsRepository reads and writes the singleton instance settings row.
 type SettingsRepository struct {
@@ -31,7 +31,7 @@ func (r *SettingsRepository) get(ctx context.Context, lock bool) (models.Instanc
 	var s models.InstanceSettings
 	err := database.Conn(ctx, r.db).QueryRowContext(ctx, q).Scan(
 		&s.ID, &s.EmbeddingModelID, &s.DefaultReportModelID, &s.DefaultIdeaModelID,
-		&s.RetentionDays, &s.IdeaSimilarityThreshold, &s.SignupEnabled, &s.InactivityPauseDays, &s.SetupCompletedAt, &s.UpdatedAt)
+		&s.RetentionDays, &s.IdeaSimilarityThreshold, &s.SignupEnabled, &s.InactivityPauseDays, &s.BYOKEnabled, &s.SetupCompletedAt, &s.UpdatedAt)
 	if err != nil {
 		return models.InstanceSettings{}, fmt.Errorf("get instance settings: %w", translate(err))
 	}
@@ -59,9 +59,9 @@ func (r *SettingsRepository) MarkSetupCompleted(ctx context.Context, now time.Ti
 // UpdateAI stores the instance-wide AI settings.
 func (r *SettingsRepository) UpdateAI(ctx context.Context, s models.InstanceSettings) error {
 	const q = `UPDATE instance_settings SET embedding_model_id = $1, default_report_model_id = $2, default_idea_model_id = $3,
-		retention_days = $4, idea_similarity_threshold = $5, updated_at = $6`
+		retention_days = $4, idea_similarity_threshold = $5, byok_enabled = $6, updated_at = $7`
 	res, err := database.Conn(ctx, r.db).ExecContext(ctx, q, s.EmbeddingModelID, s.DefaultReportModelID, s.DefaultIdeaModelID,
-		s.RetentionDays, s.IdeaSimilarityThreshold, s.UpdatedAt)
+		s.RetentionDays, s.IdeaSimilarityThreshold, s.BYOKEnabled, s.UpdatedAt)
 	return checkAffected(res, err, "update instance settings")
 }
 
