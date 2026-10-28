@@ -10,6 +10,7 @@ import { AppearanceSection } from "@/features/profile/components/appearance-sect
 import { IdeasSection } from "@/features/profile/components/ideas-section";
 import { InterestsSection } from "@/features/profile/components/interests-section";
 import { ModelsSection } from "@/features/profile/components/models-section";
+import { OwnProvidersSection } from "@/features/profile/components/own-providers-section";
 import { ReportSection } from "@/features/profile/components/report-section";
 import { SecuritySection } from "@/features/profile/components/security-section";
 import { SourcesSection } from "@/features/profile/components/sources-section";
@@ -72,6 +73,7 @@ export function PreferencesForm({ preferences, models, sources }: PreferencesFor
         <SourcesSection sources={sources} />
         <AppearanceSection />
       </form>
+      <OwnProvidersSection />
       <SecuritySection />
       <UnsavedBar
         formId={FORM_ID}

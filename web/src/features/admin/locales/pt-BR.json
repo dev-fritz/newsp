@@ -369,7 +369,9 @@
         "title": "Padrões para novos usuários",
         "body": "Cada usuário pode trocar no próprio perfil.",
         "reports": "Relatórios",
-        "ideas": "Ideias"
+        "ideas": "Ideias",
+        "byok": "Permitir chaves de IA próprias (BYOK)",
+        "byokBody": "Cada usuário pode conectar a própria chave da OpenAI, Anthropic ou Gemini e usar esses modelos nos relatórios e ideias. Desligado, as chaves ficam guardadas e todos usam os modelos da instância."
       },
       "similarity": {
         "title": "Ideias sem repetição",

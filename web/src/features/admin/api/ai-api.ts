@@ -35,6 +35,7 @@ export type UpdateSettingsBody = {
   retention_days?: number;
   idea_similarity_threshold?: number;
   signup_enabled?: boolean;
+  byok_enabled?: boolean;
   inactivity_pause_days?: number;
 };
 

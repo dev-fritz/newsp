@@ -47,6 +47,7 @@ function toValues(s: Settings): SettingsFormValues {
     retentionDays: String(s.retention_days ?? 90),
     threshold: (s.idea_similarity_threshold ?? 0.8).toFixed(2),
     signupEnabled: s.signup_enabled ?? false,
+    byokEnabled: s.byok_enabled ?? true,
     inactivityDays: String(s.inactivity_pause_days ?? 0),
   };
 }
@@ -84,6 +85,7 @@ function SettingsForm({ settings, providers }: { settings: Settings; providers: 
       body.idea_similarity_threshold = Number(v.threshold);
     if (v.signupEnabled !== (settings.signup_enabled ?? false))
       body.signup_enabled = v.signupEnabled;
+    if (v.byokEnabled !== (settings.byok_enabled ?? true)) body.byok_enabled = v.byokEnabled;
     if (Number(v.inactivityDays) !== (settings.inactivity_pause_days ?? 0))
       body.inactivity_pause_days = Number(v.inactivityDays);
     setMailerError(false);
@@ -162,6 +164,26 @@ function SettingsForm({ settings, providers }: { settings: Settings; providers: 
             )}
           />
         </div>
+        <Controller
+          control={form.control}
+          name="byokEnabled"
+          render={({ field }) => (
+            <div className="flex items-start justify-between gap-4">
+              <Label htmlFor="byok-enabled" className="flex flex-col items-start gap-1">
+                {t("ai.settings.defaults.byok")}
+                <span className="text-xs font-normal text-subtle-foreground">
+                  {t("ai.settings.defaults.byokBody")}
+                </span>
+              </Label>
+              <Switch
+                id="byok-enabled"
+                checked={field.value}
+                onCheckedChange={field.onChange}
+                className="mt-0.5 pointer-coarse:h-6 pointer-coarse:w-11"
+              />
+            </div>
+          )}
+        />
       </SettingsSection>
 
       <SettingsSection

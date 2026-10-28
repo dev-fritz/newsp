@@ -85,12 +85,7 @@ export interface paths {
                 };
                 cookie?: never;
             };
-            /** @description Changes */
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["dtos.UpdateModelRequest"];
-                };
-            };
+            requestBody: components["requestBodies"]["dtos.UpdateModelRequest"];
             responses: {
                 /** @description OK */
                 200: {
@@ -1508,7 +1503,7 @@ export interface paths {
         };
         /**
          * Chat models available to pick
-         * @description Enabled chat models of enabled providers, for the profile screen.
+         * @description Enabled chat models of the instance's enabled providers, plus the caller's own models while using own keys is allowed (own=true), for the profile screen.
          */
         get: {
             parameters: {
@@ -2679,6 +2674,548 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/me/ai/models/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Delete a model of my own provider
+         * @description Preferences pointing at it fall back to the instance defaults.
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Model ID */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "*/*": components["schemas"]["dtos.ErrorResponse"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "*/*": components["schemas"]["dtos.ErrorResponse"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "*/*": components["schemas"]["dtos.ErrorResponse"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        /** Rename, enable or disable a model of my own provider */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Model ID */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: components["requestBodies"]["dtos.UpdateModelRequest"];
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["dtos.ModelEnvelope"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["dtos.ErrorResponse"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["dtos.ErrorResponse"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["dtos.ErrorResponse"];
+                    };
+                };
+                /** @description Unprocessable Entity */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["dtos.ErrorResponse"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/api/v1/me/ai/providers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List my own AI providers with their models
+         * @description Works while own keys are turned off (byok_enabled=false), so the profile can explain why the section is hidden.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["dtos.OwnProvidersEnvelope"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["dtos.ErrorResponse"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /**
+         * Connect my own AI provider
+         * @description Only openai, anthropic and gemini, at their official URLs, one per kind. The key is encrypted and never returned. Returns 409 PROVIDER_KIND_TAKEN when the kind is already connected and 422 BYOK_DISABLED when an admin turned own keys off.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            /** @description Provider */
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["dtos.CreateOwnProviderRequest"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["dtos.ProviderEnvelope"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["dtos.ErrorResponse"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["dtos.ErrorResponse"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["dtos.ErrorResponse"];
+                    };
+                };
+                /** @description Unprocessable Entity */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["dtos.ErrorResponse"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/me/ai/providers/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Delete my own AI provider, its key and its models
+         * @description Works while own keys are turned off, so users can always take their key back out.
+         */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Provider ID */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "*/*": components["schemas"]["dtos.ErrorResponse"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "*/*": components["schemas"]["dtos.ErrorResponse"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "*/*": components["schemas"]["dtos.ErrorResponse"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        /**
+         * Replace the key of, enable or disable my own AI provider
+         * @description The key can be replaced but not removed: delete the provider instead. Another user's or an instance provider answers 404.
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Provider ID */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            /** @description Changes */
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["dtos.UpdateOwnProviderRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["dtos.ProviderEnvelope"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["dtos.ErrorResponse"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["dtos.ErrorResponse"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["dtos.ErrorResponse"];
+                    };
+                };
+                /** @description Unprocessable Entity */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["dtos.ErrorResponse"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/api/v1/me/ai/providers/{id}/models": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Register a chat model of my own provider
+         * @description Users' models are always chat models.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Provider ID */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            /** @description Model */
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["dtos.CreateOwnModelRequest"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["dtos.ModelEnvelope"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["dtos.ErrorResponse"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["dtos.ErrorResponse"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["dtos.ErrorResponse"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["dtos.ErrorResponse"];
+                    };
+                };
+                /** @description Unprocessable Entity */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["dtos.ErrorResponse"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/me/ai/providers/{id}/test": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Test my own provider connection
+         * @description Lists the provider's models. A failed test is a 200 with ok=false and a readable error.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Provider ID */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["dtos.ConnectionTestEnvelope"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["dtos.ErrorResponse"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["dtos.ErrorResponse"];
+                    };
+                };
+                /** @description Not Found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["dtos.ErrorResponse"];
+                    };
+                };
+                /** @description Unprocessable Entity */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["dtos.ErrorResponse"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/me/password": {
         parameters: {
             query?: never;
@@ -3601,6 +4138,8 @@ export interface components {
             id?: string;
             local?: boolean;
             name?: string;
+            /** @description Own is true when the caller's own provider (BYOK) serves the model. */
+            own?: boolean;
             provider_name?: string;
         };
         "dtos.CitationResponse": {
@@ -3637,6 +4176,15 @@ export interface components {
             capability: "chat" | "embedding";
             display_name?: string;
             name: string;
+        };
+        "dtos.CreateOwnModelRequest": {
+            display_name?: string;
+            name: string;
+        };
+        "dtos.CreateOwnProviderRequest": {
+            api_key: string;
+            /** @enum {unknown} */
+            kind: "openai" | "anthropic" | "gemini";
         };
         "dtos.CreateProviderRequest": {
             api_key?: string;
@@ -3922,6 +4470,13 @@ export interface components {
             provider_id?: string;
             tokens_last_7d?: number;
         };
+        "dtos.OwnProvidersEnvelope": {
+            data?: components["schemas"]["dtos.OwnProvidersResponse"];
+        };
+        "dtos.OwnProvidersResponse": {
+            byok_enabled?: boolean;
+            providers?: components["schemas"]["dtos.ProviderResponse"][];
+        };
         "dtos.PageMeta": {
             /** @example 20 */
             limit?: number;
@@ -4020,7 +4575,7 @@ export interface components {
             created_at?: string;
             /**
              * @description Error is a stable code (NO_ITEMS, REPORT_MODEL_NOT_SET, AI_REFUSED,
-             *     AI_INVALID_OUTPUT, AI_FAILURE) for failed reports.
+             *     AI_INVALID_OUTPUT, AI_KEY_REJECTED, AI_FAILURE) for failed reports.
              */
             error?: string;
             focus?: string;
@@ -4042,7 +4597,7 @@ export interface components {
             created_at?: string;
             /**
              * @description Error is a stable code (NO_ITEMS, REPORT_MODEL_NOT_SET, AI_REFUSED,
-             *     AI_INVALID_OUTPUT, AI_FAILURE) for failed reports.
+             *     AI_INVALID_OUTPUT, AI_KEY_REJECTED, AI_FAILURE) for failed reports.
              */
             error?: string;
             focus?: string;
@@ -4074,6 +4629,8 @@ export interface components {
             data?: components["schemas"]["dtos.SettingsResponse"];
         };
         "dtos.SettingsResponse": {
+            /** @description BYOKEnabled lets users connect their own AI providers (bring your own key). */
+            byok_enabled?: boolean;
             default_idea_model_id?: string;
             default_report_model_id?: string;
             embedding_model_id?: string;
@@ -4150,6 +4707,10 @@ export interface components {
             display_name?: string;
             enabled?: boolean;
         };
+        "dtos.UpdateOwnProviderRequest": {
+            api_key?: string;
+            enabled?: boolean;
+        };
         "dtos.UpdateProviderRequest": {
             api_key?: string;
             base_url?: string;
@@ -4157,6 +4718,7 @@ export interface components {
             name?: string;
         };
         "dtos.UpdateSettingsRequest": {
+            byok_enabled?: boolean;
             default_idea_model_id?: string;
             default_report_model_id?: string;
             embedding_model_id?: string;
@@ -4264,6 +4826,12 @@ export interface components {
     responses: never;
     parameters: never;
     requestBodies: {
+        /** @description Changes */
+        "dtos.UpdateModelRequest": {
+            content: {
+                "application/json": components["schemas"]["dtos.UpdateModelRequest"];
+            };
+        };
         /** @description Refresh token */
         "dtos.RefreshRequest": {
             content: {

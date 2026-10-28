@@ -126,6 +126,7 @@
     "REPORT_MODEL_NOT_SET": "No AI model configured for reports — ask an admin",
     "AI_REFUSED": "The AI model refused to write this report. Try another focus or window.",
     "AI_INVALID_OUTPUT": "The model answered in an invalid format. Try generating again.",
+    "AI_KEY_REJECTED": "The AI provider rejected the API key. If the model is yours, check the key in Profile → My providers; otherwise, tell an admin.",
     "AI_FAILURE": "The AI provider failed while writing the report. Try again shortly.",
     "REPORT_IN_PROGRESS": "A report is already being generated. Wait for it to finish.",
     "generic": "Could not generate the report. Try again."

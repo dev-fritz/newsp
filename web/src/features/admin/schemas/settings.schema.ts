@@ -15,6 +15,7 @@ export const settingsFormSchema = z
     retentionDays: z.string().trim(),
     threshold: z.string().trim(),
     signupEnabled: z.boolean(),
+    byokEnabled: z.boolean(),
     inactivityDays: z.string().trim(),
   })
   .superRefine((v, ctx) => {
@@ -45,5 +46,6 @@ export const SETTINGS_FIELD_MAP: Record<string, keyof SettingsFormValues> = {
   retention_days: "retentionDays",
   idea_similarity_threshold: "threshold",
   signup_enabled: "signupEnabled",
+  byok_enabled: "byokEnabled",
   inactivity_pause_days: "inactivityDays",
 };

@@ -24,11 +24,13 @@ type ModelSelectProps = {
 
 export function ModelSelect({ id, label, models, value, onChange }: ModelSelectProps) {
   const { t } = useTranslation("profile");
+  // A value missing from the list (own model with BYOK off, removed model) shows the default.
+  const known = value !== "" && models.some((m) => m.id === value);
   return (
     <div className="flex flex-col gap-1.5">
       <Label htmlFor={id}>{label}</Label>
       <Select
-        value={value || DEFAULT_ITEM}
+        value={known ? value : DEFAULT_ITEM}
         onValueChange={(next) => onChange(next === DEFAULT_ITEM ? "" : next)}
       >
         <SelectTrigger id={id} className="h-10 w-full pointer-coarse:h-11">
@@ -42,6 +44,7 @@ export function ModelSelect({ id, label, models, value, onChange }: ModelSelectP
                   <SelectItem key={m.id} value={m.id}>
                     {m.display_name ?? m.name} · {m.provider_name}
                     {m.local ? ` (${t("models.local")})` : ""}
+                    {m.own ? ` (${t("models.own")})` : ""}
                   </SelectItem>,
                 ]
               : [],
