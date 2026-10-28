@@ -30,8 +30,14 @@ function statusOf(p: OwnProvider): OwnProviderStatus {
   return "connected";
 }
 
+type OwnProviderCardProps = {
+  provider: OwnProvider;
+  /** BYOK is off: the only action left is removing the stored key. */
+  readOnly?: boolean;
+};
+
 /** One connected provider: state, key hint (never the key), models and actions. */
-export function OwnProviderCard({ provider }: { provider: OwnProvider }) {
+export function OwnProviderCard({ provider, readOnly = false }: OwnProviderCardProps) {
   const { t, i18n } = useTranslation("profile");
   const toastError = useOwnErrorToast();
   const test = useTestOwnProvider();
@@ -90,35 +96,41 @@ export function OwnProviderCard({ provider }: { provider: OwnProvider }) {
       {provider.models.length > 0 ? (
         <ul className="flex flex-col divide-y divide-border rounded-lg border border-border">
           {provider.models.map((model) => (
-            <OwnModelRow key={model.id} model={model} />
+            <OwnModelRow key={model.id} model={model} readOnly={readOnly} />
           ))}
         </ul>
       ) : (
-        <p className="text-[13px] text-muted-foreground">{t("ownProviders.card.noModels")}</p>
+        !readOnly && (
+          <p className="text-[13px] text-muted-foreground">{t("ownProviders.card.noModels")}</p>
+        )
       )}
 
-      {(test.isPending || test.data) && (
+      {!readOnly && (test.isPending || test.data) && (
         <OwnConnectionResult provider={provider} result={test.data} pending={test.isPending} />
       )}
 
       <div className="flex flex-wrap items-center gap-2 pt-1">
-        <Button
-          variant="secondary"
-          size="sm"
-          onClick={runTest}
-          disabled={!provider.enabled || test.isPending}
-          className="pointer-coarse:h-11"
-        >
-          {t("ownProviders.card.test")}
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setDialog("key")}
-          className="pointer-coarse:h-11"
-        >
-          {t("ownProviders.card.replaceKey")}
-        </Button>
+        {!readOnly && (
+          <>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={runTest}
+              disabled={!provider.enabled || test.isPending}
+              className="pointer-coarse:h-11"
+            >
+              {t("ownProviders.card.test")}
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setDialog("key")}
+              className="pointer-coarse:h-11"
+            >
+              {t("ownProviders.card.replaceKey")}
+            </Button>
+          </>
+        )}
         <Button
           variant="ghost"
           size="sm"
@@ -127,20 +139,22 @@ export function OwnProviderCard({ provider }: { provider: OwnProvider }) {
         >
           {t("ownProviders.card.remove")}
         </Button>
-        <label className="ml-auto flex items-center gap-2 text-[13px] pointer-coarse:min-h-11">
-          <Switch
-            checked={provider.enabled}
-            disabled={update.isPending}
-            onCheckedChange={(enabled) =>
-              update.mutate({ id: provider.id, body: { enabled } }, { onError: toastError })
-            }
-            className="data-checked:bg-signal"
-          />
-          {t("ownProviders.card.enabled")}
-        </label>
+        {!readOnly && (
+          <label className="ml-auto flex items-center gap-2 text-[13px] pointer-coarse:min-h-11">
+            <Switch
+              checked={provider.enabled}
+              disabled={update.isPending}
+              onCheckedChange={(enabled) =>
+                update.mutate({ id: provider.id, body: { enabled } }, { onError: toastError })
+              }
+              className="data-checked:bg-signal"
+            />
+            {t("ownProviders.card.enabled")}
+          </label>
+        )}
       </div>
 
-      {dialog === "key" && (
+      {!readOnly && dialog === "key" && (
         <ReplaceKeyDialog
           provider={provider}
           name={name}

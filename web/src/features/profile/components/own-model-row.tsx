@@ -11,8 +11,14 @@ import { useDeleteOwnModel, useUpdateOwnModel } from "@/features/profile/api/pro
 import { useOwnErrorToast } from "@/features/profile/hooks/use-own-error-toast";
 import { cn } from "@/lib/utils";
 
+type OwnModelRowProps = {
+  model: OwnModel;
+  /** BYOK is off: show the model only, without switch or remove. */
+  readOnly?: boolean;
+};
+
 /** One registered chat model: tokens used in the last 7 days, enable switch and remove. */
-export function OwnModelRow({ model }: { model: OwnModel }) {
+export function OwnModelRow({ model, readOnly = false }: OwnModelRowProps) {
   const { t, i18n } = useTranslation("profile");
   const toastError = useOwnErrorToast();
   const update = useUpdateOwnModel();
@@ -48,26 +54,28 @@ export function OwnModelRow({ model }: { model: OwnModel }) {
           {t("ownProviders.models.tokens", { tokens })}
         </span>
       </div>
-      <div className="flex shrink-0 items-center gap-2">
-        <Switch
-          checked={model.enabled}
-          disabled={update.isPending}
-          onCheckedChange={(enabled) =>
-            update.mutate({ id: model.id, body: { enabled } }, { onError: toastError })
-          }
-          aria-label={t("ownProviders.models.enabled", { name })}
-          className="data-checked:bg-signal"
-        />
-        <Button
-          variant="ghost"
-          size="icon"
-          className="hover:text-negative pointer-coarse:min-h-11 pointer-coarse:min-w-11"
-          onClick={() => setConfirming(true)}
-          aria-label={t("ownProviders.models.remove", { name })}
-        >
-          <Trash2 aria-hidden />
-        </Button>
-      </div>
+      {!readOnly && (
+        <div className="flex shrink-0 items-center gap-2">
+          <Switch
+            checked={model.enabled}
+            disabled={update.isPending}
+            onCheckedChange={(enabled) =>
+              update.mutate({ id: model.id, body: { enabled } }, { onError: toastError })
+            }
+            aria-label={t("ownProviders.models.enabled", { name })}
+            className="data-checked:bg-signal"
+          />
+          <Button
+            variant="ghost"
+            size="icon"
+            className="hover:text-negative pointer-coarse:min-h-11 pointer-coarse:min-w-11"
+            onClick={() => setConfirming(true)}
+            aria-label={t("ownProviders.models.remove", { name })}
+          >
+            <Trash2 aria-hidden />
+          </Button>
+        </div>
+      )}
       <ConfirmDialog
         open={confirming}
         onOpenChange={setConfirming}

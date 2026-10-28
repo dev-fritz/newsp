@@ -23,9 +23,12 @@ export type OwnProvider = Omit<
 
 export type OwnProviderKind = NonNullable<Schemas["dtos.CreateOwnProviderRequest"]["kind"]>;
 
-export type OwnProviders = { byok_enabled: boolean; providers: OwnProvider[] };
+export type OwnProviders = Omit<
+  Needs<Schemas["dtos.OwnProvidersResponse"], "byok_enabled" | "providers">,
+  "providers"
+> & { providers: OwnProvider[] };
 
-export type ConnectionTest = { ok: boolean; models: string[]; error?: string };
+export type ConnectionTest = Needs<Schemas["dtos.ConnectionTestResponse"], "ok" | "models">;
 
 export type CreateOwnProviderRequest = Schemas["dtos.CreateOwnProviderRequest"];
 export type UpdateOwnProviderRequest = Schemas["dtos.UpdateOwnProviderRequest"];
