@@ -315,7 +315,7 @@ func checkConnection(ctx context.Context, store AIStore, box SecretBox, factory 
 func connectionError(err error) string {
 	var apiErr *ai.APIError
 	switch {
-	case errors.As(err, &apiErr) && (apiErr.Status == 401 || apiErr.Status == 403):
+	case errors.As(err, &apiErr) && apiErr.KeyRejected():
 		return fmt.Sprintf("the provider rejected the API key (HTTP %d)", apiErr.Status)
 	case errors.As(err, &apiErr):
 		return fmt.Sprintf("the provider answered HTTP %d: %s", apiErr.Status, apiErr.Message)

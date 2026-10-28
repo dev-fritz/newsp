@@ -19,6 +19,8 @@ func TestAIErrorCodeAndRetry(t *testing.T) {
 	}{
 		{"401 rejects key", &ai.APIError{Status: 401, Message: "bad key"}, ReportErrKeyRejected, false},
 		{"403 rejects key", fmt.Errorf("wrap: %w", &ai.APIError{Status: 403}), ReportErrKeyRejected, false},
+		{"gemini invalid key is a 400 with a reason", &ai.APIError{Status: 400, Reason: "API_KEY_INVALID"}, ReportErrKeyRejected, false},
+		{"plain 400 is failure", &ai.APIError{Status: 400, Message: "bad request"}, ReportErrAIFailure, false},
 		{"500 is failure", &ai.APIError{Status: 500}, ReportErrAIFailure, true},
 		{"no model", ErrModelUnavailable, ReportErrNoModel, false},
 		{"plain error", errors.New("boom"), ReportErrAIFailure, true},

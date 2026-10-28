@@ -43,12 +43,33 @@ func doJSON(ctx context.Context, client *http.Client, kind Kind, method, url str
 		return fmt.Errorf("%s read response: %w", kind, err)
 	}
 	if res.StatusCode < 200 || res.StatusCode > 299 {
-		return &APIError{Provider: kind, Status: res.StatusCode, Message: errorMessage(raw)}
+		return &APIError{Provider: kind, Status: res.StatusCode, Message: errorMessage(raw), Reason: errorReason(raw)}
 	}
 	if err := json.Unmarshal(raw, dst); err != nil {
 		return fmt.Errorf("%s decode response: %w", kind, err)
 	}
 	return nil
+}
+
+// errorReason extracts Google's machine-readable reason
+// ({"error":{"details":[{"reason":...}]}}): the first non-empty one, else "".
+func errorReason(raw []byte) string {
+	var shaped struct {
+		Error struct {
+			Details []struct {
+				Reason string `json:"reason"`
+			} `json:"details"`
+		} `json:"error"`
+	}
+	if json.Unmarshal(raw, &shaped) != nil {
+		return ""
+	}
+	for _, d := range shaped.Error.Details {
+		if d.Reason != "" {
+			return d.Reason
+		}
+	}
+	return ""
 }
 
 // errorMessage extracts a readable message from the common error shapes

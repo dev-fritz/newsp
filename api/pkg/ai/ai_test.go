@@ -170,6 +170,55 @@ func TestGeminiChatAndEmbed(t *testing.T) {
 	assert.InDelta(t, 768, req["outputDimensionality"], 0)
 }
 
+func TestAPIErrorKeyRejected(t *testing.T) {
+	t.Parallel()
+	geminiInvalidKey := `{"error":{"code":400,"message":"API key not valid. Please pass a valid API key.","status":"INVALID_ARGUMENT","details":[{"@type":"type.googleapis.com/google.rpc.ErrorInfo","reason":"API_KEY_INVALID","domain":"googleapis.com","metadata":{"service":"generativelanguage.googleapis.com"}}]}}`
+	otherBadRequest := `{"error":{"code":400,"message":"Invalid JSON payload","status":"INVALID_ARGUMENT","details":[{"@type":"type.googleapis.com/google.rpc.BadRequest"}]}}`
+
+	tests := []struct {
+		name       string
+		kind       Kind
+		path       string
+		status     int
+		body       string
+		wantReason string
+		wantReject bool
+	}{
+		{"gemini invalid key", KindGemini, "/v1beta/models/m:generateContent", http.StatusBadRequest, geminiInvalidKey, "API_KEY_INVALID", true},
+		{"gemini other 400", KindGemini, "/v1beta/models/m:generateContent", http.StatusBadRequest, otherBadRequest, "", false},
+		{"openai 401", KindOpenAI, "/v1/chat/completions", http.StatusUnauthorized, `{"error":{"message":"invalid key"}}`, "", true},
+		{"openai 403", KindOpenAI, "/v1/chat/completions", http.StatusForbidden, `{"error":"forbidden"}`, "", true},
+		{"openai plain 400", KindOpenAI, "/v1/chat/completions", http.StatusBadRequest, `{"error":{"message":"bad model"}}`, "", false},
+		{"non-json body", KindOpenAI, "/v1/chat/completions", http.StatusBadRequest, `<html>oops</html>`, "", false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			srv, _, _ := fakeServer(t, tt.path, tt.status, tt.body)
+			baseURL := srv.URL
+			if tt.kind == KindOpenAI {
+				baseURL += "/v1"
+			}
+			p, err := New(Config{Kind: tt.kind, BaseURL: baseURL, APIKey: "k"})
+			require.NoError(t, err)
+			_, err = p.Chat(context.Background(), ChatRequest{Model: "m"})
+			var apiErr *APIError
+			require.True(t, errors.As(err, &apiErr), "got %v", err)
+			assert.Equal(t, tt.wantReason, apiErr.Reason)
+			assert.Equal(t, tt.wantReject, apiErr.KeyRejected())
+			assert.False(t, apiErr.Temporary(), "a refused key or bad request is never retried")
+			assert.False(t, IsTemporary(err))
+		})
+	}
+
+	gemini, _, _ := fakeServer(t, "/v1beta/models/m:generateContent", http.StatusBadRequest, geminiInvalidKey)
+	p, _ := New(Config{Kind: KindGemini, BaseURL: gemini.URL, APIKey: "k"})
+	_, err := p.Chat(context.Background(), ChatRequest{Model: "m"})
+	var apiErr *APIError
+	require.True(t, errors.As(err, &apiErr))
+	assert.Equal(t, "API key not valid. Please pass a valid API key.", apiErr.Message)
+}
+
 func TestGeminiSafetyBlock(t *testing.T) {
 	t.Parallel()
 	srv, _, _ := fakeServer(t, "/v1beta/models/m:generateContent", http.StatusOK, `{"promptFeedback":{"blockReason":"SAFETY"}}`)

@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"net/http"
 	"strings"
 	"sync"
 	"time"
@@ -555,8 +554,8 @@ func aiErrorCode(err error) string {
 	}
 }
 
-// isKeyRejected reports whether the provider refused the API key (HTTP 401/403).
+// isKeyRejected reports whether the provider refused the API key.
 func isKeyRejected(err error) bool {
 	var apiErr *ai.APIError
-	return errors.As(err, &apiErr) && (apiErr.Status == http.StatusUnauthorized || apiErr.Status == http.StatusForbidden)
+	return errors.As(err, &apiErr) && apiErr.KeyRejected()
 }

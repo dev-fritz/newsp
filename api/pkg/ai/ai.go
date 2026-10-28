@@ -110,11 +110,24 @@ type APIError struct {
 	Provider Kind
 	Status   int
 	Message  string
+	// Reason is the machine-readable cause the provider reported, when it does
+	// (Google's error.details[].reason, e.g. "API_KEY_INVALID"). Empty otherwise.
+	Reason string
 }
 
 func (e *APIError) Error() string {
 	return fmt.Sprintf("%s: HTTP %d: %s", e.Provider, e.Status, e.Message)
 }
+
+// KeyRejected reports whether the provider refused the API key, so retrying
+// will not help: HTTP 401/403, or Gemini's HTTP 400 with reason API_KEY_INVALID.
+func (e *APIError) KeyRejected() bool {
+	return e.Status == http.StatusUnauthorized || e.Status == http.StatusForbidden || e.Reason == reasonAPIKeyInvalid
+}
+
+// reasonAPIKeyInvalid is the reason Google APIs give for an invalid or expired
+// key. It is an error code, not a credential.
+const reasonAPIKeyInvalid = "API_KEY_INVALID" //nolint:gosec // G101 false positive
 
 // Temporary reports whether retrying later may succeed: rate limits, timeouts,
 // overload (Anthropic's 529) and server errors.
