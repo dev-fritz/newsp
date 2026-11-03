@@ -101,7 +101,7 @@ services:
 
   # Optional local models: `docker compose --profile ollama up -d`
   ollama:
-    image: ollama/ollama:0.40.11
+    image: ollama/ollama:0.40.13
     profiles: ["ollama"]
     environment:
       # Ollama's default context (4096 tokens) silently cuts the start of long
